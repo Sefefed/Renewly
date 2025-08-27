@@ -1,21 +1,9 @@
 import { Router } from 'express';
-
+import authorize from '../middleware/authMiddleware.js';
+import { createSubscription, getUserSubscriptions } from '../controllers/subscriptionController.js';
 const subscriptionRouter = Router();
 
-subscriptionRouter.get('/', (req, res) => res.send('Subscription endpoint'));
-
-subscriptionRouter.get('/:id', (req, res) => {
-  res.send(`Subscription ${req.params.id} endpoint`);
-});
-
-subscriptionRouter.post('/:id', (req, res) => {
-  res.send(`Subscription ${req.params.id} update endpoint`);
-});
-
-subscriptionRouter.put('/:id', (req, res) => {
-  res.send({
-    message: `Subscription ${req.params.id} updated successfully`
-  });
-});
+subscriptionRouter.post('/', authorize, createSubscription);
+subscriptionRouter.get('/user/:id', authorize, getUserSubscriptions);
 
 export default subscriptionRouter;

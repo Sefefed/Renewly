@@ -1,14 +1,11 @@
 import { Router } from 'express';
-
+import { getUsers, getUser } from '../controllers/userController.js';
+import authorize from '../middleware/authMiddleware.js';
 const userRouter = Router();
 
-userRouter.get('/', (req, res) => {
-  res.send('User profile endpoint');
-});
+userRouter.get('/', getUsers);
 
-userRouter.get('/:id', (req, res) => {
-  res.send(`User ${req.params.id} profile endpoint`);
-})
+userRouter.get('/:id', authorize, getUser);
 
 userRouter.post('/:id', (req, res) => {
   res.send(`User ${req.params.id} profile update endpoint`);
