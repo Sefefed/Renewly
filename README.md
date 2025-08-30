@@ -63,6 +63,8 @@ NODE_ENV=development
 DB_URI=mongodb://localhost:27017/subscription_tracker
 JWT_SECRET=your-super-secret
 JWT_EXPIRES_IN=7d
+SERVER_URL=http://localhost:3000
+EMAIL_PASSWORD=your-gmail-app-password
 ```
 
 Create `config/.env.development.local` adjacent to `config/env.js` or at your project root (same directory as `app.js`) depending on your setup. With the current `env.js`, place the file at the project root.
@@ -111,13 +113,11 @@ Base path prefixes in `app.js`:
     ```
   - Response: `201 Created` with `{ token, user }`
 
-- POST `/api/v1/auth/signin` (to be implemented)
+- POST `/api/v1/auth/signin`
   - Body (JSON): `{ "email": "...", "password": "..." }`
   - Response: `{ token, user }`
 
-- POST `/api/v1/auth/signout` (optional behavior)
-
-Note: For JSON requests, set `Content-Type: application/json`. If you plan to send URL-encoded forms, add `app.use(express.urlencoded({ extended: true }))` in `app.js`.
+- POST `/api/v1/auth/signout`
 
 ### Example cURL
 
@@ -133,6 +133,10 @@ curl -X POST http://localhost:3000/api/v1/auth/signup \
 - `authController.signup` uses bcryptjs to salt and hash passwords and issues a JWT with `JWT_SECRET` and `JWT_EXPIRES_IN`.
 - The `userModel.js` defines `email` with `unique: true`. Ensure the unique index exists in Mongo (in production, `autoIndex` can be disabled; create the index manually if needed).
 - The signup flow currently uses a Mongoose session and starts a transaction. MongoDB transactions require a replica set (including single-node RS in development). If running a standalone server, either enable a replica set or remove the transaction from signup.
+
+### Email setup
+- `config/nodemailer.js` uses Gmail SMTP. Set `EMAIL_PASSWORD` to a Gmail App Password (with 2FA enabled) for the account used as `accountEmail`.
+- `SERVER_URL` is used for workflow callbacks and should be publicly reachable in production.
 
 ## Troubleshooting
 
@@ -166,9 +170,7 @@ curl -X POST http://localhost:3000/api/v1/auth/signup \
 
 ## Future Improvements
 
-- Implement `signin` and `signout` controllers
-- Add authentication middleware and protect subscription routes
-- Add rate limiting and request validation
+- Implement rate limiting and request validation
 - Add tests (unit/integration)
 
 ## License
