@@ -21,12 +21,12 @@ app.use('/api/v1/workflows', workflowRouter);
 app.use(errorMiddleware);
 
 app.get("/", (req, res) => {
-  res.send("Welcome to the Subscription Tracker API!");
+  res.send("Welcome to the Renewly API!");
 }); 
 
 
 app.listen(PORT, async () => {
-  console.log(`Subscription tracker API is running on http://localhost:${PORT}`);
+  console.log(`Renewly API is running on http://localhost:${PORT}`);
   console.log(`Environment: ${NODE_ENV}`);
   await connectToDatabase();
 });
