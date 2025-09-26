@@ -1,32 +1,44 @@
 # 📊 Renewly — Smart Finance Tracker
 
-Renewly is a full‑stack web application that helps you track, manage, and visualize recurring expenses (subscriptions and bills). It provides a clean landing experience, authentication, and a foundation for dashboards, reminders, and insights.
+Renewly is a full‑stack web platform that helps teams keep recurring software and finance subscriptions under control. It currently delivers a polished landing page with animated interactions, full authentication flows, and a protected dashboard shell ready for deeper spend insights.
+
+---
+
+## ✨ Features
+
+- Elegant hero experience with animated CTAs and responsive background imagery
+- Email/password authentication with protected routes and persistent sessions
+- Context-driven auth state (React context + localStorage sync)
+- Reusable card layouts for onboarding (Sign In / Sign Up)
+- Structured backend with JWT, MongoDB, and modular controllers
+- Ready-to-extend services/hooks for APIs, automation, and analytics
 
 ---
 
 ## 🚀 Tech Stack
 
-- Frontend
-  - React (Vite)
-  - React Router
-  - Context API (auth state)
-  - Tailwind CSS v4 (@tailwindcss/vite)
+**Frontend**
 
-- Backend
-  - Node.js (ES Modules)
-  - Express
-  - MongoDB + Mongoose
-  - JWT Authentication (stateless)
-  - Nodemailer (email workflows)
-  - dotenv
+- React + Vite
+- React Router
+- Tailwind CSS v4 (via `@tailwindcss/vite` plugin)
+- Context API (for auth state)
+
+**Backend**
+
+- Node.js (ESM) + Express
+- MongoDB & Mongoose
+- JWT authentication
+- Nodemailer (email workflows)
+- dotenv-based configuration
 
 ---
 
-## 📂 Monorepo Structure
+## 📂 Directory Layout
 
 ```text
 renewly/
-├─ client/                      # React frontend
+├─ client/                         # React frontend
 │  ├─ index.html
 │  ├─ vite.config.js
 │  ├─ package.json
@@ -46,17 +58,21 @@ renewly/
 │     ├─ routes/
 │     │  └─ AppRoutes.jsx
 │     ├─ styles/
-│     │  └─ landing.css
-│     ├─ index.css
+│     │  ├─ global.css            # Global Tailwind entry point
+│     │  └─ landing.css           # Landing specific layers (optional)
+│     ├─ index.css                # Re-exports styles/global.css
 │     ├─ App.jsx
 │     └─ main.jsx
 │
-├─ server/                      # Node/Express backend
+├─ server/                         # Node/Express backend
 │  ├─ package.json
 │  └─ src/
 │     ├─ app.js
 │     ├─ config/
-│     │  └─ env.js
+│     │  ├─ env.js
+│     │  ├─ arcjet.js
+│     │  ├─ nodemailer.js
+│     │  └─ upstash.js
 │     ├─ controllers/
 │     │  ├─ authController.js
 │     │  ├─ subscriptionController.js
@@ -77,94 +93,124 @@ renewly/
 │     │  ├─ userRoutes.js
 │     │  └─ workflowRoutes.js
 │     └─ utils/
-│        └─ ...
+│        ├─ email-template.js
+│        └─ send-email.js
 │
 └─ README.md
+```
 
-⚙️ Setup
-1) Backend (server)
-From the server/ directory:
+---
 
-bash
+## ⚙️ Getting Started
+
+### 1. Backend API
+
+```bash
+cd server
 npm install
-Create server/.env.development.local with:
+```
 
-env
+Create `server/.env.development.local` (or `.env`) with:
+
+```env
 PORT=3000
 NODE_ENV=development
 DB_URI=mongodb://localhost:27017/renewly
-JWT_SECRET=your-super-secret
+JWT_SECRET=change-me
 JWT_EXPIRES_IN=7d
 SERVER_URL=http://localhost:3000
-EMAIL_PASSWORD=your-gmail-app-password
+EMAIL_USER=your-email@example.com
+EMAIL_PASSWORD=your-app-password
+```
+
 Run the API:
 
-bash
+```bash
 npm run dev
+```
+
 Health check:
 
-GET http://localhost:3000/ → “Welcome to the Renewly API!”
-Base API paths (from 
-server/src/app.js
-):
+```
+GET http://localhost:3000/ → "Welcome to the Renewly API!"
+```
 
-Auth: /api/v1/auth
-Users: /api/v1/users
-Subscriptions: /api/v1/subscriptions
-Workflows: /api/v1/workflows
-Local dev CORS:
+Base routes (see `server/src/app.js`):
 
-The server allows origin http://localhost:5173 (Vite) by default.
-2) Frontend (client)
-From the client/ directory:
+| Feature       | Path                    |
+| ------------- | ----------------------- |
+| Auth          | `/api/v1/auth`          |
+| Users         | `/api/v1/users`         |
+| Subscriptions | `/api/v1/subscriptions` |
+| Workflows     | `/api/v1/workflows`     |
 
-bash
+The backend permits `http://localhost:5173` for local development CORS.
+
+### 2. Frontend App
+
+```bash
+cd client
 npm install
-Create client/.env.development with:
+```
 
-env
+Create `client/.env.development` with:
+
+```env
 VITE_API_URL=http://localhost:3000
-Run the app:
+```
 
-bash
+Start the Vite dev server:
+
+```bash
 npm run dev
-Open http://localhost:5173
+```
 
-Routes:
+Open http://localhost:5173 to access the UI.
 
-/ → Landing (public)
-/signin, /signup → Auth (public)
-/dashboard
- → Protected (requires auth context state)
-🔐 Authentication (current)
-Sign Up: POST ${VITE_API_URL}/api/v1/auth/signup
-Sign In: POST ${VITE_API_URL}/api/v1/auth/signin
-On success, the client stores { token, user } in localStorage and routes to 
-/dashboard
-.
-🧩 Development Notes
-Environment loading (backend)
-server/src/config/env.js loads .env.<NODE_ENV>.local from the server/ working directory.
-Tailwind v4 extracted styles (frontend)
-Keep global Tailwind import only in 
-client/src/index.css
-:
-@import "tailwindcss";
-In any additional CSS using @apply, add a reference and use a layer (example 
-client/src/styles/landing.css
-):
-css
-@reference "tailwindcss";
-@layer components {
-  /* your component classes with @apply */
-}
-Ports (default)
-API: http://localhost:3000
-Client: http://localhost:5173
-🗺️ Roadmap
-Bills support and CRUD
-Budgets and limits
-Insights and recommendations
-Calendar view and reminders
-Axios API client with interceptors and robust error handling
-E2E & integration tests
+Available routes:
+
+- `/` — landing experience (public)
+- `/signin`, `/signup` — auth flows (public)
+- `/dashboard` — protected (requires auth context state)
+
+---
+
+## 🔐 Authentication Flow
+
+- **Sign Up** — `POST ${VITE_API_URL}/api/v1/auth/signup`
+- **Sign In** — `POST ${VITE_API_URL}/api/v1/auth/signin`
+- On success, `{ token, user }` are persisted to `localStorage` and the app redirects to the dashboard.
+
+Auth data is injected into the component tree via `AuthProvider`, making it easy to guard routes and access the current user.
+
+---
+
+## 🛠️ Development Tips
+
+- Backend environment loader (`server/src/config/env.js`) resolves `.env.<NODE_ENV>.local` automatically.
+- Global Tailwind styles live in `client/src/styles/global.css`; `client/src/index.css` simply re-exports the file for Vite.
+- Custom component layers (e.g. landing page animations) can live beside features under `client/src/styles/`.
+- Default ports:
+  - API — http://localhost:3000
+  - Client — http://localhost:5173
+
+---
+
+## 🗺️ Roadmap
+
+- Subscription CRUD with billing schedule metadata
+- Budgets, limits, and alerts
+- Insights & savings recommendations
+- Calendar view + email/SMS reminders
+- Axios API client with interceptors and typed responses
+- Unit, integration, and E2E coverage
+
+---
+
+## 🤝 Contributing
+
+We welcome ideas! Open an issue with your feature request or bug report, or submit a PR following the structure above. Feel free to fork the repo and tailor Renewly to your stack.
+
+---
+
+Happy building! 🚀
