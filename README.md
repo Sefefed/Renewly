@@ -1,130 +1,170 @@
-# 📊 Renewly - Smart Finance Tracker
+# 📊 Renewly — Smart Finance Tracker
 
-Renewly is a **full-stack web application** designed to help users **track, manage, and visualize their finances**.  
-It provides an intuitive dashboard, subscription management, and workflow automation to make money management **simple and smart**.
+Renewly is a full‑stack web application that helps you track, manage, and visualize recurring expenses (subscriptions and bills). It provides a clean landing experience, authentication, and a foundation for dashboards, reminders, and insights.
 
 ---
 
 ## 🚀 Tech Stack
 
-**Frontend**:  
-- React (Vite)  
-- React Router  
-- Context API (for auth state)  
-- TailwindCSS (styling)  
+- Frontend
+  - React (Vite)
+  - React Router
+  - Context API (auth state)
+  - Tailwind CSS v4 (@tailwindcss/vite)
 
-**Backend**:  
-- Node.js  
-- Express.js  
-- MongoDB with Mongoose  
-- JWT Authentication (stateless)  
-- Middleware for errors & security  
-
----
-
-## ✨ Features
-
-- 🔐 **Authentication**: Sign up, sign in, sign out (JWT-based)  
-- 👤 **User Dashboard**: Personalized overview of finances  
-- 💳 **Subscription Management**: Track recurring payments  
-- 📈 **Analytics & Workflows**: Visual insights and automation  
-- 🎨 **Modern UI**: Mobile-first, responsive design with Tailwind  
+- Backend
+  - Node.js (ES Modules)
+  - Express
+  - MongoDB + Mongoose
+  - JWT Authentication (stateless)
+  - Nodemailer (email workflows)
+  - dotenv
 
 ---
 
-## 📂 Project Structure
+## 📂 Monorepo Structure
 
+```text
 renewly/
-├── client/ # React frontend
-│ ├── src/
-│ │ ├── components/ # UI components
-│ │ ├── pages/ # SignIn, SignUp, Dashboard, etc.
-│ │ ├── contexts/ # Auth context
-│ │ ├── routes/ # AppRoutes (protected/public routes)
-│ │ └── App.jsx
-│ └── package.json
+├─ client/                      # React frontend
+│  ├─ index.html
+│  ├─ vite.config.js
+│  ├─ package.json
+│  └─ src/
+│     ├─ assets/
+│     ├─ components/
+│     ├─ contexts/
+│     │  └─ AuthContext.jsx
+│     ├─ pages/
+│     │  ├─ landing/
+│     │  │  └─ LandingPage.jsx
+│     │  ├─ auth/
+│     │  │  ├─ SignIn.jsx
+│     │  │  └─ SignUp.jsx
+│     │  └─ dashboard/
+│     │     └─ Dashboard.jsx
+│     ├─ routes/
+│     │  └─ AppRoutes.jsx
+│     ├─ styles/
+│     │  └─ landing.css
+│     ├─ index.css
+│     ├─ App.jsx
+│     └─ main.jsx
 │
-├── server/ # Node.js backend
-│ ├── src/
-│ │ ├── config/ # Environment configs
-│ │ ├── controllers/ # Business logic (auth, user, subscription, workflow)
-│ │ ├── database/ # MongoDB connection
-│ │ ├── middleware/ # Auth, error, rate limiting
-│ │ ├── models/ # Mongoose models
-│ │ ├── routes/ # Express routes
-│ │ └── utils/ # Helpers
-│ ├── app.js # Express app entry
-│ └── package.json
+├─ server/                      # Node/Express backend
+│  ├─ package.json
+│  └─ src/
+│     ├─ app.js
+│     ├─ config/
+│     │  └─ env.js
+│     ├─ controllers/
+│     │  ├─ authController.js
+│     │  ├─ subscriptionController.js
+│     │  ├─ userController.js
+│     │  └─ workflowController.js
+│     ├─ database/
+│     │  └─ mongodb.js
+│     ├─ middleware/
+│     │  ├─ ArcjetMiddleware.js
+│     │  ├─ authMiddleware.js
+│     │  └─ errorMiddleware.js
+│     ├─ models/
+│     │  ├─ subscriptionModel.js
+│     │  └─ userModel.js
+│     ├─ routes/
+│     │  ├─ authRoutes.js
+│     │  ├─ subscriptionRoutes.js
+│     │  ├─ userRoutes.js
+│     │  └─ workflowRoutes.js
+│     └─ utils/
+│        └─ ...
 │
-└── README.md
+└─ README.md
 
-yaml
-Copy code
+⚙️ Setup
+1) Backend (server)
+From the server/ directory:
 
----
-
-## ⚙️ Installation & Setup
-
-### 1. Clone the repo
-```bash
-git clone https://github.com/your-username/renewly.git
-cd renewly
-2. Setup backend (server)
 bash
-Copy code
-cd server
 npm install
-Create an .env.development.local file:
+Create server/.env.development.local with:
 
 env
-Copy code
-PORT=5000
-MONGODB_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/renewly
-JWT_SECRET=your_jwt_secret
-JWT_EXPIRES_IN=1d
-Run backend:
+PORT=3000
+NODE_ENV=development
+DB_URI=mongodb://localhost:27017/renewly
+JWT_SECRET=your-super-secret
+JWT_EXPIRES_IN=7d
+SERVER_URL=http://localhost:3000
+EMAIL_PASSWORD=your-gmail-app-password
+Run the API:
 
 bash
-Copy code
-npm start
-3. Setup frontend (client)
-bash
-Copy code
-cd ../client
-npm install
 npm run dev
-🔑 API Endpoints (Auth)
-POST /signup → Register new user
+Health check:
 
-POST /signin → Login existing user (returns token + user)
+GET http://localhost:3000/ → “Welcome to the Renewly API!”
+Base API paths (from 
+server/src/app.js
+):
 
-POST /signout → Sign out (client discards token)
+Auth: /api/v1/auth
+Users: /api/v1/users
+Subscriptions: /api/v1/subscriptions
+Workflows: /api/v1/workflows
+Local dev CORS:
 
-🧑‍💻 Development Workflow
-Start backend first (npm start in /server).
+The server allows origin http://localhost:5173 (Vite) by default.
+2) Frontend (client)
+From the client/ directory:
 
-Start frontend (npm run dev in /client).
+bash
+npm install
+Create client/.env.development with:
 
-Visit app at http://localhost:5173.
+env
+VITE_API_URL=http://localhost:3000
+Run the app:
 
-🌟 Roadmap
- Add expense categories
+bash
+npm run dev
+Open http://localhost:5173
 
- Add charts & graphs for better visualization
+Routes:
 
- Implement notifications/reminders
-
- Deploy on Vercel (frontend) + Render/Heroku (backend) + Mongo Atlas
-
-🤝 Contributing
-Pull requests are welcome! Please fork the repo and submit a PR with improvements.
-
-📜 License
-This project is licensed under the MIT License.
-
-yaml
-Copy code
-
----
-
-✅ This will give your project a **professional GitHub presence** and make it crystal clear for anyone setting it up.  
+/ → Landing (public)
+/signin, /signup → Auth (public)
+/dashboard
+ → Protected (requires auth context state)
+🔐 Authentication (current)
+Sign Up: POST ${VITE_API_URL}/api/v1/auth/signup
+Sign In: POST ${VITE_API_URL}/api/v1/auth/signin
+On success, the client stores { token, user } in localStorage and routes to 
+/dashboard
+.
+🧩 Development Notes
+Environment loading (backend)
+server/src/config/env.js loads .env.<NODE_ENV>.local from the server/ working directory.
+Tailwind v4 extracted styles (frontend)
+Keep global Tailwind import only in 
+client/src/index.css
+:
+@import "tailwindcss";
+In any additional CSS using @apply, add a reference and use a layer (example 
+client/src/styles/landing.css
+):
+css
+@reference "tailwindcss";
+@layer components {
+  /* your component classes with @apply */
+}
+Ports (default)
+API: http://localhost:3000
+Client: http://localhost:5173
+🗺️ Roadmap
+Bills support and CRUD
+Budgets and limits
+Insights and recommendations
+Calendar view and reminders
+Axios API client with interceptors and robust error handling
+E2E & integration tests
