@@ -43,12 +43,6 @@ export default function LandingPage() {
       <div className="hero-content relative z-10 flex min-h-screen flex-col">
         <header className="flex items-center justify-between p-6">
           <h1 className="text-xl font-bold">Renewly</h1>
-          <button className="space-y-1" type="button">
-            <div className="h-0.5 w-6 bg-white" />
-            <div className="h-0.5 w-6 bg-white" />
-            <div className="h-0.5 w-6 bg-white" />
-            <div className="h-0.5 w-6 bg-white" />
-          </button>
         </header>
 
         <main className="flex flex-grow flex-col items-center justify-center gap-6 px-4 text-center">

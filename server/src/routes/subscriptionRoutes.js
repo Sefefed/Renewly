@@ -1,9 +1,14 @@
-import { Router } from 'express';
-import authorize from '../middleware/authMiddleware.js';
-import { createSubscription, getUserSubscriptions } from '../controllers/subscriptionController.js';
+import { Router } from "express";
+import authorize from "../middleware/authMiddleware.js";
+import {
+  createSubscription,
+  getUserSubscriptions,
+} from "../controllers/subscriptionController.js";
 const subscriptionRouter = Router();
 
-subscriptionRouter.post('/', authorize, createSubscription);
-subscriptionRouter.get('/user/:id', authorize, getUserSubscriptions);
+subscriptionRouter.use(authorize); // All subscription routes require authentication
+
+subscriptionRouter.post("/", createSubscription);
+subscriptionRouter.get("/", getUserSubscriptions);
 
 export default subscriptionRouter;

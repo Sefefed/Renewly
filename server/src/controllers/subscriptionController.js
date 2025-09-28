@@ -1,7 +1,7 @@
-import Subscription from '../models/subscriptionModel.js'
-import { workflowClient } from '../config/upstash.js'
-import { SERVER_URL, NODE_ENV } from '../config/env.js'
-import { sendReminderEmail } from '../utils/send-email.js'
+import Subscription from "../models/subscriptionModel.js";
+import { workflowClient } from "../config/upstash.js";
+import { SERVER_URL, NODE_ENV } from "../config/env.js";
+import { sendReminderEmail } from "../utils/send-email.js";
 
 export const createSubscription = async (req, res, next) => {
   try {
@@ -11,14 +11,22 @@ export const createSubscription = async (req, res, next) => {
     });
 
     // In development, send an email immediately without relying on Upstash callbacks reaching localhost.
-    if (NODE_ENV !== 'production') {
-      const populated = await Subscription.findById(subscription.id).populate('user', 'name email');
+    if (NODE_ENV !== "production") {
+      const populated = await Subscription.findById(subscription.id).populate(
+        "user",
+        "name email"
+      );
       await sendReminderEmail({
         to: populated.user.email,
-        type: '1 days before reminder',
+        type: "1 days before reminder",
         subscription: populated,
       });
-      return res.status(201).json({ success: true, data: { subscription: populated, workflowRunId: null, emailed: true } });
+      return res
+        .status(201)
+        .json({
+          success: true,
+          data: { subscription: populated, workflowRunId: null, emailed: true },
+        });
     }
 
     const { workflowRunId } = await workflowClient.trigger({
@@ -27,30 +35,25 @@ export const createSubscription = async (req, res, next) => {
         subscriptionId: subscription.id,
       },
       headers: {
-        'content-type': 'application/json',
+        "content-type": "application/json",
       },
       retries: 0,
-    })
+    });
 
-    res.status(201).json({ success: true, data: { subscription, workflowRunId } });
+    res
+      .status(201)
+      .json({ success: true, data: { subscription, workflowRunId } });
   } catch (e) {
     next(e);
   }
-}
+};
 
 export const getUserSubscriptions = async (req, res, next) => {
   try {
-    // Check if the user is the same as the one in the token
-    if(req.user.id !== req.params.id) {
-      const error = new Error('You are not the owner of this account');
-      error.statusCode = 401;
-      throw error;
-    }
-
-    const subscriptions = await Subscription.find({ user: req.params.id });
+    const subscriptions = await Subscription.find({ user: req.user._id });
 
     res.status(200).json({ success: true, data: subscriptions });
   } catch (e) {
     next(e);
   }
-}
+};

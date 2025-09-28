@@ -1,0 +1,204 @@
+import { useState, useEffect } from "react";
+import { useAuth } from "../../contexts/AuthContext";
+import { Link } from "react-router-dom";
+import Navigation from "../../components/Navigation";
+import LoadingSpinner from "../../components/ui/LoadingSpinner";
+import ErrorMessage from "../../components/ui/ErrorMessage";
+import StatusBadge from "../../components/ui/StatusBadge";
+import FilterTabs from "../../components/ui/FilterTabs";
+import EmptyState from "../../components/ui/EmptyState";
+import { useApi } from "../../utils/api";
+import {
+  formatCurrency,
+  formatDate,
+  formatRelativeDate,
+} from "../../utils/formatters";
+
+export default function BillsList() {
+  const { token } = useAuth();
+  const api = useApi(token);
+  const [bills, setBills] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [filter, setFilter] = useState("all");
+
+  const filters = [
+    { value: "all", label: "All" },
+    { value: "pending", label: "Pending" },
+    { value: "paid", label: "Paid" },
+    { value: "overdue", label: "Overdue" },
+  ];
+
+  useEffect(() => {
+    fetchBills();
+  }, []);
+
+  const fetchBills = async () => {
+    try {
+      setLoading(true);
+      const data = await api.getBills();
+      setBills(data.data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleMarkPaid = async (billId) => {
+    try {
+      await api.markBillPaid(billId);
+      await fetchBills(); // Refresh the list
+    } catch (err) {
+      alert("Failed to mark bill as paid: " + err.message);
+    }
+  };
+
+  const filteredBills = bills.filter((bill) => {
+    if (filter === "all") return true;
+    return bill.status === filter;
+  });
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-900 text-white">
+        <Navigation />
+        <div className="flex items-center justify-center h-96">
+          <LoadingSpinner text="Loading bills..." />
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-900 text-white">
+        <Navigation />
+        <div className="flex items-center justify-center h-96">
+          <ErrorMessage error={error} onRetry={fetchBills} />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-900 text-white">
+      <Navigation />
+
+      {/* Header */}
+      <header className="border-b border-gray-800 bg-gray-950/70 px-6 py-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold">Bills</h1>
+            <p className="text-sm text-gray-400">
+              Manage your household bills and recurring payments
+            </p>
+          </div>
+          <Link
+            to="/bills/add"
+            className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-sm"
+          >
+            Add Bill
+          </Link>
+        </div>
+      </header>
+
+      <main className="mx-auto w-full max-w-6xl px-6 py-8">
+        {/* Filters */}
+        <div className="mb-6">
+          <FilterTabs
+            filters={filters.map((f) => ({
+              ...f,
+              label: `${f.label} (${
+                bills.filter((bill) =>
+                  f.value === "all" ? true : bill.status === f.value
+                ).length
+              })`,
+            }))}
+            activeFilter={filter}
+            onFilterChange={setFilter}
+          />
+        </div>
+
+        {/* Bills List */}
+        <div className="space-y-4">
+          {filteredBills.length > 0 ? (
+            filteredBills.map((bill) => (
+              <div
+                key={bill._id}
+                className="bg-gray-800 rounded-lg p-6 hover:bg-gray-750 transition-colors"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-gray-700 rounded-lg flex items-center justify-center">
+                      <span className="text-xl">
+                        {bill.name.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold">{bill.name}</h3>
+                      <p className="text-sm text-gray-400 capitalize">
+                        {bill.category} • {bill.paymentMethod}
+                      </p>
+                      <p className="text-sm text-gray-400">
+                        Due: {formatDate(bill.dueDate)} (
+                        {formatRelativeDate(bill.dueDate)})
+                      </p>
+                      {bill.autoPay && (
+                        <span className="inline-block mt-1 px-2 py-1 bg-blue-500/20 text-blue-400 text-xs rounded">
+                          Auto Pay
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4">
+                    <div className="text-right">
+                      <p className="text-xl font-bold">
+                        {formatCurrency(bill.amount, bill.currency)}
+                      </p>
+                      <StatusBadge status={bill.status} />
+                    </div>
+
+                    <div className="flex gap-2">
+                      {bill.status === "pending" && (
+                        <button
+                          onClick={() => handleMarkPaid(bill._id)}
+                          className="bg-green-600 hover:bg-green-700 px-3 py-1 rounded text-sm"
+                        >
+                          Mark Paid
+                        </button>
+                      )}
+                      <Link
+                        to={`/bills/${bill._id}`}
+                        className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm"
+                      >
+                        View Details
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <EmptyState
+              title="No bills found"
+              description={
+                filter === "all"
+                  ? "Add your first bill to get started"
+                  : `No ${filter} bills found`
+              }
+              actionText={filter === "all" ? "Add Bill" : null}
+              onAction={
+                filter === "all"
+                  ? () => (window.location.href = "/bills/add")
+                  : null
+              }
+              icon="💳"
+            />
+          )}
+        </div>
+      </main>
+    </div>
+  );
+}
