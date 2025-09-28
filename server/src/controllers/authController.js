@@ -12,7 +12,7 @@ export const signup = async(req, res, next) => {
      
     //check if there is existing user
 
-    const user = await User.findOne({ email});
+    const user = await User.findOne({ email });
     if(user) {
       const error = new Error('User already exists with this email');
       error.statusCode = 400;
@@ -24,22 +24,33 @@ export const signup = async(req, res, next) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     // create a new user
-    const newUser = await User.create([{
-      name,
-      email,
-      password: hashedPassword
-    }], { session });
+    const created = await User.create([
+      {
+        name,
+        email,
+        password: hashedPassword,
+      },
+    ], { session });
+    const createdUser = created[0];
     // jwt token
-    const token = jwt.sign({ userId: newUser[0]._id }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+    const token = jwt.sign({ userId: createdUser._id }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
     await session.commitTransaction();
     session.endSession();
 
+    const safeUser = {
+      _id: createdUser._id,
+      name: createdUser.name,
+      email: createdUser.email,
+      createdAt: createdUser.createdAt,
+      updatedAt: createdUser.updatedAt,
+    };
+    
     res.status(201).json({
       success: true,
       message: "User created Successfully",
       data: {
         token,
-        user: newUser[0]
+        user: safeUser,
       }
     });
   } catch (error) {
@@ -53,7 +64,8 @@ export const signin = async(req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
+    // select password explicitly for verification (schema hides it by default)
+    const user = await User.findOne({ email }).select('+password');
 
     if(!user) {
       const error = new Error('Invalid credentials');
@@ -70,12 +82,19 @@ export const signin = async(req, res, next) => {
 
     //jwt token
     const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+    const safeUser = {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
     res.status(200).json({
       success: true,
       message: "User logged in Successfully",
       data: {
         token,
-        user: user
+        user: safeUser,
       }
     });
   } catch (error) {

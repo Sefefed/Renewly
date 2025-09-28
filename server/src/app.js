@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import { PORT, NODE_ENV } from './config/env.js';
 import userRouter from './routes/userRoutes.js';
 import authRouter from "./routes/authRoutes.js";
@@ -12,7 +13,9 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
+// Allow frontend dev origin (Vite)
+app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+ 
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/subscriptions', subscriptionRouter);
