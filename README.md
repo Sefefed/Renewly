@@ -1,6 +1,6 @@
 # 📊 Renewly — Smart Finance Tracker
 
-Renewly is a full‑stack web platform that helps teams keep recurring software and finance subscriptions under control. It currently delivers a polished landing page with animated interactions, full authentication flows, and a protected dashboard shell ready for deeper spend insights.
+Renewly is a full‑stack web platform that helps teams keep recurring software and finance subscriptions under control. It now ships with a polished landing page, production-ready authentication, and a modular insights dashboard powered by real subscription and billing analytics.
 
 ---
 
@@ -9,7 +9,9 @@ Renewly is a full‑stack web platform that helps teams keep recurring software 
 - Elegant hero experience with animated CTAs and responsive background imagery
 - Email/password authentication with protected routes and persistent sessions
 - Context-driven auth state (React context + localStorage sync)
-- Reusable card layouts for onboarding (Sign In / Sign Up)
+- Modular dashboard with reusable cards (KPIs, comparisons, recommendations, quick actions)
+- Interactive spending visualizations (line + doughnut charts) with time-range filters
+- Enhanced insights API aggregating subscriptions, bills, and budgets
 - Structured backend with JWT, MongoDB, and modular controllers
 - Ready-to-extend services/hooks for APIs, automation, and analytics
 
@@ -23,6 +25,8 @@ Renewly is a full‑stack web platform that helps teams keep recurring software 
 - React Router
 - Tailwind CSS v4 (via `@tailwindcss/vite` plugin)
 - Context API (for auth state)
+- Chart.js + react-chartjs-2 for data visualization
+- PropTypes for runtime contracts
 
 **Backend**
 
@@ -38,63 +42,35 @@ Renewly is a full‑stack web platform that helps teams keep recurring software 
 
 ```text
 renewly/
-├─ client/                         # React frontend
-│  ├─ index.html
-│  ├─ vite.config.js
+├─ client/                         # React frontend (Vite + Tailwind)
 │  ├─ package.json
 │  └─ src/
-│     ├─ assets/
 │     ├─ components/
-│     ├─ contexts/
-│     │  └─ AuthContext.jsx
-│     ├─ pages/
-│     │  ├─ landing/
-│     │  │  └─ LandingPage.jsx
-│     │  ├─ auth/
-│     │  │  ├─ SignIn.jsx
-│     │  │  └─ SignUp.jsx
-│     │  └─ dashboard/
-│     │     └─ Dashboard.jsx
-│     ├─ routes/
-│     │  └─ AppRoutes.jsx
-│     ├─ styles/
-│     │  ├─ global.css            # Global Tailwind entry point
-│     │  └─ landing.css           # Landing specific layers (optional)
-│     ├─ index.css                # Re-exports styles/global.css
+│     │  ├─ Charts/                # Shared chart wrappers (Line, Pie, etc.)
+│     │  ├─ dashboard/             # Modular dashboard cards & header
+│     │  └─ Navigation.jsx
+│     ├─ contexts/                 # AuthProvider and related hooks
+│     ├─ pages/                    # Landing, auth, dashboard, settings, ...
+│     ├─ routes/                   # Application routing
+│     ├─ styles/                   # Tailwind entry points & extras
+│     ├─ utils/                    # API client, formatters, error helpers
+│     ├─ hooks/                    # Custom React hooks (future expansion)
+│     ├─ services/                 # External integrations (placeholder)
 │     ├─ App.jsx
+│     ├─ index.css
 │     └─ main.jsx
 │
 ├─ server/                         # Node/Express backend
 │  ├─ package.json
 │  └─ src/
 │     ├─ app.js
-│     ├─ config/
-│     │  ├─ env.js
-│     │  ├─ arcjet.js
-│     │  ├─ nodemailer.js
-│     │  └─ upstash.js
-│     ├─ controllers/
-│     │  ├─ authController.js
-│     │  ├─ subscriptionController.js
-│     │  ├─ userController.js
-│     │  └─ workflowController.js
-│     ├─ database/
-│     │  └─ mongodb.js
-│     ├─ middleware/
-│     │  ├─ ArcjetMiddleware.js
-│     │  ├─ authMiddleware.js
-│     │  └─ errorMiddleware.js
-│     ├─ models/
-│     │  ├─ subscriptionModel.js
-│     │  └─ userModel.js
-│     ├─ routes/
-│     │  ├─ authRoutes.js
-│     │  ├─ subscriptionRoutes.js
-│     │  ├─ userRoutes.js
-│     │  └─ workflowRoutes.js
-│     └─ utils/
-│        ├─ email-template.js
-│        └─ send-email.js
+│     ├─ config/                   # env, email, queue, and third-party wiring
+│     ├─ controllers/              # auth, bill, budget, calendar, insights, subscription, user, workflow
+│     ├─ database/                 # Mongo connection helpers
+│     ├─ middleware/               # Arcjet, auth, error handling
+│     ├─ models/                   # action, bill, budget, subscription, user schemas
+│     ├─ routes/                   # REST routers (incl. /api/v1/insights/enhanced)
+│     └─ utils/                    # email templating helpers
 │
 └─ README.md
 ```
@@ -137,12 +113,16 @@ GET http://localhost:3000/ → "Welcome to the Renewly API!"
 
 Base routes (see `server/src/app.js`):
 
-| Feature       | Path                    |
-| ------------- | ----------------------- |
-| Auth          | `/api/v1/auth`          |
-| Users         | `/api/v1/users`         |
-| Subscriptions | `/api/v1/subscriptions` |
-| Workflows     | `/api/v1/workflows`     |
+| Feature       | Path                               |
+| ------------- | ---------------------------------- |
+| Auth          | `/api/v1/auth`                     |
+| Users         | `/api/v1/users`                    |
+| Subscriptions | `/api/v1/subscriptions`            |
+| Bills         | `/api/v1/bills`                    |
+| Budgets       | `/api/v1/budgets`                  |
+| Insights      | `/api/v1/insights` (+ `/enhanced`) |
+| Calendar      | `/api/v1/calendar`                 |
+| Workflows     | `/api/v1/workflows`                |
 
 The backend permits `http://localhost:5173` for local development CORS.
 
@@ -175,7 +155,18 @@ Available routes:
 
 ---
 
-## 🔐 Authentication Flow
+## � Insights & Dashboard
+
+- **Enhanced Insights API** — `GET /api/v1/insights/enhanced?timeRange=monthly|quarterly|yearly`
+  - Returns spending trend aggregates, category breakdown (with percentages), and month-over-month comparisons
+  - Backed by normalized subscription + bill data and indexed MongoDB queries
+- **Dashboard cards** wrap the insights into reusable React components (KPIs, charts, recommendations, quick actions)
+- **Interactive visualizations** use Chart.js via `react-chartjs-2`, with skeleton/loading states and retry affordances
+- **Time-range filters** let users flip between monthly, quarterly, and yearly views without reloading the page
+
+---
+
+## �🔐 Authentication Flow
 
 - **Sign Up** — `POST ${VITE_API_URL}/api/v1/auth/signup`
 - **Sign In** — `POST ${VITE_API_URL}/api/v1/auth/signin`
@@ -198,12 +189,12 @@ Auth data is injected into the component tree via `AuthProvider`, making it easy
 
 ## 🗺️ Roadmap
 
-- Subscription CRUD with billing schedule metadata
-- Budgets, limits, and alerts
-- Insights & savings recommendations
-- Calendar view + email/SMS reminders
-- Axios API client with interceptors and typed responses
-- Unit, integration, and E2E coverage
+- ✅ Enhanced insights API + dashboard visualizations (spending trends, categories, comparisons)
+- 🔄 Subscription CRUD with billing schedule metadata & reminders
+- 🔄 Budgets, limits, and proactive alerts
+- 🔄 Calendar view + exportable email/SMS reminders
+- 🔄 Typed API client (axios or fetch wrappers) with retry/refresh logic
+- 🔄 Comprehensive test coverage (unit, integration, E2E)
 
 ---
 
