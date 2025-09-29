@@ -77,7 +77,7 @@ export const getInsights = async (req, res, next) => {
     });
 
     const overlaps = Object.entries(categoryGroups)
-      .filter(([category, subs]) => subs.length > 1)
+      .filter(([, subs]) => subs.length > 1)
       .map(([category, subs]) => ({
         category,
         subscriptions: subs,
@@ -200,4 +200,235 @@ export const getInsights = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+export const getEnhancedInsights = async (req, res, next) => {
+  try {
+    const userId = req.user._id;
+    const { timeRange = "monthly" } = req.query;
+
+    const [subscriptions, bills] = await Promise.all([
+      Subscription.find({ user: userId }),
+      Bill.find({ user: userId }),
+    ]);
+
+    const spendingTrend = calculateSpendingTrend(
+      subscriptions,
+      bills,
+      timeRange
+    );
+    const categoryBreakdown = calculateCategoryBreakdown(subscriptions, bills);
+    const monthlyComparison = calculateMonthlyComparison(subscriptions, bills);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        spendingTrend,
+        categoryBreakdown,
+        monthlyComparison,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const normalizeSubscriptionAmount = (subscription) => {
+  const price = Number(subscription.price) || 0;
+  switch (subscription.frequency) {
+    case "daily":
+      return price * 30;
+    case "weekly":
+      return price * 4.33;
+    case "yearly":
+      return price / 12;
+    case "monthly":
+    default:
+      return price;
+  }
+};
+
+const calculateMonthlySpending = (subscriptions, bills, targetDate) => {
+  const month = targetDate.getMonth();
+  const year = targetDate.getFullYear();
+  const startOfMonth = new Date(year, month, 1);
+  const endOfMonth = new Date(year, month + 1, 0, 23, 59, 59, 999);
+
+  const subscriptionTotal = subscriptions.reduce((total, subscription) => {
+    const startDate = subscription.startDate
+      ? new Date(subscription.startDate)
+      : null;
+    const renewalDate = subscription.renewalDate
+      ? new Date(subscription.renewalDate)
+      : null;
+    const isCancelled = subscription.status === "cancelled";
+
+    if (startDate && startDate > endOfMonth) return total;
+    if (isCancelled && renewalDate && renewalDate < startOfMonth) return total;
+
+    return total + normalizeSubscriptionAmount(subscription);
+  }, 0);
+
+  const billTotal = bills.reduce((total, bill) => {
+    if (!bill.dueDate) return total;
+    const dueDate = new Date(bill.dueDate);
+    if (dueDate.getFullYear() === year && dueDate.getMonth() === month) {
+      return total + (Number(bill.amount) || 0);
+    }
+    return total;
+  }, 0);
+
+  return {
+    total: subscriptionTotal + billTotal,
+    subscriptions: subscriptionTotal,
+    bills: billTotal,
+  };
+};
+
+const buildTrendPeriods = (timeRange) => {
+  const now = new Date();
+  const config = {
+    monthly: { points: 6, monthsPerPoint: 1 },
+    quarterly: { points: 6, monthsPerPoint: 3 },
+    yearly: { points: 6, monthsPerPoint: 12 },
+  };
+
+  const { points, monthsPerPoint } = config[timeRange] || config.monthly;
+  const periods = [];
+
+  for (let i = points - 1; i >= 0; i--) {
+    const end = new Date(
+      now.getFullYear(),
+      now.getMonth() - i * monthsPerPoint + 1,
+      0,
+      23,
+      59,
+      59,
+      999
+    );
+    const start = new Date(
+      end.getFullYear(),
+      end.getMonth() - monthsPerPoint + 1,
+      1
+    );
+
+    let label;
+    if (monthsPerPoint === 1) {
+      label = start.toLocaleDateString("en-US", {
+        month: "short",
+        year: "numeric",
+      });
+    } else if (monthsPerPoint === 3) {
+      const quarter = Math.floor(start.getMonth() / 3) + 1;
+      label = `Q${quarter} ${start.getFullYear()}`;
+    } else {
+      label = start.getFullYear().toString();
+    }
+
+    periods.push({ start, end, label, monthsPerPoint });
+  }
+
+  return periods;
+};
+
+const calculateSpendingTrend = (subscriptions, bills, timeRange) => {
+  const periods = buildTrendPeriods(timeRange);
+
+  return periods.map(({ start, end, label, monthsPerPoint }) => {
+    const monthly = calculateMonthlySpending(subscriptions, bills, start);
+
+    const subscriptionsTotal = monthly.subscriptions * monthsPerPoint;
+    const billsTotal = bills.reduce((total, bill) => {
+      if (!bill.dueDate) return total;
+      const dueDate = new Date(bill.dueDate);
+      return dueDate >= start && dueDate <= end
+        ? total + (Number(bill.amount) || 0)
+        : total;
+    }, 0);
+
+    const total = subscriptionsTotal + billsTotal;
+
+    return {
+      month: label,
+      spending: Number(total.toFixed(2)),
+      subscriptions: Number(subscriptionsTotal.toFixed(2)),
+      bills: Number(billsTotal.toFixed(2)),
+    };
+  });
+};
+
+const calculateCategoryBreakdown = (subscriptions, bills) => {
+  const categories = {};
+  const addAmount = (category, amount) => {
+    if (!categories[category]) {
+      categories[category] = { amount: 0, count: 0, percentage: 0 };
+    }
+    categories[category].amount += amount;
+    categories[category].count += 1;
+  };
+
+  subscriptions.forEach((subscription) => {
+    const category = subscription.category || "other";
+    addAmount(category, normalizeSubscriptionAmount(subscription));
+  });
+
+  bills.forEach((bill) => {
+    const category = bill.category || "other";
+    addAmount(category, Number(bill.amount) || 0);
+  });
+
+  const total =
+    Object.values(categories).reduce(
+      (sum, category) => sum + category.amount,
+      0
+    ) || 1;
+
+  Object.keys(categories).forEach((category) => {
+    categories[category].percentage = Number(
+      ((categories[category].amount / total) * 100).toFixed(2)
+    );
+  });
+
+  return categories;
+};
+
+const calculateMonthlyComparison = (subscriptions, bills) => {
+  const currentDate = new Date();
+  const previousDate = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth() - 1,
+    1
+  );
+
+  const current = calculateMonthlySpending(subscriptions, bills, currentDate);
+  const previous = calculateMonthlySpending(subscriptions, bills, previousDate);
+
+  const difference = current.total - previous.total;
+  const percentageChange =
+    previous.total === 0 ? null : (difference / previous.total) * 100;
+
+  return {
+    currentMonth: {
+      label: currentDate.toLocaleDateString("en-US", {
+        month: "long",
+        year: "numeric",
+      }),
+      total: Number(current.total.toFixed(2)),
+      subscriptions: Number(current.subscriptions.toFixed(2)),
+      bills: Number(current.bills.toFixed(2)),
+    },
+    previousMonth: {
+      label: previousDate.toLocaleDateString("en-US", {
+        month: "long",
+        year: "numeric",
+      }),
+      total: Number(previous.total.toFixed(2)),
+      subscriptions: Number(previous.subscriptions.toFixed(2)),
+      bills: Number(previous.bills.toFixed(2)),
+    },
+    difference: Number(difference.toFixed(2)),
+    trend: difference >= 0 ? "up" : "down",
+    percentageChange:
+      percentageChange === null ? null : Number(percentageChange.toFixed(2)),
+  };
 };

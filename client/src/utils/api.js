@@ -1,4 +1,5 @@
 // Centralized API utilities for consistent API calls
+import { useMemo } from "react";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
@@ -103,6 +104,11 @@ export class ApiClient {
     return this.request("/api/v1/insights");
   }
 
+  async getEnhancedInsights(timeRange = "monthly") {
+    const params = new URLSearchParams({ timeRange });
+    return this.request(`/api/v1/insights/enhanced?${params.toString()}`);
+  }
+
   // Workflow methods
   async sendReminder(subscriptionId, immediate = false) {
     return this.request("/api/v1/workflows/subscription/reminder", {
@@ -122,5 +128,5 @@ export class ApiClient {
 
 // Hook for using API client
 export const useApi = (token) => {
-  return new ApiClient(token);
+  return useMemo(() => new ApiClient(token), [token]);
 };

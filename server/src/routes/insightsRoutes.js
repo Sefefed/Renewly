@@ -1,5 +1,8 @@
 import { Router } from "express";
-import { getInsights } from "../controllers/insightsController.js";
+import {
+  getEnhancedInsights,
+  getInsights,
+} from "../controllers/insightsController.js";
 import authorize from "../middleware/authMiddleware.js";
 
 const insightsRouter = Router();
@@ -7,5 +10,6 @@ const insightsRouter = Router();
 insightsRouter.use(authorize); // All insights routes require authentication
 
 insightsRouter.get("/", getInsights);
+insightsRouter.get("/enhanced", getEnhancedInsights);
 
 export default insightsRouter;
