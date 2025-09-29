@@ -62,10 +62,12 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-950 text-white flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-gray-400">Loading your dashboard...</p>
+          <div className="animate-spin rounded-full h-20 w-20 border-4 border-blue-500 border-t-transparent mx-auto mb-6"></div>
+          <p className="text-xl text-gray-300 font-medium bg-gradient-to-r from-gray-300 to-gray-400 bg-clip-text text-transparent">
+            Loading your dashboard...
+          </p>
         </div>
       </div>
     );
@@ -73,14 +75,19 @@ export default function Dashboard() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-400 mb-4">Error: {error}</p>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-950 text-white flex items-center justify-center">
+        <div className="text-center bg-gradient-to-br from-gray-800 to-gray-900 p-10 rounded-2xl shadow-2xl border border-red-500/20 backdrop-blur-sm">
+          <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-2xl">⚠️</span>
+          </div>
+          <p className="text-red-400 text-xl font-semibold mb-4 bg-gradient-to-r from-red-400 to-red-300 bg-clip-text text-transparent">
+            {error}
+          </p>
           <button
             onClick={fetchInsights}
-            className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded"
+            className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 px-8 py-3 rounded-xl text-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
           >
-            Retry
+            Try Again
           </button>
         </div>
       </div>
@@ -89,96 +96,103 @@ export default function Dashboard() {
 
   if (!insights) {
     return (
-      <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
-        <p className="text-gray-400">No data available</p>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-950 text-white flex items-center justify-center">
+        <div className="text-center bg-gradient-to-br from-gray-800 to-gray-900 p-8 rounded-2xl border border-gray-700/50">
+          <p className="text-gray-300 text-lg font-medium">No data available</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-950 text-white">
       <Navigation />
-      {/* Header */}
-      <header className="border-b border-gray-800 bg-gray-950/70 px-6 py-4">
+      
+      {/* Enhanced Header */}
+      <header className="border-b border-gray-800 bg-gray-900/50 backdrop-blur-md px-8 py-6 sticky top-0 z-10">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold">Dashboard</h1>
-            <p className="text-sm text-gray-400">
-              Welcome back, {user?.name || "User"}
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+              Dashboard
+            </h1>
+            <p className="text-sm text-gray-400 mt-1">
+              Welcome back, <span className="text-blue-400 font-medium">{user?.name || "User"}</span>
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <button
               onClick={handleExportCalendar}
-              className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-sm"
+              className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center gap-2"
             >
+              <span>📅</span>
               Export Calendar
             </button>
             <button
               onClick={() => navigate("/settings")}
-              className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded text-sm"
+              className="bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center gap-2"
             >
+              <span>⚙️</span>
               Settings
             </button>
           </div>
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-7xl px-6 py-8">
-        {/* KPI Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-gray-800 rounded-lg p-6">
+      <main className="mx-auto w-full max-w-7xl px-8 py-8 pt-24">
+        {/* Enhanced KPI Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 shadow-2xl border border-gray-700/30 hover:border-blue-500/30 transition-all duration-500 hover:scale-105 group">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400">Monthly Spending</p>
-                <p className="text-2xl font-bold text-green-400">
+                <p className="text-sm text-gray-400 font-medium">Monthly Spending</p>
+                <p className="text-3xl font-bold text-green-400 mt-2 group-hover:scale-105 transition-transform duration-300">
                   {formatCurrency(insights.summary.monthlySpending)}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
-                <span className="text-green-400 text-xl">💰</span>
+              <div className="w-14 h-14 bg-green-500/20 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                <span className="text-2xl">💰</span>
               </div>
             </div>
           </div>
 
-          <div className="bg-gray-800 rounded-lg p-6">
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 shadow-2xl border border-gray-700/30 hover:border-blue-500/30 transition-all duration-500 hover:scale-105 group">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400">Yearly Spending</p>
-                <p className="text-2xl font-bold text-blue-400">
+                <p className="text-sm text-gray-400 font-medium">Yearly Spending</p>
+                <p className="text-3xl font-bold text-blue-400 mt-2 group-hover:scale-105 transition-transform duration-300">
                   {formatCurrency(insights.summary.yearlySpending)}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                <span className="text-blue-400 text-xl">📊</span>
+              <div className="w-14 h-14 bg-blue-500/20 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                <span className="text-2xl">📊</span>
               </div>
             </div>
           </div>
 
-          <div className="bg-gray-800 rounded-lg p-6">
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 shadow-2xl border border-gray-700/30 hover:border-purple-500/30 transition-all duration-500 hover:scale-105 group">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400">Active Subscriptions</p>
-                <p className="text-2xl font-bold text-purple-400">
+                <p className="text-sm text-gray-400 font-medium">Active Subscriptions</p>
+                <p className="text-3xl font-bold text-purple-400 mt-2 group-hover:scale-105 transition-transform duration-300">
                   {insights.summary.activeSubscriptions}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center">
-                <span className="text-purple-400 text-xl">📱</span>
+              <div className="w-14 h-14 bg-purple-500/20 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                <span className="text-2xl">📱</span>
               </div>
             </div>
           </div>
 
-          <div className="bg-gray-800 rounded-lg p-6">
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 shadow-2xl border border-gray-700/30 hover:border-yellow-500/30 transition-all duration-500 hover:scale-105 group">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400">Savings Potential</p>
-                <p className="text-2xl font-bold text-yellow-400">
+                <p className="text-sm text-gray-400 font-medium">Savings Potential</p>
+                <p className="text-3xl font-bold text-yellow-400 mt-2 group-hover:scale-105 transition-transform duration-300">
                   {formatCurrency(insights.savingsPotential)}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-yellow-500/20 rounded-lg flex items-center justify-center">
-                <span className="text-yellow-400 text-xl">💡</span>
+              <div className="w-14 h-14 bg-yellow-500/20 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                <span className="text-2xl">💡</span>
               </div>
             </div>
           </div>
@@ -187,27 +201,41 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column */}
           <div className="lg:col-span-2 space-y-8">
-            {/* Upcoming Renewals */}
-            <div className="bg-gray-800 rounded-lg p-6">
-              <h2 className="text-xl font-semibold mb-4">Upcoming Renewals</h2>
+            {/* Enhanced Upcoming Renewals */}
+            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-7 shadow-2xl border border-gray-700/30 backdrop-blur-sm">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                  Upcoming Renewals
+                </h2>
+                <span className="text-blue-400 text-sm font-medium">
+                  {insights.upcomingRenewals.length} items
+                </span>
+              </div>
               {insights.upcomingRenewals.length > 0 ? (
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {insights.upcomingRenewals.map((renewal, index) => (
                     <div
                       key={index}
-                      className="flex items-center justify-between p-3 bg-gray-700 rounded-lg"
+                      className="flex items-center justify-between p-5 bg-gradient-to-r from-gray-700/50 to-gray-800/50 rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all duration-300 border border-gray-600/30 hover:border-blue-500/30 group cursor-pointer transform hover:scale-[1.02]"
                     >
-                      <div>
-                        <p className="font-medium">{renewal.name}</p>
-                        <p className="text-sm text-gray-400">
-                          {formatDate(renewal.renewalDate)}
-                        </p>
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                          <span className="text-white text-lg">📅</span>
+                        </div>
+                        <div>
+                          <p className="font-semibold text-lg text-white group-hover:text-blue-300 transition-colors">
+                            {renewal.name}
+                          </p>
+                          <p className="text-sm text-gray-400">
+                            {formatDate(renewal.renewalDate)}
+                          </p>
+                        </div>
                       </div>
                       <div className="text-right">
-                        <p className="font-semibold">
+                        <p className="font-bold text-xl text-blue-400">
                           {formatCurrency(renewal.price)}
                         </p>
-                        <p className="text-sm text-gray-400">
+                        <p className="text-sm text-gray-400 font-medium">
                           {renewal.frequency}
                         </p>
                       </div>
@@ -215,25 +243,36 @@ export default function Dashboard() {
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-400">No upcoming renewals</p>
+                <div className="text-center py-12">
+                  <div className="w-20 h-20 bg-gray-700/50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <span className="text-3xl">📅</span>
+                  </div>
+                  <p className="text-gray-400 text-lg">No upcoming renewals</p>
+                </div>
               )}
             </div>
 
-            {/* Category Breakdown */}
-            <div className="bg-gray-800 rounded-lg p-6">
-              <h2 className="text-xl font-semibold mb-4">Category Breakdown</h2>
-              <div className="space-y-3">
+            {/* Enhanced Category Breakdown */}
+            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-7 shadow-2xl border border-gray-700/30 backdrop-blur-sm">
+              <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                Category Breakdown
+              </h2>
+              <div className="space-y-5">
                 {Object.entries(insights.categoryBreakdown).map(
                   ([category, amount]) => (
                     <div
                       key={category}
-                      className="flex items-center justify-between"
+                      className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-700/30 to-gray-800/30 rounded-xl hover:from-gray-700/50 hover:to-gray-800/50 transition-all duration-300 group"
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                        <span className="capitalize">{category}</span>
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
+                          <span className="text-white text-sm">📊</span>
+                        </div>
+                        <span className="capitalize text-lg font-semibold text-white group-hover:text-purple-300 transition-colors">
+                          {category}
+                        </span>
                       </div>
-                      <span className="font-semibold">
+                      <span className="font-bold text-lg text-green-400 bg-gradient-to-r from-green-400 to-green-300 bg-clip-text text-transparent">
                         {formatCurrency(amount)}
                       </span>
                     </div>
@@ -245,24 +284,26 @@ export default function Dashboard() {
 
           {/* Right Column */}
           <div className="space-y-8">
-            {/* Budget Analysis */}
+            {/* Enhanced Budget Analysis */}
             {insights.budgetAnalysis && (
-              <div className="bg-gray-800 rounded-lg p-6">
-                <h2 className="text-xl font-semibold mb-4">Budget Status</h2>
-                <div className="space-y-4">
+              <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-7 shadow-2xl border border-gray-700/30 backdrop-blur-sm">
+                <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                  Budget Status
+                </h2>
+                <div className="space-y-7">
                   <div>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span>Monthly Budget</span>
-                      <span>
+                    <div className="flex justify-between text-base mb-3">
+                      <span className="font-semibold text-gray-200">Monthly Budget</span>
+                      <span className="text-gray-300 font-medium">
                         {formatCurrency(
                           insights.budgetAnalysis.currentSpending
                         )}{" "}
                         / {formatCurrency(insights.budgetAnalysis.monthlyLimit)}
                       </span>
                     </div>
-                    <div className="w-full bg-gray-700 rounded-full h-2">
+                    <div className="w-full bg-gray-700 rounded-full h-3 overflow-hidden shadow-inner">
                       <div
-                        className="bg-blue-500 h-2 rounded-full"
+                        className="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-1000 shadow-lg"
                         style={{
                           width: `${Math.min(
                             insights.budgetAnalysis.percentageUsed,
@@ -271,16 +312,16 @@ export default function Dashboard() {
                         }}
                       ></div>
                     </div>
-                    <p className="text-xs text-gray-400 mt-1">
+                    <p className="text-sm text-gray-400 mt-3 font-medium">
                       {insights.budgetAnalysis.percentageUsed.toFixed(1)}% used
                     </p>
                   </div>
 
                   {insights.budgetAnalysis.categoryAnalysis.entertainment && (
                     <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span>Entertainment</span>
-                        <span>
+                      <div className="flex justify-between text-base mb-3">
+                        <span className="font-semibold text-gray-200">Entertainment</span>
+                        <span className="text-gray-300 font-medium">
                           {formatCurrency(
                             insights.budgetAnalysis.categoryAnalysis
                               .entertainment.spent
@@ -292,13 +333,13 @@ export default function Dashboard() {
                           )}
                         </span>
                       </div>
-                      <div className="w-full bg-gray-700 rounded-full h-2">
+                      <div className="w-full bg-gray-700 rounded-full h-3 overflow-hidden shadow-inner">
                         <div
-                          className={`h-2 rounded-full ${
+                          className={`h-3 rounded-full transition-all duration-1000 shadow-lg ${
                             insights.budgetAnalysis.categoryAnalysis
                               .entertainment.overBudget
-                              ? "bg-red-500"
-                              : "bg-green-500"
+                              ? "bg-gradient-to-r from-red-500 to-red-600"
+                              : "bg-gradient-to-r from-green-500 to-green-600"
                           }`}
                           style={{
                             width: `${Math.min(
@@ -315,59 +356,74 @@ export default function Dashboard() {
               </div>
             )}
 
-            {/* Recommendations */}
-            <div className="bg-gray-800 rounded-lg p-6">
-              <h2 className="text-xl font-semibold mb-4">Recommendations</h2>
-              <div className="space-y-3">
+            {/* Enhanced Recommendations */}
+            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-7 shadow-2xl border border-gray-700/30 backdrop-blur-sm">
+              <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                Recommendations
+              </h2>
+              <div className="space-y-4">
                 {insights.recommendations.length > 0 ? (
                   insights.recommendations.map((rec, index) => (
                     <div
                       key={index}
-                      className="p-3 bg-gray-700 rounded-lg border-l-4 border-yellow-500"
+                      className="p-5 bg-gradient-to-r from-yellow-500/10 to-yellow-600/10 rounded-xl border-l-4 border-yellow-500 hover:from-yellow-500/20 hover:to-yellow-600/20 transition-all duration-300 group transform hover:scale-[1.02]"
                     >
-                      <p className="text-sm font-medium">{rec.message}</p>
+                      <p className="text-base font-semibold text-white group-hover:text-yellow-100 transition-colors">
+                        {rec.message}
+                      </p>
                       {rec.potentialSavings && (
-                        <p className="text-xs text-yellow-400 mt-1">
-                          Potential savings:{" "}
+                        <p className="text-sm text-yellow-400 font-medium mt-3 bg-gradient-to-r from-yellow-400 to-yellow-300 bg-clip-text text-transparent">
+                          💰 Potential savings:{" "}
                           {formatCurrency(rec.potentialSavings)}
                         </p>
                       )}
                     </div>
                   ))
                 ) : (
-                  <p className="text-gray-400 text-sm">
-                    No recommendations at this time
-                  </p>
+                  <div className="text-center py-8">
+                    <div className="w-16 h-16 bg-gray-700/50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                      <span className="text-2xl">✅</span>
+                    </div>
+                    <p className="text-gray-400 text-lg">
+                      No recommendations at this time
+                    </p>
+                  </div>
                 )}
               </div>
             </div>
 
-            {/* Quick Actions */}
-            <div className="bg-gray-800 rounded-lg p-6">
-              <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
-              <div className="space-y-2">
+            {/* Enhanced Quick Actions */}
+            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-7 shadow-2xl border border-gray-700/30 backdrop-blur-sm">
+              <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                Quick Actions
+              </h2>
+              <div className="space-y-4">
                 <button
                   onClick={() => navigate("/subscriptions/add")}
-                  className="w-full bg-blue-600 hover:bg-blue-700 py-2 px-4 rounded text-sm"
+                  className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 py-4 px-5 rounded-xl text-base font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center gap-3 group"
                 >
+                  <span className="text-xl group-hover:scale-110 transition-transform">➕</span>
                   Add Subscription
                 </button>
                 <button
                   onClick={() => navigate("/bills/add")}
-                  className="w-full bg-green-600 hover:bg-green-700 py-2 px-4 rounded text-sm"
+                  className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 py-4 px-5 rounded-xl text-base font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center gap-3 group"
                 >
+                  <span className="text-xl group-hover:scale-110 transition-transform">📄</span>
                   Add Bill
                 </button>
                 <button
                   onClick={() => navigate("/budgets")}
-                  className="w-full bg-purple-600 hover:bg-purple-700 py-2 px-4 rounded text-sm"
+                  className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 py-4 px-5 rounded-xl text-base font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center gap-3 group"
                 >
+                  <span className="text-xl group-hover:scale-110 transition-transform">💼</span>
                   Budget Settings
                 </button>
                 <button
                   onClick={() => navigate("/settings")}
-                  className="w-full bg-gray-600 hover:bg-gray-700 py-2 px-4 rounded text-sm"
+                  className="w-full bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-500 hover:to-gray-600 py-4 px-5 rounded-xl text-base font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center gap-3 group"
                 >
+                  <span className="text-xl group-hover:scale-110 transition-transform">⚙️</span>
                   Settings
                 </button>
               </div>

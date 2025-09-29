@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import DelayedLink from "../../components/ui/DelayedLink";
+import { parseApiError, toErrorState } from "../../utils/errorHandling";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 export default function SignUp() {
@@ -9,6 +11,7 @@ export default function SignUp() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const { login } = useAuth();
+  const DELAY_MS = 400;
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -26,16 +29,31 @@ export default function SignUp() {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Signup failed");
+      if (!res.ok) {
+        const parsed = parseApiError(
+          res.status,
+          data,
+          "Unable to create your account right now. Please try again shortly."
+        );
+        const err = new Error(parsed.message);
+        err.status = parsed.status;
+        err.details = parsed.details;
+        throw err;
+      }
 
       // Save token + user to localStorage
       localStorage.setItem("token", data.data.token);
       localStorage.setItem("user", JSON.stringify(data.data.user));
 
       login(data.data); // Update AuthContext
-      navigate("/dashboard");
+      setTimeout(() => navigate("/dashboard"), DELAY_MS);
     } catch (err) {
-      setError(err.message);
+      setError(
+        toErrorState(
+          err,
+          "Something went wrong while creating your account. Please try again."
+        )
+      );
     } finally {
       setLoading(false);
     }
@@ -56,8 +74,17 @@ export default function SignUp() {
           <h2 className="text-2xl font-bold text-center mb-6">Sign Up</h2>
 
           {error && (
-            <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-3 mb-4">
-              <p className="text-red-400 text-sm">{error}</p>
+            <div className="bg-white-500/20 border border-red-50 rounded-lg p-3 mb-4 space-y-1">
+              <p className="text-red-500 text-sm font-medium">
+                {error.message}
+              </p>
+              {error.details?.length > 0 && (
+                <ul className="list-disc list-inside text-xs text-red-200/80">
+                  {error.details.map((detail, index) => (
+                    <li key={`${detail}-${index}`}>{detail}</li>
+                  ))}
+                </ul>
+              )}
             </div>
           )}
 
@@ -100,9 +127,13 @@ export default function SignUp() {
           {/* Footer links */}
           <div className="text-center text-sm text-gray-600 mt-4">
             <span>Already have an account? </span>
-            <Link to="/signin" className="text-blue-600 hover:underline">
+            <DelayedLink
+              to="/signin"
+              delay={DELAY_MS}
+              className="text-blue-600 hover:underline"
+            >
               Login
-            </Link>
+            </DelayedLink>
           </div>
         </form>
       </div>

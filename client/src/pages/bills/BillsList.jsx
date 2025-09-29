@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Navigation from "../../components/Navigation";
 import LoadingSpinner from "../../components/ui/LoadingSpinner";
 import ErrorMessage from "../../components/ui/ErrorMessage";
@@ -17,10 +17,12 @@ import {
 export default function BillsList() {
   const { token } = useAuth();
   const api = useApi(token);
+  const navigate = useNavigate();
   const [bills, setBills] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filter, setFilter] = useState("all");
+  const DELAY_MS = 400;
 
   const filters = [
     { value: "all", label: "All" },
@@ -52,6 +54,11 @@ export default function BillsList() {
     } catch (err) {
       alert("Failed to mark bill as paid: " + err.message);
     }
+  };
+
+  const handleDelayedNav = (e, path) => {
+    e.preventDefault();
+    setTimeout(() => navigate(path), DELAY_MS);
   };
 
   const filteredBills = bills.filter((bill) => {
@@ -96,6 +103,7 @@ export default function BillsList() {
           </div>
           <Link
             to="/bills/add"
+            onClick={(e) => handleDelayedNav(e, '/bills/add')}
             className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-sm"
           >
             Add Bill
@@ -109,11 +117,9 @@ export default function BillsList() {
           <FilterTabs
             filters={filters.map((f) => ({
               ...f,
-              label: `${f.label} (${
-                bills.filter((bill) =>
-                  f.value === "all" ? true : bill.status === f.value
-                ).length
-              })`,
+              label: `${f.label} (${bills.filter((bill) =>
+                f.value === "all" ? true : bill.status === f.value
+              ).length})`,
             }))}
             activeFilter={filter}
             onFilterChange={setFilter}
@@ -171,6 +177,7 @@ export default function BillsList() {
                       )}
                       <Link
                         to={`/bills/${bill._id}`}
+                        onClick={(e) => handleDelayedNav(e, `/bills/${bill._id}`)}
                         className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm"
                       >
                         View Details
@@ -189,11 +196,7 @@ export default function BillsList() {
                   : `No ${filter} bills found`
               }
               actionText={filter === "all" ? "Add Bill" : null}
-              onAction={
-                filter === "all"
-                  ? () => (window.location.href = "/bills/add")
-                  : null
-              }
+              onAction={filter === "all" ? () => setTimeout(() => navigate('/bills/add'), DELAY_MS) : null}
               icon="💳"
             />
           )}

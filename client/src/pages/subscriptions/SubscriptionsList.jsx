@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Navigation from "../../components/Navigation";
 import LoadingSpinner from "../../components/ui/LoadingSpinner";
 import ErrorMessage from "../../components/ui/ErrorMessage";
@@ -17,10 +17,12 @@ import {
 export default function SubscriptionsList() {
   const { token } = useAuth();
   const api = useApi(token);
+  const navigate = useNavigate();
   const [subscriptions, setSubscriptions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filter, setFilter] = useState("all");
+  const DELAY_MS = 400;
 
   const filters = [
     { value: "all", label: "All" },
@@ -59,6 +61,11 @@ export default function SubscriptionsList() {
     }
   };
 
+  const handleDelayedNav = (e, path) => {
+    e.preventDefault();
+    setTimeout(() => navigate(path), DELAY_MS);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-900 text-white">
@@ -95,6 +102,7 @@ export default function SubscriptionsList() {
           </div>
           <Link
             to="/subscriptions/add"
+            onClick={(e) => handleDelayedNav(e, '/subscriptions/add')}
             className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-sm"
           >
             Add Subscription
@@ -108,11 +116,9 @@ export default function SubscriptionsList() {
           <FilterTabs
             filters={filters.map((f) => ({
               ...f,
-              label: `${f.label} (${
-                subscriptions.filter((sub) =>
-                  f.value === "all" ? true : sub.status === f.value
-                ).length
-              })`,
+              label: `${f.label} (${subscriptions.filter((sub) =>
+                f.value === "all" ? true : sub.status === f.value
+              ).length})`,
             }))}
             activeFilter={filter}
             onFilterChange={setFilter}
@@ -168,6 +174,7 @@ export default function SubscriptionsList() {
                       </button>
                       <Link
                         to={`/subscriptions/${subscription._id}`}
+                        onClick={(e) => handleDelayedNav(e, `/subscriptions/${subscription._id}`)}
                         className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm"
                       >
                         View Details
@@ -186,11 +193,7 @@ export default function SubscriptionsList() {
                   : `No ${filter} subscriptions found`
               }
               actionText={filter === "all" ? "Add Subscription" : null}
-              onAction={
-                filter === "all"
-                  ? () => (window.location.href = "/subscriptions/add")
-                  : null
-              }
+              onAction={filter === "all" ? () => setTimeout(() => navigate('/subscriptions/add'), DELAY_MS) : null}
               icon="📱"
             />
           )}

@@ -1,9 +1,11 @@
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import DelayedLink from "./ui/DelayedLink";
 
 export default function Navigation() {
   const { user, logout } = useAuth();
   const location = useLocation();
+  const DELAY_MS = 400;
 
   const isActive = (path) => {
     return location.pathname === path;
@@ -15,13 +17,18 @@ export default function Navigation() {
         <div className="flex justify-between h-16">
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
-              <Link to="/dashboard" className="text-xl font-bold text-white">
+              <DelayedLink
+                to="/dashboard"
+                delay={DELAY_MS}
+                className="text-xl font-bold text-white"
+              >
                 Renewly
-              </Link>
+              </DelayedLink>
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-              <Link
+              <DelayedLink
                 to="/dashboard"
+                delay={DELAY_MS}
                 className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
                   isActive("/dashboard")
                     ? "border-blue-500 text-white"
@@ -29,9 +36,10 @@ export default function Navigation() {
                 }`}
               >
                 Dashboard
-              </Link>
-              <Link
+              </DelayedLink>
+              <DelayedLink
                 to="/subscriptions"
+                delay={DELAY_MS}
                 className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
                   isActive("/subscriptions")
                     ? "border-blue-500 text-white"
@@ -39,9 +47,10 @@ export default function Navigation() {
                 }`}
               >
                 Subscriptions
-              </Link>
-              <Link
+              </DelayedLink>
+              <DelayedLink
                 to="/bills"
+                delay={DELAY_MS}
                 className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
                   isActive("/bills")
                     ? "border-blue-500 text-white"
@@ -49,9 +58,10 @@ export default function Navigation() {
                 }`}
               >
                 Bills
-              </Link>
-              <Link
+              </DelayedLink>
+              <DelayedLink
                 to="/budgets"
+                delay={DELAY_MS}
                 className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
                   isActive("/budgets")
                     ? "border-blue-500 text-white"
@@ -59,7 +69,7 @@ export default function Navigation() {
                 }`}
               >
                 Budgets
-              </Link>
+              </DelayedLink>
             </div>
           </div>
           <div className="hidden sm:ml-6 sm:flex sm:items-center">
