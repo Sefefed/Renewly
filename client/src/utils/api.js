@@ -124,6 +124,35 @@ export class ApiClient {
   async exportCalendar() {
     return this.request("/api/v1/calendar.ics");
   }
+
+  // Notification methods
+  async getNotifications(params = {}) {
+    const query = new URLSearchParams(params).toString();
+    const endpoint = `/api/v1/notifications${query ? `?${query}` : ""}`;
+    return this.request(endpoint);
+  }
+
+  async getUnreadNotificationCount() {
+    return this.request("/api/v1/notifications/unread-count");
+  }
+
+  async markNotificationAsRead(notificationId) {
+    return this.request(`/api/v1/notifications/${notificationId}/read`, {
+      method: "PATCH",
+    });
+  }
+
+  async markAllNotificationsAsRead() {
+    return this.request("/api/v1/notifications/mark-all-read", {
+      method: "PATCH",
+    });
+  }
+
+  async deleteNotification(notificationId) {
+    return this.request(`/api/v1/notifications/${notificationId}`, {
+      method: "DELETE",
+    });
+  }
 }
 
 // Hook for using API client

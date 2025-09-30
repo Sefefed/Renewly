@@ -1,8 +1,13 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import Navigation from "../../components/Navigation";
 import { useApi } from "../../utils/api";
+import {
+  NotificationBell,
+  ToastNotification,
+  NotificationCenter,
+} from "../../components/Notifications";
 import {
   DashboardHeader,
   KpiGrid,
@@ -32,6 +37,22 @@ export default function Dashboard() {
   const [enhancedLoading, setEnhancedLoading] = useState(true);
   const [enhancedError, setEnhancedError] = useState(null);
   const [timeRange, setTimeRange] = useState("monthly");
+  const [showNotificationCenter, setShowNotificationCenter] = useState(false);
+  const [toasts, setToasts] = useState([]);
+  const displayedToastIdsRef = useRef(new Set());
+
+  const addToast = useCallback((notification) => {
+    if (!notification || !notification._id) return;
+    if (displayedToastIdsRef.current.has(notification._id)) return;
+
+    displayedToastIdsRef.current.add(notification._id);
+    const toastId = `${notification._id}-${Date.now()}`;
+    setToasts((prev) => [...prev, { ...notification, id: toastId }]);
+  }, []);
+
+  const removeToast = useCallback((toastId) => {
+    setToasts((prev) => prev.filter((toast) => toast.id !== toastId));
+  }, []);
 
   const fetchInsights = useCallback(async () => {
     try {
@@ -72,6 +93,36 @@ export default function Dashboard() {
     if (!token) return;
     fetchEnhancedInsights(timeRange);
   }, [fetchEnhancedInsights, timeRange, token]);
+
+  const pollNotifications = useCallback(async () => {
+    if (!token) return;
+
+    try {
+      const unreadResponse = await api.getUnreadNotificationCount();
+      if (!unreadResponse.data) {
+        return;
+      }
+
+      const latestResponse = await api.getNotifications({
+        limit: 1,
+        unreadOnly: true,
+      });
+      const latestNotification = latestResponse.data.notifications?.[0];
+      if (latestNotification) {
+        addToast(latestNotification);
+      }
+    } catch (err) {
+      console.error("Error polling notifications:", err);
+    }
+  }, [addToast, api, token]);
+
+  useEffect(() => {
+    if (!token) return;
+
+    pollNotifications();
+    const interval = setInterval(pollNotifications, 30000);
+    return () => clearInterval(interval);
+  }, [pollNotifications, token]);
 
   const categoryBreakdown =
     enhancedInsights?.categoryBreakdown ?? insights?.categoryBreakdown ?? {};
@@ -195,6 +246,13 @@ export default function Dashboard() {
         userName={user?.name || "User"}
         onExportCalendar={handleExportCalendar}
         onOpenSettings={() => navigate("/settings")}
+        onOpenNotificationCenter={() => setShowNotificationCenter(true)}
+        notificationSlot={
+          <NotificationBell
+            token={token}
+            onOpenCenter={() => setShowNotificationCenter(true)}
+          />
+        }
       />
 
       <main className="mx-auto w-full max-w-7xl px-8 py-8 pt-24">
@@ -237,6 +295,22 @@ export default function Dashboard() {
           </div>
         </div>
       </main>
+
+      <div className="fixed bottom-4 right-4 z-50 space-y-2">
+        {toasts.map((toast) => (
+          <ToastNotification
+            key={toast.id}
+            notification={toast}
+            onClose={() => removeToast(toast.id)}
+          />
+        ))}
+      </div>
+
+      <NotificationCenter
+        token={token}
+        isOpen={showNotificationCenter}
+        onClose={() => setShowNotificationCenter(false)}
+      />
     </div>
   );
 }
