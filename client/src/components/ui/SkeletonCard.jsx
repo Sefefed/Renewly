@@ -15,7 +15,8 @@ const SkeletonCard = ({ lines, showIcon, className, pulseOnly, style }) => {
           <div className="space-y-3 w-full">
             {lineArray.map((_, index) => {
               const heightClass = index === 0 ? "h-4" : "h-3";
-              const widthClass = index === 0 ? "w-24" : index === 1 ? "w-32" : "w-20";
+              const widthClass =
+                index === 0 ? "w-24" : index === 1 ? "w-32" : "w-20";
               return (
                 <div
                   key={`skeleton-line-${index}`}

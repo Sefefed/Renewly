@@ -109,6 +109,11 @@ export class ApiClient {
     return this.request(`/api/v1/insights/enhanced?${params.toString()}`);
   }
 
+  async getSmartInsights(period = "30d") {
+    const params = new URLSearchParams({ period });
+    return this.request(`/api/v1/insights/smart?${params.toString()}`);
+  }
+
   async searchSubscriptions(query = "", filters = {}) {
     const params = new URLSearchParams();
 
@@ -156,7 +161,9 @@ export class ApiClient {
     params.append("limit", filters.limit ?? 20);
 
     const queryString = params.toString();
-    return this.request(`/api/v1/search/subscriptions${queryString ? `?${queryString}` : ""}`);
+    return this.request(
+      `/api/v1/search/subscriptions${queryString ? `?${queryString}` : ""}`
+    );
   }
 
   async getSearchSuggestions(query) {
@@ -164,12 +171,16 @@ export class ApiClient {
       return { data: [] };
     }
     const params = new URLSearchParams({ q: query });
-    return this.request(`/api/v1/search/subscriptions/suggestions?${params.toString()}`);
+    return this.request(
+      `/api/v1/search/subscriptions/suggestions?${params.toString()}`
+    );
   }
 
   async getPopularSearches(limit = 5) {
     const params = new URLSearchParams({ limit: String(limit) });
-    return this.request(`/api/v1/search/subscriptions/popular?${params.toString()}`);
+    return this.request(
+      `/api/v1/search/subscriptions/popular?${params.toString()}`
+    );
   }
 
   // Workflow methods

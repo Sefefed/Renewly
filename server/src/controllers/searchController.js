@@ -7,7 +7,10 @@ import {
 
 const parseArrayQuery = (value) => {
   if (!value) return undefined;
-  return value.split(",").map((item) => item.trim()).filter(Boolean);
+  return value
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
 };
 
 export const searchSubscriptions = async (req, res, next) => {

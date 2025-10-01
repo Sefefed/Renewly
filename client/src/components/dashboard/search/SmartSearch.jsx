@@ -2,7 +2,13 @@ import { useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 import PopularSearches from "./PopularSearches";
 
-const SmartSearch = ({ api, onSearch, isLoading, onReset, popularSearches }) => {
+const SmartSearch = ({
+  api,
+  onSearch,
+  isLoading,
+  onReset,
+  popularSearches,
+}) => {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [isFetchingSuggestions, setIsFetchingSuggestions] = useState(false);
@@ -147,7 +153,9 @@ const SmartSearch = ({ api, onSearch, isLoading, onReset, popularSearches }) => 
             </button>
           ))}
           {isFetchingSuggestions && (
-            <div className="px-4 py-3 text-sm text-gray-400">Fetching suggestions…</div>
+            <div className="px-4 py-3 text-sm text-gray-400">
+              Fetching suggestions…
+            </div>
           )}
         </div>
       )}

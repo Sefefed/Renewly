@@ -19,8 +19,10 @@ import {
   BudgetStatusCard,
   RecommendationsCard,
   QuickActionsCard,
+  AnalyticsDashboard,
 } from "../../components/dashboard";
 import DashboardSkeleton from "../../components/dashboard/DashboardSkeleton";
+import useSmartInsights from "../../hooks/useSmartInsights";
 
 const TIME_RANGE_FILTERS = [
   { label: "Last 6 months", value: "monthly", icon: "📅" },
@@ -42,6 +44,16 @@ export default function Dashboard() {
   const [showNotificationCenter, setShowNotificationCenter] = useState(false);
   const [toasts, setToasts] = useState([]);
   const displayedToastIdsRef = useRef(new Set());
+
+  const {
+    insights: smartInsights,
+    loading: smartInsightsLoading,
+    error: smartInsightsError,
+    period: smartPeriod,
+    setPeriod: setSmartPeriod,
+    refetch: refetchSmartInsights,
+    isRefreshing: smartInsightsRefreshing,
+  } = useSmartInsights(api);
 
   const addToast = useCallback((notification) => {
     if (!notification || !notification._id) return;
@@ -211,7 +223,9 @@ export default function Dashboard() {
             Oops! Something went wrong
           </h2>
           <p className="mb-10 text-sm leading-relaxed text-gray-300">
-            We couldn&apos;t load your dashboard data. This is usually temporary. Try refreshing the data or revisit your subscriptions to make sure everything looks good.
+            We couldn&apos;t load your dashboard data. This is usually
+            temporary. Try refreshing the data or revisit your subscriptions to
+            make sure everything looks good.
           </p>
           <div className="space-y-4">
             <button
@@ -269,9 +283,21 @@ export default function Dashboard() {
           />
         </FadeIn>
 
+        <FadeIn delay={0.16} className="block">
+          <AnalyticsDashboard
+            insights={smartInsights}
+            isLoading={smartInsightsLoading}
+            error={smartInsightsError}
+            timeframe={smartPeriod}
+            onTimeframeChange={setSmartPeriod}
+            onRefresh={refetchSmartInsights}
+            isRefreshing={smartInsightsRefreshing}
+          />
+        </FadeIn>
+
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <div className="space-y-8 lg:col-span-2">
-            <FadeIn delay={0.18} className="w-full">
+            <FadeIn delay={0.22} className="w-full">
               <SpendingTrendCard
                 filters={TIME_RANGE_FILTERS}
                 activeFilter={timeRange}
@@ -283,11 +309,14 @@ export default function Dashboard() {
               />
             </FadeIn>
 
-            <FadeIn delay={0.24} className="w-full">
-              <UpcomingRenewalsCard renewals={insights.upcomingRenewals} api={api} />
+            <FadeIn delay={0.28} className="w-full">
+              <UpcomingRenewalsCard
+                renewals={insights.upcomingRenewals}
+                api={api}
+              />
             </FadeIn>
 
-            <FadeIn delay={0.3} className="w-full">
+            <FadeIn delay={0.34} className="w-full">
               <CategoryBreakdownCard
                 breakdown={categoryBreakdown}
                 isLoading={enhancedLoading}
@@ -296,22 +325,22 @@ export default function Dashboard() {
           </div>
 
           <div className="space-y-8">
-            <FadeIn delay={0.2} className="w-full">
+            <FadeIn delay={0.24} className="w-full">
               <MonthlyComparisonCard
                 comparison={monthlyComparison}
                 showInitialLoader={showComparisonLoader}
               />
             </FadeIn>
 
-            <FadeIn delay={0.26} className="w-full">
+            <FadeIn delay={0.3} className="w-full">
               <BudgetStatusCard analysis={insights.budgetAnalysis} />
             </FadeIn>
 
-            <FadeIn delay={0.32} className="w-full">
+            <FadeIn delay={0.36} className="w-full">
               <RecommendationsCard recommendations={insights.recommendations} />
             </FadeIn>
 
-            <FadeIn delay={0.38} className="w-full">
+            <FadeIn delay={0.42} className="w-full">
               <QuickActionsCard actions={quickActions} />
             </FadeIn>
           </div>

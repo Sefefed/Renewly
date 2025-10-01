@@ -13,9 +13,11 @@ const SearchResultsList = ({ results }) => {
         <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl bg-gray-700/40">
           <span className="text-3xl">🔍</span>
         </div>
-        <h3 className="text-xl font-semibold text-gray-200">No results found</h3>
+        <h3 className="text-xl font-semibold text-gray-200">
+          No results found
+        </h3>
         <p className="mt-2 text-sm text-gray-400">
-          Try adjusting your search terms or filters.
+          Try refining your search terms or trying different keywords.
         </p>
       </div>
     );
@@ -25,7 +27,8 @@ const SearchResultsList = ({ results }) => {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 rounded-2xl border border-gray-700/50 bg-gray-800/60 p-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="text-sm text-gray-300">
-          Showing <span className="text-white font-semibold">{items.length}</span> of {" "}
+          Showing{" "}
+          <span className="text-white font-semibold">{items.length}</span> of{" "}
           <span className="text-white font-semibold">{totalCount}</span> results
         </div>
         <div className="flex flex-wrap gap-3 text-xs text-gray-400">
@@ -57,7 +60,9 @@ const SearchResultsList = ({ results }) => {
               </div>
               <div>
                 <div className="flex items-center gap-3">
-                  <p className="text-lg font-semibold text-white">{item.name}</p>
+                  <p className="text-lg font-semibold text-white">
+                    {item.name}
+                  </p>
                   {item.category && (
                     <span className="rounded-full bg-blue-500/15 px-3 py-1 text-xs uppercase tracking-wide text-blue-200">
                       {item.category}
@@ -70,7 +75,8 @@ const SearchResultsList = ({ results }) => {
                   )}
                 </div>
                 <p className="mt-1 text-sm text-gray-400">
-                  Next renewal · {item.renewalDate ? formatDate(item.renewalDate) : "Not set"}
+                  Next renewal ·{" "}
+                  {item.renewalDate ? formatDate(item.renewalDate) : "Not set"}
                 </p>
                 {item.description && (
                   <p className="mt-2 text-sm text-gray-300 line-clamp-2">

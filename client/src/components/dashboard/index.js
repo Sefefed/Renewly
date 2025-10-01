@@ -7,3 +7,4 @@ export { default as MonthlyComparisonCard } from "./MonthlyComparisonCard";
 export { default as BudgetStatusCard } from "./BudgetStatusCard";
 export { default as RecommendationsCard } from "./RecommendationsCard";
 export { default as QuickActionsCard } from "./QuickActionsCard";
+export { default as AnalyticsDashboard } from "./analytics/AnalyticsDashboard";

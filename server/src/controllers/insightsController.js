@@ -4,6 +4,7 @@ import {
   fetchActiveInsightsData,
   fetchFullFinancialData,
 } from "../services/insights/index.js";
+import { generateSmartInsights } from "../services/insights/smartInsightsService.js";
 
 export const getInsights = async (req, res, next) => {
   try {
@@ -28,6 +29,16 @@ export const getEnhancedInsights = async (req, res, next) => {
       success: true,
       data,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getSmartInsights = async (req, res, next) => {
+  try {
+    const { period = "30d" } = req.query;
+    const data = await generateSmartInsights(req.user._id, period);
+    res.status(200).json({ success: true, data });
   } catch (error) {
     next(error);
   }

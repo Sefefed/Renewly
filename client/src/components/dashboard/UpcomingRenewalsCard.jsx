@@ -111,14 +111,18 @@ export default function UpcomingRenewalsCard({ renewals, api }) {
                   <p className="text-lg font-semibold text-white transition-colors group-hover:text-blue-300">
                     {renewal.name}
                   </p>
-                  <p className="text-sm text-gray-400">{formatDate(renewal.renewalDate)}</p>
+                  <p className="text-sm text-gray-400">
+                    {formatDate(renewal.renewalDate)}
+                  </p>
                 </div>
               </div>
               <div className="text-right">
                 <p className="text-xl font-bold text-blue-400">
                   {formatCurrency(renewal.price)}
                 </p>
-                <p className="text-sm font-medium text-gray-400">{renewal.frequency}</p>
+                <p className="text-sm font-medium text-gray-400">
+                  {renewal.frequency}
+                </p>
               </div>
             </div>
           ))}

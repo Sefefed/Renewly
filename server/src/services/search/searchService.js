@@ -2,7 +2,13 @@ import mongoose from "mongoose";
 import Subscription from "../../models/subscriptionModel.js";
 import SearchHistory from "../../models/searchHistoryModel.js";
 
-const ALLOWED_SORT_FIELDS = new Set(["name", "price", "renewalDate", "createdAt", "status"]);
+const ALLOWED_SORT_FIELDS = new Set([
+  "name",
+  "price",
+  "renewalDate",
+  "createdAt",
+  "status",
+]);
 
 const parsePositiveNumber = (value, fallback) => {
   const parsed = Number(value);
@@ -20,7 +26,11 @@ const sanitizeSort = (sortBy, sortOrder, queryProvided) => {
   return { field, direction };
 };
 
-export const advancedSubscriptionSearch = async (userId, query, filters = {}) => {
+export const advancedSubscriptionSearch = async (
+  userId,
+  query,
+  filters = {}
+) => {
   const {
     category,
     priceRange,
@@ -198,7 +208,12 @@ export const getSubscriptionSuggestions = async (userId, query) => {
   ]);
 };
 
-export const recordSearchHistory = async (userId, query, filters, resultsCount) => {
+export const recordSearchHistory = async (
+  userId,
+  query,
+  filters,
+  resultsCount
+) => {
   try {
     await SearchHistory.create({
       user: userId,
