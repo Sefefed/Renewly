@@ -14,6 +14,7 @@ import notificationRouter from "./routes/notificationRoutes.js";
 import backgroundNotificationService from "./services/notifications/backgroundNotificationService.js";
 //import arcjetMiddleware from './middleware/ArcjetMiddleware.js';
 import workflowRouter from "./routes/workflowRoutes.js";
+import searchRouter from "./routes/searchRoutes.js";
 const app = express();
 
 app.use(express.json());
@@ -31,6 +32,7 @@ app.use("/api/v1/insights", insightsRouter);
 app.use("/api/v1", calendarRouter);
 app.use("/api/v1/workflows", workflowRouter);
 app.use("/api/v1/notifications", notificationRouter);
+app.use("/api/v1/search", searchRouter);
 
 app.use(errorMiddleware);
 

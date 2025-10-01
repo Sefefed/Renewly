@@ -109,6 +109,69 @@ export class ApiClient {
     return this.request(`/api/v1/insights/enhanced?${params.toString()}`);
   }
 
+  async searchSubscriptions(query = "", filters = {}) {
+    const params = new URLSearchParams();
+
+    if (query) {
+      params.append("q", query);
+    }
+
+    if (filters.category?.length) {
+      params.append("category", filters.category.join(","));
+    }
+
+    if (filters.priceRange) {
+      const { min, max } = filters.priceRange;
+      if (min !== undefined && min !== "") {
+        params.append("minPrice", min);
+      }
+      if (max !== undefined && max !== "") {
+        params.append("maxPrice", max);
+      }
+    }
+
+    if (filters.status?.length) {
+      params.append("status", filters.status.join(","));
+    }
+
+    if (filters.renewalDate) {
+      const { start, end } = filters.renewalDate;
+      if (start) {
+        params.append("startDate", start);
+      }
+      if (end) {
+        params.append("endDate", end);
+      }
+    }
+
+    if (filters.sortBy) {
+      params.append("sortBy", filters.sortBy);
+    }
+
+    if (filters.sortOrder) {
+      params.append("sortOrder", filters.sortOrder);
+    }
+
+    params.append("page", filters.page ?? 1);
+    params.append("limit", filters.limit ?? 20);
+
+    const queryString = params.toString();
+    return this.request(`/api/v1/search/subscriptions${queryString ? `?${queryString}` : ""}`);
+  }
+
+  async getSearchSuggestions(query) {
+    if (!query) {
+      return { data: [] };
+    }
+    const params = new URLSearchParams({ q: query });
+    return this.request(`/api/v1/search/subscriptions/suggestions?${params.toString()}`);
+  }
+
+  async getPopularSearches(limit = 5) {
+    const params = new URLSearchParams({ limit: String(limit) });
+    return this.request(`/api/v1/search/subscriptions/popular?${params.toString()}`);
+  }
+
   // Workflow methods
   async sendReminder(subscriptionId, immediate = false) {
     return this.request("/api/v1/workflows/subscription/reminder", {

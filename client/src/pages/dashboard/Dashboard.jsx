@@ -284,7 +284,7 @@ export default function Dashboard() {
             </FadeIn>
 
             <FadeIn delay={0.24} className="w-full">
-              <UpcomingRenewalsCard renewals={insights.upcomingRenewals} />
+              <UpcomingRenewalsCard renewals={insights.upcomingRenewals} api={api} />
             </FadeIn>
 
             <FadeIn delay={0.3} className="w-full">

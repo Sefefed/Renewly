@@ -72,6 +72,12 @@ const subscriptionSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
+    description: {
+      type: String,
+      trim: true,
+      default: "",
+      maxLength: 500,
+    },
   },
   { timestamps: true }
 );
@@ -101,6 +107,21 @@ subscriptionSchema.pre("save", function (next) {
 
 subscriptionSchema.index({ user: 1, renewalDate: 1 });
 subscriptionSchema.index({ user: 1, category: 1 });
+subscriptionSchema.index(
+  {
+    name: "text",
+    category: "text",
+    description: "text",
+  },
+  {
+    weights: {
+      name: 10,
+      category: 5,
+      description: 1,
+    },
+    name: "subscription_text_search",
+  }
+);
 
 const Subscription = mongoose.model("Subscription", subscriptionSchema);
 
