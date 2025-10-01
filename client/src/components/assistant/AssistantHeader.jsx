@@ -1,4 +1,5 @@
 import VoiceAssistant from "./VoiceAssistant";
+import SpeechToggle from "./SpeechToggle";
 
 const STATUS_CONFIG = {
   thinking: {
@@ -23,6 +24,7 @@ const AssistantHeader = ({
   assistantState,
   theme,
   toggleTheme,
+  speechControls,
   onTranscript,
   onClose,
 }) => {
@@ -61,6 +63,13 @@ const AssistantHeader = ({
       </div>
 
       <div className="flex items-center gap-2">
+        <SpeechToggle
+          theme={theme}
+          isSupported={speechControls?.isSupported}
+          isEnabled={speechControls?.isEnabled}
+          isSpeaking={speechControls?.isSpeaking}
+          onToggle={speechControls?.onToggle}
+        />
         <button
           onClick={toggleTheme}
           className={`rounded-xl p-3 text-lg transition-all duration-300 ${

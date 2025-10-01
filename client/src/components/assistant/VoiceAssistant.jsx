@@ -1,7 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 const getSpeechRecognition = () => {
-  if (typeof window === "undefined") return null;
+  if (typeof window === "undefined") {
+    return null;
+  }
+
   return (
     window.SpeechRecognition ||
     window.webkitSpeechRecognition ||
@@ -13,35 +16,58 @@ const getSpeechRecognition = () => {
 
 const VoiceAssistant = ({ onTranscript, theme = "dark" }) => {
   const [isListening, setIsListening] = useState(false);
-  const [transcript, setTranscript] = useState("");
+  const [interimText, setInterimText] = useState("");
   const recognitionRef = useRef(null);
+  const capturedTranscriptRef = useRef("");
   const isDark = theme === "dark";
 
+  const Recognition = useMemo(() => getSpeechRecognition(), []);
+
   useEffect(() => {
-    const Recognition = getSpeechRecognition();
-    if (!Recognition) return;
+    if (!Recognition) {
+      return undefined;
+    }
 
     const recognition = new Recognition();
+    recognition.continuous = false;
     recognition.interimResults = true;
     recognition.lang = "en-US";
 
     recognition.onresult = (event) => {
-      const currentTranscript = Array.from(event.results)
-        .map((result) => result[0].transcript)
+      const results = Array.from(event.results ?? []);
+      const interimTranscript = results
+        .map((result) => result[0]?.transcript ?? "")
         .join("");
-      setTranscript(currentTranscript);
+
+      const finalSegments = results
+        .filter((result) => result.isFinal)
+        .map((result) => result[0]?.transcript ?? "");
+
+      if (interimTranscript) {
+        setInterimText(interimTranscript);
+      }
+
+      if (finalSegments.length) {
+        capturedTranscriptRef.current = finalSegments.join(" ");
+      }
     };
 
     recognition.onend = () => {
       setIsListening(false);
-      if (transcript.trim()) {
-        onTranscript?.(transcript.trim());
-        setTranscript("");
+      const transcript = capturedTranscriptRef.current.trim();
+
+      if (transcript) {
+        onTranscript?.(transcript);
       }
+
+      capturedTranscriptRef.current = "";
+      setInterimText("");
     };
 
     recognition.onerror = () => {
       setIsListening(false);
+      capturedTranscriptRef.current = "";
+      setInterimText("");
     };
 
     recognitionRef.current = recognition;
@@ -50,39 +76,83 @@ const VoiceAssistant = ({ onTranscript, theme = "dark" }) => {
       recognition.stop();
       recognitionRef.current = null;
     };
-  }, [onTranscript, transcript]);
+  }, [Recognition, onTranscript]);
+
+  const stopListening = useCallback(() => {
+    const recognition = recognitionRef.current;
+    if (!recognition) {
+      return;
+    }
+
+    try {
+      recognition.stop();
+    } catch (error) {
+      console.warn("Voice recognition stop failed", error);
+    }
+  }, []);
 
   const startListening = useCallback(() => {
     const recognition = recognitionRef.current;
-    if (!recognition || isListening) return;
+    if (!recognition || isListening) {
+      return;
+    }
+
     try {
+      capturedTranscriptRef.current = "";
+      setInterimText("");
       recognition.start();
       setIsListening(true);
-    } catch {
+    } catch (error) {
+      console.warn("Voice recognition start failed", error);
       setIsListening(false);
     }
   }, [isListening]);
 
-  const Recognition = getSpeechRecognition();
+  const handleClick = useCallback(() => {
+    if (!Recognition) {
+      return;
+    }
+
+    if (isListening) {
+      stopListening();
+    } else {
+      startListening();
+    }
+  }, [Recognition, isListening, startListening, stopListening]);
+
   if (!Recognition) {
     return null;
   }
 
+  const baseClasses = isDark
+    ? "bg-gray-700 text-gray-400 hover:bg-gray-600 hover:text-white"
+    : "bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-700";
+
+  const activeClasses = isDark
+    ? "bg-red-500/20 text-red-400"
+    : "bg-red-100 text-red-600";
+
   return (
     <button
-      onClick={startListening}
-      disabled={isListening}
+      type="button"
+      onClick={handleClick}
       className={`rounded-xl p-3 transition-all duration-300 ${
-        isListening
-          ? isDark
-            ? "animate-pulse bg-red-500/20 text-red-400"
-            : "animate-pulse bg-red-100 text-red-600"
-          : isDark
-          ? "bg-gray-700 text-gray-400 hover:bg-gray-600 hover:text-white"
-          : "bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-700"
+        isListening ? `${activeClasses} animate-pulse` : baseClasses
       }`}
+      aria-pressed={isListening}
+      aria-label={isListening ? "Stop voice capture" : "Start voice capture"}
+      title={
+        isListening
+          ? "Listening... click to stop"
+          : "Click to speak to the assistant"
+      }
     >
       <span className="text-xl">{isListening ? "🎤" : "🎙️"}</span>
+      {interimText ? (
+        <span className="ml-2 max-w-[9rem] truncate text-xs opacity-70">
+          {interimText}
+        </span>
+      ) : null}
     </button>
   );
 };

@@ -1,3 +1,4 @@
+import { useCallback, useEffect, useRef } from "react";
 import AssistantComposer from "./AssistantComposer";
 import AssistantHeader from "./AssistantHeader";
 import AssistantMessages from "./AssistantMessages";
@@ -5,6 +6,7 @@ import AssistantSuggestions from "./AssistantSuggestions";
 import useAssistantConversation from "./hooks/useAssistantConversation";
 import useAssistantLayout from "./hooks/useAssistantLayout";
 import useAssistantTheme from "./hooks/useAssistantTheme";
+import useAssistantSpeech from "./hooks/useAssistantSpeech";
 
 const FinancialAssistant = ({
   api,
@@ -27,10 +29,86 @@ const FinancialAssistant = ({
     handleInputKeyDown,
   } = useAssistantConversation({ api, isOpen, onUnreadChange });
 
+  const {
+    isSupported: isSpeechSupported,
+    isEnabled: isSpeechEnabled,
+    isSpeaking,
+    speak,
+    stop,
+    toggleSpeech,
+  } = useAssistantSpeech();
+
+  const lastSpokenRef = useRef(null);
+
   const { containerRef, containerLayoutClasses } = useAssistantLayout({
     isOpen,
     onLayoutChange,
   });
+
+  useEffect(() => {
+    if (!isOpen) {
+      stop();
+      lastSpokenRef.current = null;
+    }
+  }, [isOpen, stop]);
+
+  useEffect(() => {
+    if (!isSpeechEnabled) {
+      stop();
+      lastSpokenRef.current = null;
+    }
+  }, [isSpeechEnabled, stop]);
+
+  useEffect(() => {
+    if (!isOpen || !isSpeechSupported || !isSpeechEnabled) {
+      return;
+    }
+
+    const latestAssistantMessage = [...conversation]
+      .reverse()
+      .find((message) => message.type === "assistant");
+
+    if (!latestAssistantMessage) {
+      return;
+    }
+
+    const timestamp = latestAssistantMessage.timestamp;
+    const messageId = (() => {
+      if (timestamp instanceof Date) {
+        return timestamp.getTime();
+      }
+      if (typeof timestamp === "number") {
+        return timestamp;
+      }
+      if (typeof timestamp === "string") {
+        const parsed = Date.parse(timestamp);
+        return Number.isNaN(parsed) ? conversation.length : parsed;
+      }
+      return conversation.length;
+    })();
+
+    if (lastSpokenRef.current === messageId) {
+      return;
+    }
+
+    const textContent =
+      typeof latestAssistantMessage.content === "string"
+        ? latestAssistantMessage.content
+        : latestAssistantMessage.content?.text;
+
+    if (!textContent) {
+      return;
+    }
+
+    lastSpokenRef.current = messageId;
+    speak(textContent);
+  }, [conversation, isOpen, isSpeechEnabled, isSpeechSupported, speak]);
+
+  const handleClose = useCallback(() => {
+    stop();
+    lastSpokenRef.current = null;
+    onClose?.();
+  }, [onClose, stop]);
 
   if (!isOpen) {
     return null;
@@ -50,8 +128,14 @@ const FinancialAssistant = ({
         assistantState={assistantState}
         theme={theme}
         toggleTheme={toggleTheme}
+        speechControls={{
+          isSupported: isSpeechSupported,
+          isEnabled: isSpeechEnabled,
+          isSpeaking,
+          onToggle: toggleSpeech,
+        }}
         onTranscript={handleTranscript}
-        onClose={onClose}
+        onClose={handleClose}
       />
 
       <AssistantMessages
