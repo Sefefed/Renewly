@@ -183,6 +183,25 @@ export class ApiClient {
     );
   }
 
+  // Assistant methods
+  async assistantQuery(query, context = {}) {
+    return this.request("/api/v1/assistant/query", {
+      method: "POST",
+      body: JSON.stringify({ query, context }),
+    });
+  }
+
+  async getAssistantInsights() {
+    return this.request("/api/v1/assistant/insights");
+  }
+
+  async sendAssistantFeedback(payload) {
+    return this.request("/api/v1/assistant/feedback", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  }
+
   // Workflow methods
   async sendReminder(subscriptionId, immediate = false) {
     return this.request("/api/v1/workflows/subscription/reminder", {
