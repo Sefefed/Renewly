@@ -186,3 +186,36 @@ button:focus-visible {
     transform: translateY(-4px);
   }
 }
+
+.bg-size-200 {
+  background-size: 200% 100%;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: 200px 0;
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite linear;
+  background-image: linear-gradient(90deg, #374151 0%, #4b5563 50%, #374151 100%);
+  background-size: 200px 100%;
+}
+
+@keyframes gentleBounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.animate-gentle-bounce {
+  animation: gentleBounce 1.8s ease-in-out infinite;
+}

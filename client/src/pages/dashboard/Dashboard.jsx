@@ -3,6 +3,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import Navigation from "../../components/Navigation";
 import { useApi } from "../../utils/api";
+import FadeIn from "../../components/ui/FadeIn";
 import {
   NotificationBell,
   ToastNotification,
@@ -19,11 +20,12 @@ import {
   RecommendationsCard,
   QuickActionsCard,
 } from "../../components/dashboard";
+import DashboardSkeleton from "../../components/dashboard/DashboardSkeleton";
 
 const TIME_RANGE_FILTERS = [
-  { label: "Last 6 months", value: "monthly" },
-  { label: "Last 6 quarters", value: "quarterly" },
-  { label: "Last 6 years", value: "yearly" },
+  { label: "Last 6 months", value: "monthly", icon: "📅" },
+  { label: "Last 6 quarters", value: "quarterly", icon: "📈" },
+  { label: "Last 6 years", value: "yearly", icon: "🗓️" },
 ];
 
 export default function Dashboard() {
@@ -195,34 +197,36 @@ export default function Dashboard() {
   }, [token]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-950 text-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-20 w-20 border-4 border-blue-500 border-t-transparent mx-auto mb-6"></div>
-          <p className="text-xl font-medium bg-gradient-to-r from-gray-300 to-gray-400 bg-clip-text text-transparent">
-            Loading your dashboard...
-          </p>
-        </div>
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-950 text-white flex items-center justify-center">
-        <div className="text-center bg-gradient-to-br from-gray-800 to-gray-900 p-10 rounded-2xl shadow-2xl border border-red-500/20 backdrop-blur-sm">
-          <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-2xl">⚠️</span>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-950 to-gray-900 flex items-center justify-center px-4 text-white">
+        <div className="max-w-md w-full rounded-3xl border border-red-500/20 bg-gradient-to-br from-gray-800/90 to-gray-900/90 p-12 text-center shadow-2xl backdrop-blur-xl">
+          <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-2xl bg-red-500/20 animate-gentle-bounce">
+            <span className="text-3xl">⚠️</span>
           </div>
-          <p className="text-xl font-semibold mb-4 bg-gradient-to-r from-red-400 to-red-300 bg-clip-text text-transparent">
-            {error}
+          <h2 className="mb-4 text-2xl font-bold bg-gradient-to-r from-red-400 via-orange-400 to-amber-300 bg-clip-text text-transparent">
+            Oops! Something went wrong
+          </h2>
+          <p className="mb-10 text-sm leading-relaxed text-gray-300">
+            We couldn&apos;t load your dashboard data. This is usually temporary. Try refreshing the data or revisit your subscriptions to make sure everything looks good.
           </p>
-          <button
-            onClick={fetchInsights}
-            className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 px-8 py-3 rounded-xl text-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
-          >
-            Try Again
-          </button>
+          <div className="space-y-4">
+            <button
+              onClick={fetchInsights}
+              className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 py-4 text-base font-semibold shadow-lg transition-all duration-300 hover:from-blue-700 hover:to-blue-800 hover:shadow-xl hover:scale-[1.02]"
+            >
+              Try Again
+            </button>
+            <button
+              onClick={() => navigate("/subscriptions")}
+              className="w-full rounded-xl border border-gray-700 bg-gradient-to-r from-gray-800 to-gray-900 py-4 text-base font-semibold text-gray-200 transition-all duration-300 hover:border-gray-500 hover:text-white"
+            >
+              Go to Subscriptions
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -242,56 +246,74 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-950 text-white">
       <Navigation />
 
-      <DashboardHeader
-        userName={user?.name || "User"}
-        onExportCalendar={handleExportCalendar}
-        onOpenSettings={() => navigate("/settings")}
-        onOpenNotificationCenter={() => setShowNotificationCenter(true)}
-        notificationSlot={
-          <NotificationBell
-            token={token}
-            onOpenCenter={() => setShowNotificationCenter(true)}
-          />
-        }
-      />
+      <FadeIn delay={0.05}>
+        <DashboardHeader
+          userName={user?.name || "User"}
+          onExportCalendar={handleExportCalendar}
+          onOpenSettings={() => navigate("/settings")}
+          onOpenNotificationCenter={() => setShowNotificationCenter(true)}
+          notificationSlot={
+            <NotificationBell
+              token={token}
+              onOpenCenter={() => setShowNotificationCenter(true)}
+            />
+          }
+        />
+      </FadeIn>
 
       <main className="mx-auto w-full max-w-7xl px-8 py-8 pt-24">
-        <KpiGrid
-          summary={insights.summary}
-          savingsPotential={insights.savingsPotential}
-        />
+        <FadeIn delay={0.12} className="block">
+          <KpiGrid
+            summary={insights.summary}
+            savingsPotential={insights.savingsPotential}
+          />
+        </FadeIn>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-8">
-            <SpendingTrendCard
-              filters={TIME_RANGE_FILTERS}
-              activeFilter={timeRange}
-              onFilterChange={setTimeRange}
-              isLoading={enhancedLoading}
-              error={enhancedError}
-              data={enhancedInsights?.spendingTrend}
-              onRetry={() => fetchEnhancedInsights(timeRange)}
-            />
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+          <div className="space-y-8 lg:col-span-2">
+            <FadeIn delay={0.18} className="w-full">
+              <SpendingTrendCard
+                filters={TIME_RANGE_FILTERS}
+                activeFilter={timeRange}
+                onFilterChange={setTimeRange}
+                isLoading={enhancedLoading}
+                error={enhancedError}
+                data={enhancedInsights?.spendingTrend}
+                onRetry={() => fetchEnhancedInsights(timeRange)}
+              />
+            </FadeIn>
 
-            <UpcomingRenewalsCard renewals={insights.upcomingRenewals} />
+            <FadeIn delay={0.24} className="w-full">
+              <UpcomingRenewalsCard renewals={insights.upcomingRenewals} />
+            </FadeIn>
 
-            <CategoryBreakdownCard
-              breakdown={categoryBreakdown}
-              isLoading={enhancedLoading}
-            />
+            <FadeIn delay={0.3} className="w-full">
+              <CategoryBreakdownCard
+                breakdown={categoryBreakdown}
+                isLoading={enhancedLoading}
+              />
+            </FadeIn>
           </div>
 
           <div className="space-y-8">
-            <MonthlyComparisonCard
-              comparison={monthlyComparison}
-              showInitialLoader={showComparisonLoader}
-            />
+            <FadeIn delay={0.2} className="w-full">
+              <MonthlyComparisonCard
+                comparison={monthlyComparison}
+                showInitialLoader={showComparisonLoader}
+              />
+            </FadeIn>
 
-            <BudgetStatusCard analysis={insights.budgetAnalysis} />
+            <FadeIn delay={0.26} className="w-full">
+              <BudgetStatusCard analysis={insights.budgetAnalysis} />
+            </FadeIn>
 
-            <RecommendationsCard recommendations={insights.recommendations} />
+            <FadeIn delay={0.32} className="w-full">
+              <RecommendationsCard recommendations={insights.recommendations} />
+            </FadeIn>
 
-            <QuickActionsCard actions={quickActions} />
+            <FadeIn delay={0.38} className="w-full">
+              <QuickActionsCard actions={quickActions} />
+            </FadeIn>
           </div>
         </div>
       </main>

@@ -28,6 +28,7 @@ export default function SpendingTrendCard({
           filters={filters}
           activeFilter={activeFilter}
           onFilterChange={onFilterChange}
+          isLoading={isLoading}
         />
       </div>
 
