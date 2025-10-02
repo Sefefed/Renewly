@@ -11,7 +11,9 @@ Renewly is a full‑stack web platform that helps teams keep recurring software 
 - Context-driven auth state (React context + localStorage sync)
 - Modular dashboard with reusable cards (KPIs, comparisons, recommendations, quick actions)
 - Interactive spending visualizations (line + doughnut charts) with time-range filters
+- Predictive alerts that can be handed off directly to the AI assistant for deeper guidance
 - Enhanced insights API aggregating subscriptions, bills, and budgets
+- Refreshed notification center with light styling and contextual actions
 - Structured backend with JWT, MongoDB, and modular controllers
 - Ready-to-extend services/hooks for APIs, automation, and analytics
 
@@ -155,18 +157,44 @@ Available routes:
 
 ---
 
-## � Insights & Dashboard
+## 🧭 System Blueprint
+
+| Layer        | Highlights |
+| ------------ | ---------- |
+| **Client**   | React + Vite SPA with Tailwind design tokens, dark/light-aware components, and modular feature folders. Key bundles include `dashboard/` for analytics, `assistant/` for conversational UI, `Notifications/` for the command center, and shared utilities (`contexts`, `hooks`, `utils`). |
+| **Server**   | Express API in ESM mode with MongoDB/Mongoose, JWT auth, and service-driven controllers across auth, subscriptions, bills, budgets, insights, workflows, notifications, and assistant interactions. Configuration is centralized under `src/config/` with per-environment loaders. |
+| **Data Flow**| Insights endpoints aggregate subscription + billing data, hydrate chart-ready payloads, and feed the dashboard via `useSmartInsights`/`useDashboardInsights`. Assistant prompts are proxied through `/api/v1/assistant/query`, preserving conversation history for contextually relevant replies. |
+
+### Dashboard Experience
 
 - **Enhanced Insights API** — `GET /api/v1/insights/enhanced?timeRange=monthly|quarterly|yearly`
-  - Returns spending trend aggregates, category breakdown (with percentages), and month-over-month comparisons
-  - Backed by normalized subscription + bill data and indexed MongoDB queries
-- **Dashboard cards** wrap the insights into reusable React components (KPIs, charts, recommendations, quick actions)
-- **Interactive visualizations** use Chart.js via `react-chartjs-2`, with skeleton/loading states and retry affordances
-- **Time-range filters** let users flip between monthly, quarterly, and yearly views without reloading the page
+  - Provides spending trend aggregates, category breakdown (percentage + currency), month-over-month deltas, and anomaly clusters
+  - Backed by indexed Mongo queries with caching-friendly projections
+- **Modular cards** (KPIs, Smart Recommendations, Habits, Renewal Clusters, Quick Actions) surface insights in reusable layouts
+- **Analytics surface**
+  - Tabbed charts (spending, categories, forecast, anomalies, savings) with drilldown modals
+  - Timeframe controls with optimistic refresh and loading skeletons
+- **Predictive alerts**
+  - Each alert badge highlights priority (high/medium/low) with tone-matched color tokens
+  - “View details” now launches the AI assistant with a pre-filled prompt describing the alert, reducing investigation time
+- **Notification center**
+  - Light-themed sliding panel with bulk actions, pagination, and stateful loading indicators
+  - Designed for future deep links into subscriptions/budgets without altering the assistant focus
+
+### AI Assistant Handoff
+
+```
+PredictiveAlerts → AnalyticsDashboard → DashboardMainGrid → Dashboard → FinancialAssistant
+```
+
+- Alerts invoke `onViewDetails` → queue a prompt → open the assistant panel automatically
+- `FinancialAssistant` consumes queued prompts once, pushes them through `useAssistantConversation`, and renders the response with playback-ready speech
+- Speech module narrates the latest assistant reply unless muted, maintaining accessibility for hands-free review
+- Proactive insights widget (`ProactiveInsights`) also feeds alert counts into assistant unread badges to signal new guidance
 
 ---
 
-## �🔐 Authentication Flow
+## 🔐 Authentication Flow
 
 - **Sign Up** — `POST ${VITE_API_URL}/api/v1/auth/signup`
 - **Sign In** — `POST ${VITE_API_URL}/api/v1/auth/signin`
