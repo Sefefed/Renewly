@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import PropTypes from "prop-types";
+import { formatCurrency } from "../../../utils/formatters";
 import InteractiveLineChart from "./InteractiveLineChart";
 import InteractivePieChart from "./InteractivePieChart";
 import ForecastChart from "./ForecastChart";
@@ -164,6 +165,45 @@ const AnalyticsDashboard = ({
     [onAssistantPrompt]
   );
 
+  const handleRecommendationAssist = useCallback(
+    (opportunity) => {
+      if (!onAssistantPrompt) {
+        return;
+      }
+
+      if (!opportunity) {
+        onAssistantPrompt(
+          "I don't see any smart recommendations right now. Please review my subscription spending and suggest fresh ways to save money."
+        );
+        return;
+      }
+
+      const parts = [
+        opportunity.description ? `Context: ${opportunity.description}.` : null,
+        opportunity.type ? `Opportunity type: ${opportunity.type}.` : null,
+        Array.isArray(opportunity.subscriptionIds) &&
+        opportunity.subscriptionIds.length
+          ? `Related subscriptions: ${opportunity.subscriptionIds.join(", ")}.`
+          : null,
+        typeof opportunity.potentialSavings === "number"
+          ? `Estimated savings: ${formatCurrency(
+              opportunity.potentialSavings,
+              insights?.currency || "USD"
+            )}.`
+          : null,
+      ].filter(Boolean);
+
+      const prompt = `Help me evaluate the smart recommendation "${
+        opportunity.title || "Untitled"
+      }". ${parts.join(
+        " "
+      )} Provide the reasoning behind it and outline clear next steps I can take now.`;
+
+      onAssistantPrompt(prompt.trim());
+    },
+    [insights?.currency, onAssistantPrompt]
+  );
+
   if (isLoading) {
     return <AnalyticsLoadingState />;
   }
@@ -231,6 +271,7 @@ const AnalyticsDashboard = ({
             <SmartRecommendations
               opportunities={insights?.savingsOpportunities}
               currency={insights?.currency}
+              onAskAssistant={handleRecommendationAssist}
             />
           </div>
         </div>

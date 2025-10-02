@@ -159,11 +159,11 @@ Available routes:
 
 ## 🧭 System Blueprint
 
-| Layer        | Highlights |
-| ------------ | ---------- |
-| **Client**   | React + Vite SPA with Tailwind design tokens, dark/light-aware components, and modular feature folders. Key bundles include `dashboard/` for analytics, `assistant/` for conversational UI, `Notifications/` for the command center, and shared utilities (`contexts`, `hooks`, `utils`). |
-| **Server**   | Express API in ESM mode with MongoDB/Mongoose, JWT auth, and service-driven controllers across auth, subscriptions, bills, budgets, insights, workflows, notifications, and assistant interactions. Configuration is centralized under `src/config/` with per-environment loaders. |
-| **Data Flow**| Insights endpoints aggregate subscription + billing data, hydrate chart-ready payloads, and feed the dashboard via `useSmartInsights`/`useDashboardInsights`. Assistant prompts are proxied through `/api/v1/assistant/query`, preserving conversation history for contextually relevant replies. |
+| Layer         | Highlights                                                                                                                                                                                                                                                                                        |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Client**    | React + Vite SPA with Tailwind design tokens, dark/light-aware components, and modular feature folders. Key bundles include `dashboard/` for analytics, `assistant/` for conversational UI, `Notifications/` for the command center, and shared utilities (`contexts`, `hooks`, `utils`).         |
+| **Server**    | Express API in ESM mode with MongoDB/Mongoose, JWT auth, and service-driven controllers across auth, subscriptions, bills, budgets, insights, workflows, notifications, and assistant interactions. Configuration is centralized under `src/config/` with per-environment loaders.                |
+| **Data Flow** | Insights endpoints aggregate subscription + billing data, hydrate chart-ready payloads, and feed the dashboard via `useSmartInsights`/`useDashboardInsights`. Assistant prompts are proxied through `/api/v1/assistant/query`, preserving conversation history for contextually relevant replies. |
 
 ### Dashboard Experience
 

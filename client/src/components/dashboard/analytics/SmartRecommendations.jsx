@@ -1,18 +1,25 @@
 import PropTypes from "prop-types";
-import { formatCurrency } from "../../../utils/formatters";
+import SmartRecommendationCard from "./SmartRecommendationCard";
 
-const SmartRecommendations = ({ opportunities, currency }) => {
+const SmartRecommendations = ({ opportunities, currency, onAskAssistant }) => {
   if (!opportunities?.length) {
     return (
-      <div
-        className="dashboard-card dashboard-card--compact text-secondary"
-        style={{
-          fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif",
-          fontWeight: 600,
-          fontSize: "1rem",
-        }}
-      >
-        No savings opportunities detected yet.
+      <div className="rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 via-white to-violet-100/70 p-6 text-center shadow-sm">
+        <p className="text-sm font-medium text-violet-600">
+          No savings opportunities detected yet.
+        </p>
+        {onAskAssistant ? (
+          <button
+            type="button"
+            onClick={() => onAskAssistant(null)}
+            className="mt-4 inline-flex items-center justify-center gap-2 rounded-full bg-violet-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-violet-500/30 transition hover:bg-violet-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+          >
+            <span aria-hidden="true" role="img">
+              🤖
+            </span>
+            Ask AI for savings ideas
+          </button>
+        ) : null}
       </div>
     );
   }
@@ -20,32 +27,14 @@ const SmartRecommendations = ({ opportunities, currency }) => {
   return (
     <div className="space-y-4">
       {opportunities.map((opportunity) => (
-        <div
-          key={`${opportunity.type}-${opportunity.subscriptionIds?.join("-")}`}
-          className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 shadow-sm transition-transform duration-200 hover:-translate-y-1 hover:shadow-lg"
-          style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif" }}
-        >
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <p className="text-base font-semibold text-emerald-600">
-                {opportunity.title}
-              </p>
-              <p className="mt-2 text-base font-medium text-emerald-600/90">
-                {opportunity.description}
-              </p>
-            </div>
-            {typeof opportunity.potentialSavings === "number" && (
-              <div className="text-right">
-                <p className="text-sm font-semibold text-emerald-600">
-                  Potential savings
-                </p>
-                <p className="text-xl font-bold text-emerald-700">
-                  {formatCurrency(opportunity.potentialSavings, currency)}
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
+        <SmartRecommendationCard
+          key={`${opportunity.type ?? "generic"}-${
+            opportunity.subscriptionIds?.join("-") ?? opportunity.title
+          }`}
+          opportunity={opportunity}
+          currency={currency}
+          onAskAssistant={onAskAssistant}
+        />
       ))}
     </div>
   );
@@ -64,11 +53,13 @@ SmartRecommendations.propTypes = {
     })
   ),
   currency: PropTypes.string,
+  onAskAssistant: PropTypes.func,
 };
 
 SmartRecommendations.defaultProps = {
   opportunities: [],
   currency: "USD",
+  onAskAssistant: undefined,
 };
 
 export default SmartRecommendations;

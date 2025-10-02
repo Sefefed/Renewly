@@ -9,26 +9,22 @@ const AnalyticsHabitsSummary = ({ habits, currency }) => {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <div className="dashboard-card dashboard-card--compact">
-        <p className="text-xs uppercase tracking-[0.25em] text-tertiary">
-          Active habits
-        </p>
-        <p className="mt-3 text-2xl font-semibold text-primary">
+        <p className="analytics-summary__heading">Active habits</p>
+        <p className="analytics-summary__value mt-3">
           {habits.active}/{habits.total}
         </p>
-        <p className="mt-2 text-sm text-secondary">
+        <p className="analytics-summary__meta mt-2">
           Average price {formatCurrency(habits.averagePrice ?? 0, currency)}
         </p>
       </div>
       <div className="dashboard-card dashboard-card--compact">
-        <p className="text-xs uppercase tracking-[0.25em] text-tertiary">
-          Frequency mix
-        </p>
-        <div className="mt-3 flex flex-wrap gap-2 text-sm text-secondary">
+        <p className="analytics-summary__heading">Frequency mix</p>
+        <div className="mt-3 flex flex-wrap gap-2 text-secondary">
           {frequencyEntries.length ? (
             frequencyEntries.map(([frequency, count]) => (
               <span
                 key={frequency}
-                className="rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-blue-600"
+                className="analytics-summary__chip rounded-full px-3 py-1"
               >
                 {frequency}: {count}
               </span>
