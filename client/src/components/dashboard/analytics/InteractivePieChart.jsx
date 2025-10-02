@@ -44,7 +44,12 @@ const InteractivePieChart = ({ data, onSegmentClick }) => {
         legend: {
           position: "bottom",
           labels: {
-            color: "rgba(226, 232, 240, 0.8)",
+            color: "#1a1a1a",
+            font: {
+              family: "'Inter', 'Helvetica Neue', Arial, sans-serif",
+              size: 13,
+              weight: 600,
+            },
             usePointStyle: true,
             padding: 16,
           },

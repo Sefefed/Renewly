@@ -31,23 +31,22 @@ const InsightCard = ({
     numericValue !== null ? formatCurrency(numericValue, currency) : value;
 
   return (
-    <div className="dashboard-card dashboard-card--compact relative overflow-hidden">
+    <div
+      className="dashboard-card dashboard-card--compact relative overflow-hidden"
+      style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif" }}
+    >
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div
-            className={`flex h-12 w-12 items-center justify-center rounded-2xl border ${
-              COLOR_STYLES[color] ?? COLOR_STYLES.blue
-            }`}
-          >
-            <span className="text-2xl" aria-hidden="true">
-              {icon}
-            </span>
-          </div>
           <div>
-            <p className="text-xs uppercase tracking-wider text-tertiary">
+            <p className="text-xs uppercase tracking-wider text-tertiary font-semibold">
               {title}
             </p>
-            <p className="mt-1 text-sm text-secondary">{description}</p>
+            <p
+              className="mt-1 text-base text-secondary"
+              style={{ fontWeight: 600 }}
+            >
+              {description}
+            </p>
           </div>
         </div>
         <div
@@ -57,9 +56,7 @@ const InsightCard = ({
         </div>
       </div>
 
-      <div className="mt-6 text-3xl font-semibold text-primary">
-        {displayValue}
-      </div>
+      <div className="mt-6 text-4xl font-bold text-primary">{displayValue}</div>
     </div>
   );
 };

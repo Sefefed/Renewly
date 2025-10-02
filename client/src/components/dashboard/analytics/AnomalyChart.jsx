@@ -54,7 +54,12 @@ const AnomalyChart = ({ data, baseline, currency, onPointClick }) => {
       plugins: {
         legend: {
           labels: {
-            color: "rgba(226,232,240,0.8)",
+            color: "#1a1a1a",
+            font: {
+              family: "'Inter', 'Helvetica Neue', Arial, sans-serif",
+              size: 14,
+              weight: 600,
+            },
           },
         },
         tooltip: {
@@ -78,7 +83,12 @@ const AnomalyChart = ({ data, baseline, currency, onPointClick }) => {
         },
         y: {
           ticks: {
-            color: "rgba(148,163,184,0.85)",
+            color: "#1a1a1a",
+            font: {
+              family: "'Inter', 'Helvetica Neue', Arial, sans-serif",
+              size: 13,
+              weight: 600,
+            },
             callback: (value) => formatCurrency(value, currency),
           },
           grid: {

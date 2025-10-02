@@ -26,6 +26,10 @@ export const ensureChartRegistration = () => {
     ArcElement,
     BarElement
   );
+  ChartJS.defaults.font.family = "'Inter', 'Helvetica Neue', Arial, sans-serif";
+  ChartJS.defaults.font.size = 14;
+  ChartJS.defaults.font.weight = "600";
+  ChartJS.defaults.color = "#1a1a1a";
   registered = true;
 };
 
