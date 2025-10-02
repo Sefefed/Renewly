@@ -6,7 +6,7 @@ const PRIORITY_STYLES = {
   low: "border-blue-200 bg-blue-50",
 };
 
-const PredictiveAlerts = ({ alerts }) => {
+const PredictiveAlerts = ({ alerts, onViewDetails }) => {
   if (!alerts?.length) {
     return (
       <div className="dashboard-card dashboard-card--compact text-sm text-secondary">
@@ -36,6 +36,7 @@ const PredictiveAlerts = ({ alerts }) => {
           </div>
           <button
             type="button"
+            onClick={() => onViewDetails?.(alert)}
             className="text-sm font-semibold text-blue-600 transition-colors hover:text-blue-500"
           >
             View details
@@ -56,10 +57,12 @@ PredictiveAlerts.propTypes = {
       priority: PropTypes.oneOf(["high", "medium", "low"]),
     })
   ),
+  onViewDetails: PropTypes.func,
 };
 
 PredictiveAlerts.defaultProps = {
   alerts: [],
+  onViewDetails: undefined,
 };
 
 export default PredictiveAlerts;

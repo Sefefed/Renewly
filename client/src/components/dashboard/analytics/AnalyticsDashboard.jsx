@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import PropTypes from "prop-types";
 import InteractiveLineChart from "./InteractiveLineChart";
 import InteractivePieChart from "./InteractivePieChart";
@@ -24,6 +24,7 @@ const AnalyticsDashboard = ({
   onTimeframeChange,
   onRefresh,
   isRefreshing,
+  onAssistantPrompt,
 }) => {
   const [activeChart, setActiveChart] = useState(CHART_TABS[0].id);
   const [drilldownData, setDrilldownData] = useState(null);
@@ -139,6 +140,30 @@ const AnalyticsDashboard = ({
     }
   }, [activeChart, insights]);
 
+  const handleAlertDetails = useCallback(
+    (alert) => {
+      if (!alert) {
+        return;
+      }
+
+      const parts = [
+        alert.message ? `Details: ${alert.message}` : null,
+        alert.priority ? `Priority: ${alert.priority}` : null,
+        alert.type ? `Alert type: ${alert.type}` : null,
+        alert.subscriptionId
+          ? `Subscription reference: ${alert.subscriptionId}`
+          : null,
+      ].filter(Boolean);
+
+      const contextLine = parts.length ? `${parts.join(" | ")}.` : "";
+
+      const prompt = `I just received a predictive alert titled "${alert.title}". ${contextLine} Please explain why this alert matters and outline the recommended next steps.`;
+
+      onAssistantPrompt?.(prompt.trim());
+    },
+    [onAssistantPrompt]
+  );
+
   if (isLoading) {
     return <AnalyticsLoadingState />;
   }
@@ -189,7 +214,10 @@ const AnalyticsDashboard = ({
             Stay ahead of renewals and price changes.
           </p>
           <div className="mt-4">
-            <PredictiveAlerts alerts={insights?.predictiveAlerts} />
+            <PredictiveAlerts
+              alerts={insights?.predictiveAlerts}
+              onViewDetails={handleAlertDetails}
+            />
           </div>
         </div>
         <div className="dashboard-card">
@@ -290,6 +318,7 @@ AnalyticsDashboard.propTypes = {
   onTimeframeChange: PropTypes.func.isRequired,
   onRefresh: PropTypes.func.isRequired,
   isRefreshing: PropTypes.bool,
+  onAssistantPrompt: PropTypes.func,
 };
 
 AnalyticsDashboard.defaultProps = {
@@ -297,6 +326,7 @@ AnalyticsDashboard.defaultProps = {
   isLoading: false,
   error: null,
   isRefreshing: false,
+  onAssistantPrompt: undefined,
 };
 
 export default AnalyticsDashboard;

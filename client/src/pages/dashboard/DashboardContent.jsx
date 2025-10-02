@@ -29,6 +29,8 @@ const DashboardContent = ({
   toasts,
   removeToast,
   toastsStyle,
+  assistantPrompt,
+  onAssistantPromptConsumed,
   mainGridProps,
 }) => {
   const openNotifications = () => setShowNotificationCenter(true);
@@ -81,6 +83,8 @@ const DashboardContent = ({
         onClose={() => setIsAssistantOpen(false)}
         onUnreadChange={setAssistantUnread}
         onLayoutChange={handleAssistantLayoutChange}
+        queuedPrompt={assistantPrompt}
+        onPromptConsumed={onAssistantPromptConsumed}
       />
 
       <NotificationCenter

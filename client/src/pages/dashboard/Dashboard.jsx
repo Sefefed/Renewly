@@ -28,6 +28,7 @@ export default function Dashboard() {
     handleAssistantLayoutChange,
     toastsStyle,
   } = assistant;
+  const [assistantPrompt, setAssistantPrompt] = useState(null);
   const { toasts, removeToast } = useToastNotifications({ api, token });
   const {
     insights: smartInsights,
@@ -47,6 +48,18 @@ export default function Dashboard() {
       }
     },
     [isAssistantOpen, setAssistantUnread]
+  );
+
+  const handleAssistantPrompt = useCallback(
+    (message) => {
+      if (!message) {
+        return;
+      }
+
+      setAssistantPrompt({ id: Date.now(), text: message });
+      setIsAssistantOpen(true);
+    },
+    [setIsAssistantOpen]
   );
 
   if (insightsState.loading) {
@@ -75,6 +88,7 @@ export default function Dashboard() {
     setSmartPeriod,
     refetchSmartInsights,
     smartInsightsRefreshing,
+    onAssistantPrompt: handleAssistantPrompt,
     primaryColumnProps: {
       insights: insightsState.insights,
       api,
@@ -116,6 +130,8 @@ export default function Dashboard() {
       removeToast={removeToast}
       toastsStyle={toastsStyle}
       mainGridProps={mainGridProps}
+      assistantPrompt={assistantPrompt}
+      onAssistantPromptConsumed={() => setAssistantPrompt(null)}
     />
   );
 }

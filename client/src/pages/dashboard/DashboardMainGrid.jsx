@@ -15,6 +15,7 @@ const DashboardMainGrid = ({
   smartInsightsRefreshing,
   primaryColumnProps,
   secondaryColumnProps,
+  onAssistantPrompt,
 }) => (
   <main className="space-y-10">
     <FadeIn delay={0.12} className="block">
@@ -33,6 +34,7 @@ const DashboardMainGrid = ({
         onTimeframeChange={setSmartPeriod}
         onRefresh={refetchSmartInsights}
         isRefreshing={smartInsightsRefreshing}
+        onAssistantPrompt={onAssistantPrompt}
       />
     </FadeIn>
 

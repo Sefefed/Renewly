@@ -87,32 +87,32 @@ export default function NotificationCenter({ token, isOpen, onClose }) {
         aria-hidden="true"
       />
 
-      <aside className="absolute right-0 top-0 h-full w-96 max-w-full bg-gray-900 shadow-2xl border-l border-gray-800">
-        <header className="flex items-center justify-between p-6 border-b border-gray-800">
-          <h2 className="text-2xl font-bold text-white">Notifications</h2>
+      <aside className="absolute right-0 top-0 h-full w-96 max-w-full bg-white shadow-2xl border-l border-gray-200">
+        <header className="flex items-center justify-between p-6 border-b border-gray-200">
+          <h2 className="text-2xl font-bold text-gray-900">Notifications</h2>
           <button
             type="button"
             onClick={onClose}
-            className="text-gray-400 hover:text-white transition-colors"
+            className="text-gray-500 hover:text-gray-700 transition-colors"
             aria-label="Close notification center"
           >
             <span className="text-2xl">×</span>
           </button>
         </header>
 
-        <div className="p-4 border-b border-gray-800 bg-gray-800/70">
+        <div className="p-4 border-b border-gray-200 bg-white">
           <div className="flex gap-2">
             <button
               type="button"
               onClick={markAllAsRead}
-              className="px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium transition-colors"
+              className="px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium text-white shadow-sm transition-colors"
             >
               Mark All Read
             </button>
             <button
               type="button"
               onClick={() => loadNotifications(1, true)}
-              className="px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm font-medium transition-colors"
+              className="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium text-gray-700 transition-colors"
             >
               Refresh
             </button>
@@ -121,16 +121,16 @@ export default function NotificationCenter({ token, isOpen, onClose }) {
 
         <div className="h-full overflow-y-auto">
           {notifications.length === 0 && !loading ? (
-            <div className="text-center py-12 text-gray-400">
+            <div className="text-center py-12 text-gray-500">
               No notifications yet
             </div>
           ) : (
-            <div className="divide-y divide-gray-800">
+            <div className="divide-y divide-gray-100">
               {notifications.map((notification) => (
                 <article
                   key={notification._id}
-                  className={`p-4 hover:bg-gray-800 transition-colors ${
-                    !notification.isRead ? "bg-gray-800/50" : ""
+                  className={`p-4 hover:bg-gray-50 transition-colors ${
+                    !notification.isRead ? "bg-blue-50" : ""
                   }`}
                 >
                   <div className="flex gap-3">
@@ -144,8 +144,8 @@ export default function NotificationCenter({ token, isOpen, onClose }) {
                         <h3
                           className={`font-medium ${
                             !notification.isRead
-                              ? "text-white"
-                              : "text-gray-300"
+                              ? "text-gray-900"
+                              : "text-gray-600"
                           }`}
                         >
                           {notification.title}
@@ -155,7 +155,7 @@ export default function NotificationCenter({ token, isOpen, onClose }) {
                             <button
                               type="button"
                               onClick={() => markAsRead(notification._id)}
-                              className="text-blue-400 hover:text-blue-300 text-sm"
+                              className="text-blue-600 hover:text-blue-500 text-sm"
                             >
                               Mark read
                             </button>
@@ -163,13 +163,13 @@ export default function NotificationCenter({ token, isOpen, onClose }) {
                           <button
                             type="button"
                             onClick={() => deleteNotification(notification._id)}
-                            className="text-gray-400 hover:text-red-400 text-sm"
+                            className="text-gray-400 hover:text-red-500 text-sm"
                           >
                             Delete
                           </button>
                         </div>
                       </div>
-                      <p className="text-sm text-gray-400 mt-1">
+                      <p className="text-sm text-gray-600 mt-1">
                         {notification.message}
                       </p>
                       <div className="flex items-center justify-between mt-2">
@@ -179,12 +179,12 @@ export default function NotificationCenter({ token, isOpen, onClose }) {
                         <span
                           className={`text-xs px-2 py-1 rounded-full ${
                             notification.priority === "urgent"
-                              ? "bg-red-500/20 text-red-400"
+                              ? "bg-red-100 text-red-600"
                               : notification.priority === "high"
-                              ? "bg-orange-500/20 text-orange-400"
+                              ? "bg-orange-100 text-orange-600"
                               : notification.priority === "medium"
-                              ? "bg-blue-500/20 text-blue-300"
-                              : "bg-gray-500/20 text-gray-400"
+                              ? "bg-blue-100 text-blue-600"
+                              : "bg-gray-100 text-gray-500"
                           }`}
                         >
                           {notification.priority}
@@ -203,7 +203,7 @@ export default function NotificationCenter({ token, isOpen, onClose }) {
                 type="button"
                 onClick={() => loadNotifications(page + 1)}
                 disabled={loading}
-                className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm font-medium disabled:opacity-50"
+                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium text-gray-700 disabled:opacity-50"
               >
                 {loading ? "Loading..." : "Load More"}
               </button>

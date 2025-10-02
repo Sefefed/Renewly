@@ -14,6 +14,8 @@ const FinancialAssistant = ({
   onClose,
   onUnreadChange,
   onLayoutChange,
+  queuedPrompt,
+  onPromptConsumed,
 }) => {
   const { theme, isDark, toggleTheme } = useAssistantTheme();
   const {
@@ -39,6 +41,7 @@ const FinancialAssistant = ({
   } = useAssistantSpeech();
 
   const lastSpokenRef = useRef(null);
+  const lastQueuedPromptRef = useRef(null);
 
   const { containerRef, containerLayoutClasses } = useAssistantLayout({
     isOpen,
@@ -49,6 +52,7 @@ const FinancialAssistant = ({
     if (!isOpen) {
       stop();
       lastSpokenRef.current = null;
+      lastQueuedPromptRef.current = null;
     }
   }, [isOpen, stop]);
 
@@ -107,8 +111,23 @@ const FinancialAssistant = ({
   const handleClose = useCallback(() => {
     stop();
     lastSpokenRef.current = null;
+    lastQueuedPromptRef.current = null;
     onClose?.();
   }, [onClose, stop]);
+
+  useEffect(() => {
+    if (!isOpen || !queuedPrompt?.text) {
+      return;
+    }
+
+    if (lastQueuedPromptRef.current === queuedPrompt.id) {
+      return;
+    }
+
+    handleSendMessage(queuedPrompt.text);
+    lastQueuedPromptRef.current = queuedPrompt.id;
+    onPromptConsumed?.(queuedPrompt.id);
+  }, [handleSendMessage, isOpen, onPromptConsumed, queuedPrompt]);
 
   if (!isOpen) {
     return null;
