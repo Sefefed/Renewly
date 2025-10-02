@@ -16,7 +16,7 @@ const DashboardMainGrid = ({
   primaryColumnProps,
   secondaryColumnProps,
 }) => (
-  <main className="mx-auto w-full max-w-7xl px-8 py-8 pt-24">
+  <main className="space-y-10">
     <FadeIn delay={0.12} className="block">
       <KpiGrid
         summary={insights.summary}

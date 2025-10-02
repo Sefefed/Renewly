@@ -10,13 +10,11 @@ const SearchResultsList = ({ results }) => {
   if (items.length === 0) {
     return (
       <div className="py-12 text-center">
-        <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl bg-gray-700/40">
+        <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl border border-slate-200 bg-slate-100">
           <span className="text-3xl">🔍</span>
         </div>
-        <h3 className="text-xl font-semibold text-gray-200">
-          No results found
-        </h3>
-        <p className="mt-2 text-sm text-gray-400">
+        <h3 className="text-xl font-semibold text-primary">No results found</h3>
+        <p className="mt-2 text-sm text-secondary">
           Try refining your search terms or trying different keywords.
         </p>
       </div>
@@ -25,22 +23,23 @@ const SearchResultsList = ({ results }) => {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 rounded-2xl border border-gray-700/50 bg-gray-800/60 p-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="text-sm text-gray-300">
+      <div className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+        <div className="text-sm text-secondary">
           Showing{" "}
-          <span className="text-white font-semibold">{items.length}</span> of{" "}
-          <span className="text-white font-semibold">{totalCount}</span> results
+          <span className="font-semibold text-primary">{items.length}</span> of{" "}
+          <span className="font-semibold text-primary">{totalCount}</span>{" "}
+          results
         </div>
-        <div className="flex flex-wrap gap-3 text-xs text-gray-400">
+        <div className="flex flex-wrap gap-3 text-xs text-secondary">
           {priceFacets && (
-            <span className="rounded-full bg-blue-500/10 px-3 py-1 text-blue-200">
+            <span className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-blue-600">
               Avg: {formatCurrency(priceFacets.avgPrice ?? 0)}
             </span>
           )}
           {categoryFacets.slice(0, 3).map((category) => (
             <span
               key={category._id}
-              className="rounded-full bg-purple-500/10 px-3 py-1 text-purple-200"
+              className="rounded-full border border-violet-200 bg-violet-50 px-3 py-1 text-violet-600"
             >
               {category._id} · {category.count}
             </span>
@@ -52,44 +51,44 @@ const SearchResultsList = ({ results }) => {
         {items.map((item) => (
           <div
             key={item._id}
-            className="flex flex-col gap-4 rounded-2xl border border-gray-700/40 bg-gradient-to-r from-gray-800/70 to-gray-900/70 p-5 transition-all duration-300 hover:border-blue-500/30 hover:shadow-xl sm:flex-row sm:items-center sm:justify-between"
+            className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-transform duration-200 hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg sm:flex-row sm:items-center sm:justify-between"
           >
             <div className="flex flex-1 items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-blue-200 bg-blue-50 text-blue-600 shadow-sm">
                 <span className="text-lg">💡</span>
               </div>
               <div>
                 <div className="flex items-center gap-3">
-                  <p className="text-lg font-semibold text-white">
+                  <p className="text-lg font-semibold text-primary">
                     {item.name}
                   </p>
                   {item.category && (
-                    <span className="rounded-full bg-blue-500/15 px-3 py-1 text-xs uppercase tracking-wide text-blue-200">
+                    <span className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs uppercase tracking-wide text-blue-600">
                       {item.category}
                     </span>
                   )}
                   {item.status && (
-                    <span className="rounded-full bg-emerald-500/15 px-3 py-1 text-xs uppercase tracking-wide text-emerald-200">
+                    <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs uppercase tracking-wide text-emerald-600">
                       {item.status}
                     </span>
                   )}
                 </div>
-                <p className="mt-1 text-sm text-gray-400">
+                <p className="mt-1 text-sm text-secondary">
                   Next renewal ·{" "}
                   {item.renewalDate ? formatDate(item.renewalDate) : "Not set"}
                 </p>
                 {item.description && (
-                  <p className="mt-2 text-sm text-gray-300 line-clamp-2">
+                  <p className="mt-2 line-clamp-2 text-sm text-secondary">
                     {item.description}
                   </p>
                 )}
               </div>
             </div>
             <div className="flex flex-col items-start gap-2 text-right sm:items-end">
-              <p className="text-xl font-semibold text-blue-300">
+              <p className="text-xl font-semibold text-blue-600">
                 {formatCurrency(item.price, item.currency)}
               </p>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-tertiary">
                 Added {item.createdAt ? formatDate(item.createdAt) : "-"}
               </p>
             </div>

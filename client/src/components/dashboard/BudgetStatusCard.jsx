@@ -9,45 +9,45 @@ export default function BudgetStatusCard({ analysis }) {
   const entertainment = analysis.categoryAnalysis?.entertainment;
 
   return (
-    <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-7 shadow-2xl border border-gray-700/30 backdrop-blur-sm">
-      <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+    <div className="dashboard-card">
+      <h2 className="mb-6 text-2xl font-semibold text-primary">
         Budget Status
       </h2>
       <div className="space-y-7">
         <div>
-          <div className="flex justify-between text-base mb-3">
-            <span className="font-semibold text-gray-200">Monthly Budget</span>
-            <span className="text-gray-300 font-medium">
+          <div className="mb-3 flex justify-between text-base">
+            <span className="font-semibold text-primary">Monthly Budget</span>
+            <span className="font-medium text-secondary">
               {formatCurrency(analysis.currentSpending)} /{" "}
               {formatCurrency(analysis.monthlyLimit)}
             </span>
           </div>
-          <div className="w-full bg-gray-700 rounded-full h-3 overflow-hidden shadow-inner">
+          <div className="h-3 w-full overflow-hidden rounded-full bg-slate-200 shadow-inner">
             <div
-              className="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-1000 shadow-lg"
+              className="h-3 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 transition-all duration-1000 shadow-sm"
               style={{ width: `${Math.min(analysis.percentageUsed, 100)}%` }}
             ></div>
           </div>
-          <p className="text-sm text-gray-400 mt-3 font-medium">
+          <p className="mt-3 text-sm font-medium text-secondary">
             {analysis.percentageUsed.toFixed(1)}% used
           </p>
         </div>
 
         {entertainment && (
           <div>
-            <div className="flex justify-between text-base mb-3">
-              <span className="font-semibold text-gray-200">Entertainment</span>
-              <span className="text-gray-300 font-medium">
+            <div className="mb-3 flex justify-between text-base">
+              <span className="font-semibold text-primary">Entertainment</span>
+              <span className="font-medium text-secondary">
                 {formatCurrency(entertainment.spent)} /{" "}
                 {formatCurrency(entertainment.limit)}
               </span>
             </div>
-            <div className="w-full bg-gray-700 rounded-full h-3 overflow-hidden shadow-inner">
+            <div className="h-3 w-full overflow-hidden rounded-full bg-slate-200 shadow-inner">
               <div
-                className={`h-3 rounded-full transition-all duration-1000 shadow-lg ${
+                className={`h-3 rounded-full transition-all duration-1000 shadow-sm ${
                   entertainment.overBudget
-                    ? "bg-gradient-to-r from-red-500 to-red-600"
-                    : "bg-gradient-to-r from-green-500 to-green-600"
+                    ? "bg-gradient-to-r from-rose-500 to-rose-600"
+                    : "bg-gradient-to-r from-emerald-500 to-emerald-600"
                 }`}
                 style={{ width: `${Math.min(entertainment.percentage, 100)}%` }}
               ></div>

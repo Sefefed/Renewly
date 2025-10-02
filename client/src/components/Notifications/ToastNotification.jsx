@@ -6,17 +6,17 @@ const DEFAULT_AUTO_HIDE = 5000;
 
 const getContainerStyles = (type, priority) => {
   const base =
-    "max-w-sm w-full bg-gray-800 shadow-lg rounded-xl pointer-events-auto border-l-4";
+    "pointer-events-auto w-full max-w-sm rounded-xl border-l-4 bg-white shadow-xl";
   const priorityStyles = {
-    renewal: "border-blue-500",
-    budget: priority === "urgent" ? "border-red-500" : "border-orange-500",
-    recommendation: "border-green-500",
-    warning: "border-yellow-500",
-    system: "border-gray-500",
-    bill: priority === "urgent" ? "border-red-500" : "border-teal-500",
+    renewal: "border-blue-400",
+    budget: priority === "urgent" ? "border-rose-400" : "border-amber-400",
+    recommendation: "border-emerald-400",
+    warning: "border-amber-400",
+    system: "border-slate-300",
+    bill: priority === "urgent" ? "border-rose-400" : "border-teal-400",
   };
 
-  return `${base} ${priorityStyles[type] || "border-gray-500"}`;
+  return `${base} ${priorityStyles[type] || "border-slate-300"}`;
 };
 
 export default function ToastNotification({
@@ -43,16 +43,18 @@ export default function ToastNotification({
             </span>
           </div>
           <div className="ml-3 w-0 flex-1">
-            <p className="text-sm font-medium text-white">
+            <p className="text-sm font-semibold text-primary">
               {notification.title}
             </p>
-            <p className="mt-1 text-sm text-gray-400">{notification.message}</p>
+            <p className="mt-1 text-sm text-secondary">
+              {notification.message}
+            </p>
           </div>
-          <div className="ml-4 flex-shrink-0 flex">
+          <div className="ml-4 flex flex-shrink-0">
             <button
               type="button"
               onClick={onClose}
-              className="bg-gray-800 rounded-md inline-flex text-gray-400 hover:text-gray-300 focus:outline-none"
+              className="inline-flex rounded-md border border-slate-200 bg-white px-1 text-tertiary transition-colors hover:border-blue-200 hover:text-blue-600 focus:outline-none"
             >
               <span className="sr-only">Close</span>
               <span className="text-lg">×</span>

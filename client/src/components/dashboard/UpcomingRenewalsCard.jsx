@@ -59,19 +59,19 @@ export default function UpcomingRenewalsCard({ renewals, api }) {
   const isShowingSearch = Boolean(searchResults);
 
   return (
-    <div className="rounded-2xl border border-gray-700/30 bg-gradient-to-br from-gray-800 to-gray-900 p-7 shadow-2xl backdrop-blur-sm">
+    <div className="dashboard-card">
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-transparent bg-gradient-to-r from-white to-gray-300 bg-clip-text">
+          <h2 className="text-2xl font-semibold text-primary">
             {isShowingSearch ? "Search Results" : "Upcoming Renewals"}
           </h2>
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-secondary">
             {isShowingSearch
               ? "Adjust your search to discover more subscriptions."
               : "Keep an eye on the next renewals and explore your library effortlessly."}
           </p>
         </div>
-        <span className="rounded-full bg-blue-500/10 px-4 py-1 text-sm font-medium text-blue-300">
+        <span className="rounded-full border border-blue-200 bg-blue-50 px-4 py-1 text-sm font-semibold text-blue-600">
           {resultsCount} {resultsCount === 1 ? "item" : "items"}
         </span>
       </div>
@@ -87,7 +87,7 @@ export default function UpcomingRenewalsCard({ renewals, api }) {
       </div>
 
       {searchError && (
-        <div className="mb-4 rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+        <div className="mb-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-600">
           {searchError}
         </div>
       )}
@@ -101,26 +101,28 @@ export default function UpcomingRenewalsCard({ renewals, api }) {
           {renewals.map((renewal) => (
             <div
               key={`${renewal.name}-${renewal.renewalDate}`}
-              className="group flex items-center justify-between rounded-xl border border-gray-600/30 bg-gradient-to-r from-gray-700/50 to-gray-800/50 p-5 transition-all duration-300 hover:scale-[1.02] hover:border-blue-500/30 hover:from-gray-700 hover:to-gray-800"
+              className="group flex items-center justify-between rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-transform duration-200 hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg"
             >
               <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg">
-                  <span className="text-lg">📅</span>
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-blue-200 bg-blue-50 text-blue-600 shadow-sm">
+                  <span className="text-lg" aria-hidden="true">
+                    📅
+                  </span>
                 </div>
                 <div>
-                  <p className="text-lg font-semibold text-white transition-colors group-hover:text-blue-300">
+                  <p className="text-lg font-semibold text-primary transition-colors group-hover:text-blue-600">
                     {renewal.name}
                   </p>
-                  <p className="text-sm text-gray-400">
+                  <p className="text-sm text-secondary">
                     {formatDate(renewal.renewalDate)}
                   </p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-xl font-bold text-blue-400">
+                <p className="text-xl font-semibold text-blue-600">
                   {formatCurrency(renewal.price)}
                 </p>
-                <p className="text-sm font-medium text-gray-400">
+                <p className="text-sm font-medium text-secondary">
                   {renewal.frequency}
                 </p>
               </div>
@@ -129,10 +131,10 @@ export default function UpcomingRenewalsCard({ renewals, api }) {
         </div>
       ) : (
         <div className="py-12 text-center">
-          <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl bg-gray-700/50">
+          <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl border border-slate-200 bg-slate-100">
             <span className="text-3xl">📅</span>
           </div>
-          <p className="text-lg text-gray-400">No upcoming renewals</p>
+          <p className="text-lg text-secondary">No upcoming renewals</p>
         </div>
       )}
     </div>

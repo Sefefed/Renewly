@@ -6,21 +6,21 @@ export default function CategoryBreakdownCard({ breakdown, isLoading }) {
   const hasBreakdown = breakdown && Object.keys(breakdown).length > 0;
 
   return (
-    <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-7 shadow-2xl border border-gray-700/30 backdrop-blur-sm">
-      <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+    <div className="dashboard-card">
+      <h2 className="mb-6 text-2xl font-semibold text-primary">
         Category Breakdown
       </h2>
       {hasBreakdown ? (
         <div className="grid gap-8 lg:grid-cols-[1.2fr_1fr]">
-          <div className="relative h-80 rounded-2xl border border-gray-700/30 bg-gray-900/40 p-4">
+          <div className="relative h-80 rounded-2xl border border-slate-200 bg-white p-4">
             {isLoading && (
-              <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-gray-900/80">
+              <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-white/80">
                 <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
               </div>
             )}
             <PieChart data={breakdown} height={240} />
           </div>
-          <div className="space-y-5 max-h-80 overflow-y-auto pr-1">
+          <div className="max-h-80 space-y-5 overflow-y-auto pr-1">
             {Object.entries(breakdown)
               .sort((a, b) => {
                 const getAmount = (entry) =>
@@ -38,30 +38,30 @@ export default function CategoryBreakdownCard({ breakdown, isLoading }) {
                 return (
                   <div
                     key={category}
-                    className="rounded-xl border border-gray-700/20 bg-gradient-to-r from-gray-700/30 to-gray-800/30 p-4 transition-all duration-300 hover:from-gray-700/50 hover:to-gray-800/50"
+                    className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-transform duration-200 hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg"
                   >
                     <div className="flex items-center justify-between gap-4">
                       <div className="flex items-center gap-4">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 text-white shadow-lg">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-violet-200 bg-violet-50 text-violet-600 shadow-sm">
                           <span className="text-sm">📊</span>
                         </div>
                         <div>
-                          <p className="text-lg font-semibold text-white capitalize">
+                          <p className="text-lg font-semibold text-primary capitalize">
                             {category}
                           </p>
                           {count !== null && (
-                            <p className="text-xs text-gray-400">
+                            <p className="text-xs text-tertiary">
                               {count} item{count === 1 ? "" : "s"}
                             </p>
                           )}
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="text-lg font-semibold text-green-300">
+                        <p className="text-lg font-semibold text-emerald-600">
                           {formatCurrency(amount)}
                         </p>
                         {percentage !== null && (
-                          <p className="text-xs text-gray-400">
+                          <p className="text-xs text-tertiary">
                             {percentage}% of total
                           </p>
                         )}
@@ -69,9 +69,9 @@ export default function CategoryBreakdownCard({ breakdown, isLoading }) {
                     </div>
                     {percentage !== null && (
                       <div className="mt-4">
-                        <div className="h-2 w-full overflow-hidden rounded-full bg-gray-700">
+                        <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200">
                           <div
-                            className="h-2 rounded-full bg-gradient-to-r from-green-400 to-green-500"
+                            className="h-2 rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500"
                             style={{ width: `${Math.min(percentage, 100)}%` }}
                           ></div>
                         </div>
@@ -83,7 +83,7 @@ export default function CategoryBreakdownCard({ breakdown, isLoading }) {
           </div>
         </div>
       ) : (
-        <div className="flex items-center justify-center rounded-xl border border-dashed border-gray-700 py-16 text-gray-400">
+        <div className="flex items-center justify-center rounded-xl border border-dashed border-slate-200 py-16 text-secondary">
           No spending categories yet. Add subscriptions or bills to see
           insights.
         </div>

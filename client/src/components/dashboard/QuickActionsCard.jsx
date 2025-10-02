@@ -6,8 +6,8 @@ export default function QuickActionsCard({ actions }) {
   }
 
   return (
-    <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-7 shadow-2xl border border-gray-700/30 backdrop-blur-sm">
-      <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+    <div className="dashboard-card">
+      <h2 className="mb-6 text-2xl font-semibold text-primary">
         Quick Actions
       </h2>
       <div className="space-y-4">
@@ -15,9 +15,11 @@ export default function QuickActionsCard({ actions }) {
           <button
             key={label}
             onClick={onClick}
-            className={`w-full py-4 px-5 rounded-xl text-base font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center gap-3 group bg-gradient-to-r ${gradient}`}
+            className="group flex w-full items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white px-5 py-4 text-base font-semibold text-primary shadow-sm transition-transform duration-200 hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg"
           >
-            <span className="text-xl group-hover:scale-110 transition-transform">
+            <span
+              className={`flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-r ${gradient} text-white transition-transform duration-200 group-hover:scale-110`}
+            >
               {icon}
             </span>
             {label}

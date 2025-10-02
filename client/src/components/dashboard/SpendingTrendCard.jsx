@@ -69,13 +69,13 @@ export default function SpendingTrendCard({
   }, [data, hasData]);
 
   return (
-    <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-7 shadow-2xl border border-gray-700/30 backdrop-blur-sm">
+    <div className="dashboard-card">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+          <h2 className="text-2xl font-semibold text-primary">
             Spending Trend
           </h2>
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-secondary">
             Visualize how subscriptions and bills stack up across each period.
           </p>
         </div>
@@ -89,13 +89,13 @@ export default function SpendingTrendCard({
 
       <div className="mt-6">
         {error ? (
-          <div className="flex h-72 flex-col items-center justify-center gap-4 rounded-xl border border-red-500/30 bg-red-500/10 text-red-200">
-            <p className="text-sm font-medium text-center">
+          <div className="flex h-72 flex-col items-center justify-center gap-4 rounded-xl border border-rose-200 bg-rose-50 text-rose-600">
+            <p className="text-center text-sm font-medium">
               Unable to load enhanced insights: {error}
             </p>
             <button
               onClick={onRetry}
-              className="rounded-lg border border-red-500/40 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-red-100 transition hover:border-red-400 hover:text-red-50"
+              className="rounded-lg border border-rose-200 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-wide text-rose-600 transition hover:bg-rose-100 hover:text-rose-700"
             >
               Try again
             </button>
@@ -107,7 +107,7 @@ export default function SpendingTrendCard({
         ) : hasData ? (
           <BarChart chartData={chartData} chartType="grouped" height={320} />
         ) : (
-          <div className="flex h-72 items-center justify-center rounded-xl border border-dashed border-gray-700 text-sm text-gray-400">
+          <div className="flex h-72 items-center justify-center rounded-xl border border-dashed border-slate-200 text-sm text-secondary">
             No trend data available yet. Add subscriptions or bills to get
             started.
           </div>

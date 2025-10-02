@@ -40,25 +40,27 @@ const DashboardContent = ({
   };
 
   return (
-    <div
-      className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-950 text-white"
-      style={dashboardStyle}
-    >
+    <div className="dashboard-shell" style={dashboardStyle}>
       <Navigation />
 
-      <FadeIn delay={0.05}>
-        <DashboardHeader
-          userName={userName}
-          onExportCalendar={handleExportCalendar}
-          onOpenSettings={onOpenSettings}
-          onOpenNotificationCenter={openNotifications}
-          notificationSlot={
-            <NotificationBell token={token} onOpenCenter={openNotifications} />
-          }
-        />
-      </FadeIn>
+      <div className="dashboard-shell__inner space-y-10">
+        <FadeIn delay={0.05}>
+          <DashboardHeader
+            userName={userName}
+            onExportCalendar={handleExportCalendar}
+            onOpenSettings={onOpenSettings}
+            onOpenNotificationCenter={openNotifications}
+            notificationSlot={
+              <NotificationBell
+                token={token}
+                onOpenCenter={openNotifications}
+              />
+            }
+          />
+        </FadeIn>
 
-      <DashboardMainGrid {...mainGridProps} />
+        <DashboardMainGrid {...mainGridProps} />
+      </div>
 
       <DashboardToasts
         toasts={toasts}

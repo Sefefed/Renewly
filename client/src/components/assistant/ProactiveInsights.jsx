@@ -33,12 +33,12 @@ const ProactiveInsights = ({ api, onInsightsLoaded }) => {
 
   if (error) {
     return (
-      <div className="space-y-3 rounded-2xl border border-red-500/20 bg-red-500/10 p-6 text-sm text-red-200">
+      <div className="space-y-3 rounded-2xl border border-rose-200 bg-rose-50 p-6 text-sm text-rose-600 shadow-sm">
         <p className="font-semibold">Unable to load insights</p>
         <p>{error}</p>
         <button
           onClick={loadInsights}
-          className="rounded-lg bg-red-500/30 px-3 py-2 text-xs text-red-100 transition hover:bg-red-500/40"
+          className="rounded-lg border border-rose-200 bg-white px-3 py-2 text-xs font-semibold text-rose-600 transition hover:bg-rose-100"
         >
           Retry
         </button>
@@ -53,14 +53,14 @@ const ProactiveInsights = ({ api, onInsightsLoaded }) => {
   return (
     <div className="space-y-6">
       {insights.alerts?.length ? (
-        <div className="rounded-2xl border border-orange-500/30 bg-gradient-to-br from-orange-500/10 to-red-500/10 p-6">
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6 shadow-sm">
           <div className="mb-4 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500/20">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-amber-200 bg-white">
               <span className="text-lg">⚠️</span>
             </div>
             <div>
-              <h3 className="font-semibold text-orange-300">Smart alerts</h3>
-              <p className="text-sm text-orange-200/80">
+              <h3 className="font-semibold text-amber-700">Smart alerts</h3>
+              <p className="text-sm text-amber-600/80">
                 Proactive notifications about your finances
               </p>
             </div>
@@ -69,19 +69,19 @@ const ProactiveInsights = ({ api, onInsightsLoaded }) => {
             {insights.alerts.map((alert, index) => (
               <div
                 key={`${alert.title}-${index}`}
-                className="flex items-center justify-between rounded-xl border border-orange-500/20 bg-orange-500/5 p-3"
+                className="flex items-center justify-between rounded-xl border border-amber-200 bg-white p-3 shadow-sm"
               >
                 <div>
-                  <h4 className="text-sm font-medium text-orange-200">
+                  <h4 className="text-sm font-medium text-amber-700">
                     {alert.title}
                   </h4>
-                  <p className="text-xs text-orange-200/70">{alert.message}</p>
+                  <p className="text-xs text-amber-600/80">{alert.message}</p>
                 </div>
                 <span
-                  className={`rounded-full px-2 py-1 text-xs uppercase ${
+                  className={`rounded-full border px-2 py-1 text-xs uppercase font-semibold ${
                     alert.severity === "high"
-                      ? "bg-red-500/20 text-red-400"
-                      : "bg-orange-500/20 text-orange-400"
+                      ? "border-rose-200 bg-rose-50 text-rose-600"
+                      : "border-amber-200 bg-amber-50 text-amber-600"
                   }`}
                 >
                   {alert.severity}
@@ -93,16 +93,16 @@ const ProactiveInsights = ({ api, onInsightsLoaded }) => {
       ) : null}
 
       {insights.tips?.length ? (
-        <div className="rounded-2xl border border-green-500/30 bg-gradient-to-br from-green-500/10 to-emerald-500/10 p-6">
+        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 shadow-sm">
           <div className="mb-4 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-500/20">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-emerald-200 bg-white">
               <span className="text-lg">💡</span>
             </div>
             <div>
-              <h3 className="font-semibold text-green-300">
+              <h3 className="font-semibold text-emerald-700">
                 Personalized tips
               </h3>
-              <p className="text-sm text-green-200/80">
+              <p className="text-sm text-emerald-600/80">
                 Recommendations tailored for you
               </p>
             </div>
@@ -111,7 +111,7 @@ const ProactiveInsights = ({ api, onInsightsLoaded }) => {
             {insights.tips.map((tip, index) => (
               <div
                 key={`${tip}-${index}`}
-                className="rounded-xl border border-green-500/10 bg-green-500/5 p-3 text-sm text-green-100"
+                className="rounded-xl border border-emerald-200 bg-white p-3 text-sm text-emerald-700 shadow-sm"
               >
                 {tip}
               </div>
@@ -121,22 +121,22 @@ const ProactiveInsights = ({ api, onInsightsLoaded }) => {
       ) : null}
 
       {insights.persona ? (
-        <div className="rounded-2xl border border-purple-500/30 bg-gradient-to-br from-purple-500/10 to-pink-500/10 p-6">
+        <div className="rounded-2xl border border-violet-200 bg-violet-50 p-6 shadow-sm">
           <div className="mb-4 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/20">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-violet-200 bg-white">
               <span className="text-lg">🎭</span>
             </div>
             <div>
-              <h3 className="font-semibold text-purple-300">
+              <h3 className="font-semibold text-violet-700">
                 Your financial style
               </h3>
-              <p className="text-sm text-purple-200/80">
+              <p className="text-sm text-violet-600/80">
                 Understanding how you manage money
               </p>
             </div>
           </div>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <div className="space-y-2 text-sm text-purple-100">
+            <div className="space-y-2 text-sm text-violet-700">
               <div className="flex justify-between">
                 <span>Spending style</span>
                 <span className="font-medium capitalize">
@@ -150,7 +150,7 @@ const ProactiveInsights = ({ api, onInsightsLoaded }) => {
                 </span>
               </div>
             </div>
-            <div className="space-y-2 text-sm text-purple-100">
+            <div className="space-y-2 text-sm text-violet-700">
               <div className="flex justify-between">
                 <span>Learning priority</span>
                 <span className="font-medium capitalize">

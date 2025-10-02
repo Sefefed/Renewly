@@ -4,7 +4,7 @@ const SearchResultsSkeleton = () => {
       {Array.from({ length: 4 }).map((_, index) => (
         <div
           key={`search-skeleton-${index}`}
-          className="flex items-center justify-between rounded-2xl border border-gray-700/50 bg-gray-800/70 p-5"
+          className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
         >
           <div className="flex items-center gap-4 w-full">
             <div className="h-12 w-12 rounded-xl bg-size-200 animate-shimmer"></div>

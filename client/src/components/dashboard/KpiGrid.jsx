@@ -5,28 +5,22 @@ const METRIC_CONFIG = [
   {
     key: "monthlySpending",
     label: "Monthly Spending",
-    icon: "💰",
-    valueClass: "text-green-400",
-    iconBg: "bg-green-500/20",
-    hoverBorder: "hover:border-blue-500/30",
+    valueClass: "text-emerald-500",
+    iconBg: "bg-emerald-50 text-emerald-500",
     formatter: formatCurrency,
   },
   {
     key: "yearlySpending",
     label: "Yearly Spending",
-    icon: "📊",
-    valueClass: "text-blue-400",
-    iconBg: "bg-blue-500/20",
-    hoverBorder: "hover:border-blue-500/30",
+    valueClass: "text-blue-600",
+    iconBg: "bg-blue-50 text-blue-600",
     formatter: formatCurrency,
   },
   {
     key: "activeSubscriptions",
     label: "Active Subscriptions",
-    icon: "📱",
-    valueClass: "text-purple-400",
-    iconBg: "bg-purple-500/20",
-    hoverBorder: "hover:border-purple-500/30",
+    valueClass: "text-violet-500",
+    iconBg: "bg-violet-50 text-violet-500",
     formatter: (value) => value ?? 0,
   },
 ];
@@ -40,40 +34,30 @@ export default function KpiGrid({ summary, savingsPotential }) {
     {
       key: "savingsPotential",
       label: "Savings Potential",
-      icon: "💡",
-      valueClass: "text-yellow-400",
-      iconBg: "bg-yellow-500/20",
-      hoverBorder: "hover:border-yellow-500/30",
+      valueClass: "text-amber-500",
+      iconBg: "bg-amber-50 text-amber-500",
       value: formatCurrency(savingsPotential ?? 0),
     },
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-      {metrics.map(
-        ({ key, label, icon, value, valueClass, iconBg, hoverBorder }) => (
-          <div
-            key={key}
-            className={`bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 shadow-2xl border border-gray-700/30 transition-all duration-500 hover:scale-105 group ${hoverBorder}`}
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-400 font-medium">{label}</p>
-                <p
-                  className={`text-3xl font-bold mt-2 transition-transform duration-300 group-hover:scale-105 ${valueClass}`}
-                >
-                  {value}
-                </p>
-              </div>
-              <div
-                className={`w-14 h-14 ${iconBg} rounded-2xl flex items-center justify-center transition-transform duration-300 shadow-lg group-hover:scale-110`}
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 mb-12">
+      {metrics.map(({ key, label, value, valueClass }) => (
+        <div key={key} className="dashboard-card dashboard-card--compact group">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-secondary text-black">
+                {label}
+              </p>
+              <p
+                className={`text-3xl font-semibold mt-3 transition-transform duration-300 group-hover:scale-105 ${valueClass}`}
               >
-                <span className="text-2xl">{icon}</span>
-              </div>
+                {value}
+              </p>
             </div>
           </div>
-        )
-      )}
+        </div>
+      ))}
     </div>
   );
 }

@@ -23,7 +23,8 @@ AnalyticsSummaryCards.propTypes = {
     PropTypes.shape({
       key: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
-      value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+      value: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
+        .isRequired,
       trend: PropTypes.string,
       icon: PropTypes.string,
       description: PropTypes.string,

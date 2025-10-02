@@ -15,15 +15,15 @@ const FilterTabs = ({ filters, activeFilter, onFilterChange, isLoading }) => {
                 onFilterChange(filter.value);
               }
             }}
-            className={`flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition-all duration-300 ${
+            className={`flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-semibold transition-all duration-200 ${
               isActive
-                ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-900/40"
-                : "bg-gray-800/70 text-gray-300 hover:bg-gray-700 hover:text-white"
-            } ${isBusy ? "opacity-60 cursor-not-allowed" : ""}`}
+                ? "border-blue-300 bg-blue-50 text-blue-600 shadow-sm"
+                : "border-transparent bg-white text-secondary hover:border-blue-200 hover:text-blue-600"
+            } ${isBusy ? "cursor-not-allowed opacity-60" : ""}`}
             disabled={isBusy}
           >
             {isBusy ? (
-              <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/60 border-t-transparent"></div>
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-400/70 border-t-transparent"></div>
             ) : (
               filter.icon && <span className="text-base">{filter.icon}</span>
             )}

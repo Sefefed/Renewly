@@ -13,14 +13,14 @@ export default function MonthlyComparisonCard({
   const increase = difference >= 0;
   const percentage = comparison.percentageChange;
   const icon = increase ? "⬆️" : "⬇️";
-  const tone = increase ? "text-red-400" : "text-green-400";
+  const tone = increase ? "text-rose-500" : "text-emerald-500";
   const pillBg = increase
-    ? "bg-red-500/10 border-red-500/30"
-    : "bg-green-500/10 border-green-500/30";
+    ? "border-rose-200 bg-rose-50"
+    : "border-emerald-200 bg-emerald-50";
 
   return (
-    <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-7 shadow-2xl border border-gray-700/30 backdrop-blur-sm">
-      <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+    <div className="dashboard-card">
+      <h2 className="mb-6 text-2xl font-semibold text-primary">
         Monthly Comparison
       </h2>
       {showInitialLoader ? (
@@ -29,42 +29,42 @@ export default function MonthlyComparisonCard({
         </div>
       ) : (
         <div className="space-y-6">
-          <div className="grid grid-cols-1 gap-4 rounded-xl border border-gray-700/40 bg-gray-900/50 p-4 text-sm text-gray-300 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 rounded-xl border border-slate-200 bg-white p-4 text-sm text-secondary shadow-sm sm:grid-cols-2">
             <div>
-              <p className="mb-1 text-xs uppercase tracking-wide text-gray-400">
+              <p className="mb-1 text-xs uppercase tracking-wide text-tertiary">
                 {comparison.currentMonth.label}
               </p>
-              <p className="text-lg font-semibold text-white">
+              <p className="text-lg font-semibold text-primary">
                 {formatCurrency(comparison.currentMonth.total)}
               </p>
-              <p className="mt-2 text-xs text-gray-400">
+              <p className="mt-2 text-xs text-tertiary">
                 Subscriptions:{" "}
                 {formatCurrency(comparison.currentMonth.subscriptions)}
               </p>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-tertiary">
                 Bills: {formatCurrency(comparison.currentMonth.bills)}
               </p>
             </div>
             <div>
-              <p className="mb-1 text-xs uppercase tracking-wide text-gray-400">
+              <p className="mb-1 text-xs uppercase tracking-wide text-tertiary">
                 {comparison.previousMonth.label}
               </p>
-              <p className="text-lg font-semibold text-white">
+              <p className="text-lg font-semibold text-primary">
                 {formatCurrency(comparison.previousMonth.total)}
               </p>
-              <p className="mt-2 text-xs text-gray-400">
+              <p className="mt-2 text-xs text-tertiary">
                 Subscriptions:{" "}
                 {formatCurrency(comparison.previousMonth.subscriptions)}
               </p>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-tertiary">
                 Bills: {formatCurrency(comparison.previousMonth.bills)}
               </p>
             </div>
           </div>
-          <div className="rounded-xl border border-gray-700/40 bg-gray-900/50 p-4">
+          <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-300">
+                <p className="text-sm font-medium text-secondary">
                   {increase ? "Spending increased" : "Spending decreased"}
                 </p>
                 <p className={`mt-2 text-xl font-semibold ${tone}`}>
@@ -72,7 +72,7 @@ export default function MonthlyComparisonCard({
                   {increase ? "higher" : "lower"} than last month
                 </p>
                 {percentage !== null && (
-                  <p className="mt-1 text-xs text-gray-400">
+                  <p className="mt-1 text-xs text-tertiary">
                     Change of {Math.abs(percentage).toFixed(2)}%
                   </p>
                 )}

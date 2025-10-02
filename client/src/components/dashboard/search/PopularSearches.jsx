@@ -7,13 +7,13 @@ const PopularSearches = ({ items, onSelect }) => {
 
   return (
     <div className="flex flex-wrap items-center gap-2 text-sm">
-      <span className="text-gray-400">Popular:</span>
+      <span className="text-secondary">Popular:</span>
       {items.map((item) => (
         <button
           key={item._id}
           type="button"
           onClick={() => onSelect(item._id)}
-          className="rounded-full bg-gray-700 px-3 py-1 text-gray-200 transition-all duration-300 hover:scale-105 hover:bg-gray-600 hover:text-white"
+          className="rounded-full border border-slate-200 bg-white px-3 py-1 text-secondary transition-all duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:text-blue-600"
         >
           {item._id}
         </button>

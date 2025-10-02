@@ -2,18 +2,18 @@ import PropTypes from "prop-types";
 import { formatCurrency } from "../../../utils/formatters";
 
 const TREND_STYLES = {
-  up: { emoji: "📈", className: "text-green-400" },
-  down: { emoji: "📉", className: "text-red-400" },
-  stable: { emoji: "➡️", className: "text-gray-400" },
-  opportunity: { emoji: "💰", className: "text-amber-300" },
-  alert: { emoji: "⚠️", className: "text-orange-400" },
+  up: { emoji: "📈", className: "text-emerald-500" },
+  down: { emoji: "📉", className: "text-rose-500" },
+  stable: { emoji: "➡️", className: "text-tertiary" },
+  opportunity: { emoji: "�", className: "text-amber-500" },
+  alert: { emoji: "⚠️", className: "text-orange-500" },
 };
 
-const COLOR_BG = {
-  blue: "from-blue-500/20",
-  green: "from-emerald-500/20",
-  purple: "from-purple-500/20",
-  orange: "from-orange-500/20",
+const COLOR_STYLES = {
+  blue: "border-blue-100 bg-blue-50 text-blue-600",
+  green: "border-emerald-100 bg-emerald-50 text-emerald-600",
+  purple: "border-violet-100 bg-violet-50 text-violet-600",
+  orange: "border-amber-100 bg-amber-50 text-amber-600",
 };
 
 const InsightCard = ({
@@ -31,12 +31,12 @@ const InsightCard = ({
     numericValue !== null ? formatCurrency(numericValue, currency) : value;
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-gray-700/40 bg-gradient-to-br from-gray-800/70 to-gray-900/70 p-6 shadow-2xl transition-all duration-500 hover:border-blue-500/40">
+    <div className="dashboard-card dashboard-card--compact relative overflow-hidden">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-4">
           <div
-            className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${
-              COLOR_BG[color] ?? COLOR_BG.blue
+            className={`flex h-12 w-12 items-center justify-center rounded-2xl border ${
+              COLOR_STYLES[color] ?? COLOR_STYLES.blue
             }`}
           >
             <span className="text-2xl" aria-hidden="true">
@@ -44,10 +44,10 @@ const InsightCard = ({
             </span>
           </div>
           <div>
-            <p className="text-xs uppercase tracking-wider text-gray-400">
+            <p className="text-xs uppercase tracking-wider text-tertiary">
               {title}
             </p>
-            <p className="mt-1 text-sm text-gray-500">{description}</p>
+            <p className="mt-1 text-sm text-secondary">{description}</p>
           </div>
         </div>
         <div
@@ -57,10 +57,8 @@ const InsightCard = ({
         </div>
       </div>
 
-      <div className="mt-6 text-3xl font-bold text-white">{displayValue}</div>
-
-      <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 hover:opacity-100">
-        <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-transparent" />
+      <div className="mt-6 text-3xl font-semibold text-primary">
+        {displayValue}
       </div>
     </div>
   );

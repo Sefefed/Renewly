@@ -4,10 +4,10 @@ import { useApi } from "../../utils/api";
 import { getNotificationIcon } from "./utils";
 
 const PRIORITY_STYLES = {
-  urgent: "border-red-500 bg-red-500/10",
-  high: "border-orange-500 bg-orange-500/10",
-  medium: "border-blue-500 bg-blue-500/10",
-  low: "border-gray-500 bg-gray-500/10",
+  urgent: "border-rose-200 bg-rose-50",
+  high: "border-amber-200 bg-amber-50",
+  medium: "border-blue-200 bg-blue-50",
+  low: "border-slate-200 bg-slate-50",
 };
 
 const getPriorityStyles = (priority) =>
@@ -108,27 +108,27 @@ export default function NotificationBell({ token, onOpenCenter }) {
       <button
         type="button"
         onClick={() => token && setIsOpen((prev) => !prev)}
-        className="relative p-2 rounded-xl bg-gray-700 hover:bg-gray-600 transition-colors duration-200"
+        className="relative inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white p-2.5 text-slate-600 shadow-sm transition-all duration-200 hover:border-blue-200 hover:text-blue-600 hover:shadow-lg"
         aria-label="Notifications"
       >
         <span className="text-xl">🔔</span>
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+          <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 text-xs font-semibold text-white">
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         )}
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-12 w-96 bg-gray-800 border border-gray-700 rounded-2xl shadow-2xl z-50 max-h-96 overflow-hidden">
-          <div className="flex items-center justify-between p-4 border-b border-gray-700">
-            <h3 className="font-semibold text-white">Notifications</h3>
+        <div className="absolute right-0 top-12 z-50 w-96 max-h-96 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl">
+          <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
+            <h3 className="font-semibold text-primary">Notifications</h3>
             <div className="flex gap-2">
               {unreadCount > 0 && (
                 <button
                   type="button"
                   onClick={markAllAsRead}
-                  className="text-blue-400 hover:text-blue-300 text-sm font-medium"
+                  className="text-sm font-semibold text-blue-600 hover:text-blue-500"
                 >
                   Mark all read
                 </button>
@@ -136,7 +136,7 @@ export default function NotificationBell({ token, onOpenCenter }) {
               <button
                 type="button"
                 onClick={fetchNotifications}
-                className="text-gray-400 hover:text-gray-300 text-sm font-medium"
+                className="text-sm font-medium text-secondary hover:text-primary"
               >
                 Refresh
               </button>
@@ -145,11 +145,11 @@ export default function NotificationBell({ token, onOpenCenter }) {
 
           <div className="overflow-y-auto max-h-80">
             {loading ? (
-              <div className="flex justify-center items-center p-8">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500" />
+              <div className="flex items-center justify-center p-8">
+                <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-blue-500" />
               </div>
             ) : notifications.length === 0 ? (
-              <div className="text-center p-8 text-gray-400">
+              <div className="p-8 text-center text-secondary">
                 No notifications
               </div>
             ) : (
@@ -160,14 +160,14 @@ export default function NotificationBell({ token, onOpenCenter }) {
                   onClick={() =>
                     !notification.isRead && markAsRead(notification._id)
                   }
-                  className={`w-full text-left p-4 border-l-4 ${getPriorityStyles(
+                  className={`w-full border-l-4 text-left transition-colors duration-200 ${getPriorityStyles(
                     notification.priority
-                  )} hover:bg-gray-750 transition-colors duration-200 ${
-                    !notification.isRead ? "bg-gray-750" : ""
-                  }`}
+                  )} ${
+                    !notification.isRead ? "bg-white" : "bg-white"
+                  } hover:bg-blue-50`}
                 >
                   <div className="flex gap-3">
-                    <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gray-700 flex items-center justify-center">
+                    <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-500">
                       <span className="text-sm">
                         {getNotificationIcon(notification.type)}
                       </span>
@@ -177,20 +177,20 @@ export default function NotificationBell({ token, onOpenCenter }) {
                         <h4
                           className={`font-medium ${
                             !notification.isRead
-                              ? "text-white"
-                              : "text-gray-300"
+                              ? "text-primary"
+                              : "text-secondary"
                           }`}
                         >
                           {notification.title}
                         </h4>
                         {!notification.isRead && (
-                          <span className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-1" />
+                          <span className="mt-1 h-2 w-2 flex-shrink-0 rounded-full bg-blue-500" />
                         )}
                       </div>
-                      <p className="text-sm text-gray-400 mt-1">
+                      <p className="mt-1 text-sm text-secondary">
                         {notification.message}
                       </p>
-                      <p className="text-xs text-gray-500 mt-2">
+                      <p className="mt-2 text-xs text-tertiary">
                         {new Date(notification.createdAt).toLocaleDateString()}
                       </p>
                     </div>
@@ -200,11 +200,11 @@ export default function NotificationBell({ token, onOpenCenter }) {
             )}
           </div>
 
-          <div className="p-3 border-t border-gray-700 bg-gray-800">
+          <div className="border-t border-slate-200 bg-slate-50/80 p-3">
             <button
               type="button"
               onClick={handleViewAll}
-              className="w-full text-center text-blue-400 hover:text-blue-300 text-sm font-medium py-2"
+              className="w-full py-2 text-center text-sm font-semibold text-blue-600 hover:text-blue-500"
             >
               View All Notifications
             </button>
