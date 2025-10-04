@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import { formatCurrency } from "../../../utils/formatters";
+import { DEFAULT_CURRENCY } from "../../../constants/preferences";
 
 const SmartRecommendationCard = ({ opportunity, currency, onAskAssistant }) => {
   const { title, description, potentialSavings, type, subscriptionIds } =
@@ -78,7 +79,7 @@ SmartRecommendationCard.propTypes = {
 };
 
 SmartRecommendationCard.defaultProps = {
-  currency: "USD",
+  currency: DEFAULT_CURRENCY,
   onAskAssistant: undefined,
 };
 

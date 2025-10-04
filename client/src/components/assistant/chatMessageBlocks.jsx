@@ -1,6 +1,6 @@
 import { formatCurrency } from "../../utils/formatters";
 
-const renderSpendingSummary = (data, isDark) => {
+const renderSpendingSummary = (data, isDark, currency) => {
   if (!data) return null;
 
   const background = isDark
@@ -17,7 +17,7 @@ const renderSpendingSummary = (data, isDark) => {
           Monthly total
         </span>
         <span className={`font-semibold ${totalColor}`}>
-          {formatCurrency(data.monthlySpending)}
+          {formatCurrency(data.monthlySpending, currency)}
         </span>
       </div>
       {data.topCategories?.length ? (
@@ -27,7 +27,7 @@ const renderSpendingSummary = (data, isDark) => {
             {data.topCategories.map((category) => (
               <li key={category.name} className="flex justify-between">
                 <span className="capitalize">{category.name}</span>
-                <span>{formatCurrency(category.amount)}</span>
+                <span>{formatCurrency(category.amount, currency)}</span>
               </li>
             ))}
           </ul>
@@ -37,7 +37,7 @@ const renderSpendingSummary = (data, isDark) => {
   );
 };
 
-const renderSavingsRecommendation = (data, isDark) => {
+const renderSavingsRecommendation = (data, isDark, currency) => {
   if (!data?.opportunities?.length) return null;
 
   const container = isDark
@@ -53,7 +53,7 @@ const renderSavingsRecommendation = (data, isDark) => {
           <li key={`${item.title}-${index}`} className="flex justify-between">
             <span className="mr-2 flex-1 text-left">{item.title}</span>
             {item.potentialSavings ? (
-              <span>{formatCurrency(item.potentialSavings)}</span>
+              <span>{formatCurrency(item.potentialSavings, currency)}</span>
             ) : null}
           </li>
         ))}
@@ -62,7 +62,7 @@ const renderSavingsRecommendation = (data, isDark) => {
   );
 };
 
-const renderTrendOverview = (data, isDark) => {
+const renderTrendOverview = (data, isDark, currency) => {
   if (!data) return null;
 
   const container = isDark ? "bg-blue-600/10" : "bg-blue-50";
@@ -75,7 +75,7 @@ const renderTrendOverview = (data, isDark) => {
         <div className={`flex justify-between ${textColor}`}>
           <span>Forecast</span>
           <span className="font-semibold">
-            {formatCurrency(data.predictedSpending.predictedAmount)}
+            {formatCurrency(data.predictedSpending.predictedAmount, currency)}
           </span>
         </div>
       ) : null}
@@ -128,14 +128,14 @@ const renderAlertSummary = (data, isDark) => {
   );
 };
 
-export const renderDataBlock = (type, data, isDark) => {
+export const renderDataBlock = (type, data, isDark, currency) => {
   switch (type) {
     case "spendingSummary":
-      return renderSpendingSummary(data, isDark);
+      return renderSpendingSummary(data, isDark, currency);
     case "savingsRecommendation":
-      return renderSavingsRecommendation(data, isDark);
+      return renderSavingsRecommendation(data, isDark, currency);
     case "trendOverview":
-      return renderTrendOverview(data, isDark);
+      return renderTrendOverview(data, isDark, currency);
     case "alerts":
       return renderAlertSummary(data, isDark);
     default:

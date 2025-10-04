@@ -1,11 +1,12 @@
 import Notification from "../../models/notificationModel.js";
+import { DEFAULT_CURRENCY } from "../../constants/currencies.js";
 
 const DEFAULT_LIMIT = 20;
 
-const formatCurrency = (amount = 0) =>
+const formatCurrency = (amount = 0, currency = DEFAULT_CURRENCY) =>
   new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency: "USD",
+    currency,
   }).format(Number(amount) || 0);
 
 export const createNotification = async (userId, notificationData) => {
@@ -68,13 +69,16 @@ export const createRenewalReminder = async (
 ) => {
   const messages = {
     1: `"${subscription.name}" renews tomorrow for ${formatCurrency(
-      subscription.price
+      subscription.price,
+      subscription.currency
     )}`,
     3: `"${subscription.name}" renews in 3 days for ${formatCurrency(
-      subscription.price
+      subscription.price,
+      subscription.currency
     )}`,
     7: `"${subscription.name}" renews in 7 days for ${formatCurrency(
-      subscription.price
+      subscription.price,
+      subscription.currency
     )}`,
   };
 
@@ -111,6 +115,7 @@ export const createBudgetAlert = async (
   const percentage = (Number(spent) / Number(limit)) * 100;
   let priority = "medium";
   let title = "Budget Alert";
+  const currency = context?.currency || DEFAULT_CURRENCY;
 
   if (percentage >= 100) {
     priority = "urgent";
@@ -123,8 +128,12 @@ export const createBudgetAlert = async (
   return createNotification(userId, {
     type: "budget",
     title,
-    message: `You've spent ${formatCurrency(spent)} of ${formatCurrency(
-      limit
+    message: `You've spent ${formatCurrency(
+      spent,
+      currency
+    )} of ${formatCurrency(
+      limit,
+      currency
     )} in ${category} (${percentage.toFixed(1)}%)`,
     data: { category, spent, limit, percentage, period, context, threshold },
     priority,
@@ -147,22 +156,30 @@ export const createBillReminder = async (
 
   let title = "Upcoming Bill";
   let message = `${bill.name} has a payment of ${formatCurrency(
-    bill.amount
+    bill.amount,
+    bill.currency
   )} due on ${new Date(bill.dueDate).toLocaleDateString()}`;
 
   if (isOverdue) {
     title = "Bill Overdue";
     message = `${bill.name} is overdue by ${overdueByDays} day${
       overdueByDays === 1 ? "" : "s"
-    }. Amount due: ${formatCurrency(bill.amount)}`;
+    }. Amount due: ${formatCurrency(bill.amount, bill.currency)}`;
   } else if (isUpcoming && daysUntilDue === 0) {
     title = "Bill Due Today";
-    message = `${bill.name} is due today for ${formatCurrency(bill.amount)}`;
+    message = `${bill.name} is due today for ${formatCurrency(
+      bill.amount,
+      bill.currency
+    )}`;
   } else if (isUpcoming && daysUntilDue === 1) {
-    message = `${bill.name} is due tomorrow for ${formatCurrency(bill.amount)}`;
+    message = `${bill.name} is due tomorrow for ${formatCurrency(
+      bill.amount,
+      bill.currency
+    )}`;
   } else if (isUpcoming && daysUntilDue > 1) {
     message = `${bill.name} is due in ${daysUntilDue} days for ${formatCurrency(
-      bill.amount
+      bill.amount,
+      bill.currency
     )}`;
   }
 
@@ -192,7 +209,8 @@ export const createSavingsRecommendation = async (
     type: "recommendation",
     title: "Savings Opportunity",
     message: `You could save ${formatCurrency(
-      potentialSavings
+      potentialSavings,
+      subscription.currency
     )} by canceling "${subscription.name}"`,
     data: {
       subscriptionId: subscription._id,

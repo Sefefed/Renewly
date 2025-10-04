@@ -1,4 +1,5 @@
 import { renderDataBlock } from "./chatMessageBlocks";
+import { useCurrency } from "../../hooks/useCurrency";
 
 const toDate = (value) => {
   if (!value) return new Date();
@@ -29,12 +30,14 @@ const getActionClasses = (isDark) =>
     : "border border-blue-200 bg-blue-50 text-blue-600 hover:bg-blue-100";
 
 const ChatMessage = ({ message, onAction, theme = "dark" }) => {
+  const { currency } = useCurrency();
   const isAssistant = message.type === "assistant";
   const timestamp = toDate(message.timestamp);
   const isDark = theme === "dark";
   const avatarClass = getAvatarClass(isAssistant, isDark);
   const bubbleClass = getBubbleClass(isAssistant, isDark);
   const timeColor = isDark ? "text-gray-500" : "text-gray-400";
+  const dataBlock = message.content?.dataBlock;
 
   return (
     <div className={`flex gap-3 ${isAssistant ? "" : "flex-row-reverse"}`}>
@@ -55,7 +58,12 @@ const ChatMessage = ({ message, onAction, theme = "dark" }) => {
               <p className="mb-2 text-sm leading-relaxed">
                 {message.content?.text}
               </p>
-              {renderDataBlock(message, theme)}
+              {renderDataBlock(
+                dataBlock?.type,
+                dataBlock?.data,
+                isDark,
+                currency
+              )}
             </div>
           )}
         </div>

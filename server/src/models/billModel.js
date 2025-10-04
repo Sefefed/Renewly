@@ -1,4 +1,8 @@
 import mongoose from "mongoose";
+import {
+  DEFAULT_CURRENCY,
+  SUPPORTED_CURRENCY_CODES,
+} from "../constants/currencies.js";
 
 const billSchema = new mongoose.Schema(
   {
@@ -16,8 +20,8 @@ const billSchema = new mongoose.Schema(
     },
     currency: {
       type: String,
-      enum: ["USD", "EUR", "GBP"],
-      default: "USD",
+      enum: SUPPORTED_CURRENCY_CODES,
+      default: DEFAULT_CURRENCY,
     },
     dueDate: {
       type: Date,

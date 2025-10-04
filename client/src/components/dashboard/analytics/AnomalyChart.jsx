@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { Scatter } from "react-chartjs-2";
 import ensureChartRegistration from "./chartSetup";
 import { formatCurrency } from "../../../utils/formatters";
+import { DEFAULT_CURRENCY } from "../../../constants/preferences";
 
 ensureChartRegistration();
 
@@ -132,7 +133,7 @@ AnomalyChart.propTypes = {
 AnomalyChart.defaultProps = {
   data: [],
   baseline: [],
-  currency: "USD",
+  currency: DEFAULT_CURRENCY,
   onPointClick: undefined,
 };
 

@@ -1,11 +1,12 @@
 import PropTypes from "prop-types";
 import { formatCurrency } from "../../../utils/formatters";
+import { DEFAULT_CURRENCY } from "../../../constants/preferences";
 
 const TREND_STYLES = {
   up: { emoji: "📈", className: "text-emerald-500" },
   down: { emoji: "📉", className: "text-rose-500" },
   stable: { emoji: "➡️", className: "text-tertiary" },
-  opportunity: { emoji: "�", className: "text-amber-500" },
+  opportunity: { emoji: "💡", className: "text-amber-500" },
   alert: { emoji: "⚠️", className: "text-orange-500" },
 };
 
@@ -29,6 +30,7 @@ const InsightCard = ({
   const numericValue = typeof value === "number" ? value : null;
   const displayValue =
     numericValue !== null ? formatCurrency(numericValue, currency) : value;
+  const iconStyles = COLOR_STYLES[color] ?? COLOR_STYLES.blue;
 
   return (
     <div
@@ -37,8 +39,14 @@ const InsightCard = ({
     >
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-4">
+          <span
+            className={`inline-flex h-12 w-12 items-center justify-center rounded-2xl border text-2xl ${iconStyles}`}
+            aria-hidden="true"
+          >
+            {icon}
+          </span>
           <div>
-            <p className="text-xs uppercase tracking-wider text-tertiary font-semibold">
+            <p className="text-xs font-semibold uppercase tracking-wider text-tertiary">
               {title}
             </p>
             <p
@@ -75,7 +83,7 @@ InsightCard.defaultProps = {
   trend: "stable",
   color: "blue",
   description: "",
-  currency: "USD",
+  currency: DEFAULT_CURRENCY,
 };
 
 export default InsightCard;

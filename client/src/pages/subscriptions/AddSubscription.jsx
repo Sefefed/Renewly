@@ -1,24 +1,34 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { useApi } from "../../utils/api";
+import { useCurrency } from "../../hooks/useCurrency";
+import { SUPPORTED_CURRENCIES } from "../../constants/preferences";
 
 export default function AddSubscription() {
   const { token } = useAuth();
   const navigate = useNavigate();
   const api = useApi(token);
+  const { currency: selectedCurrency } = useCurrency();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [form, setForm] = useState({
+  const [form, setForm] = useState(() => ({
     name: "",
     price: "",
-    currency: "USD",
+    currency: selectedCurrency,
     frequency: "monthly",
     category: "entertainment",
     paymentMethod: "",
     startDate: new Date().toISOString().split("T")[0],
     renewalDate: "",
-  });
+  }));
+
+  useEffect(() => {
+    setForm((prev) => ({
+      ...prev,
+      currency: selectedCurrency,
+    }));
+  }, [selectedCurrency]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -111,9 +121,11 @@ export default function AddSubscription() {
                   onChange={handleChange}
                   className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  <option value="USD">USD</option>
-                  <option value="EUR">EUR</option>
-                  <option value="GBP">GBP</option>
+                  {SUPPORTED_CURRENCIES.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
                 </select>
               </div>
 

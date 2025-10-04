@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import { formatCurrency } from "../../utils/formatters";
+import { useCurrency } from "../../hooks/useCurrency";
 
 const METRIC_CONFIG = [
   {
@@ -26,17 +27,18 @@ const METRIC_CONFIG = [
 ];
 
 export default function KpiGrid({ summary, savingsPotential }) {
+  const { currency } = useCurrency();
   const metrics = [
     ...METRIC_CONFIG.map((config) => ({
       ...config,
-      value: config.formatter(summary?.[config.key] ?? 0),
+      value: config.formatter(summary?.[config.key] ?? 0, currency),
     })),
     {
       key: "savingsPotential",
       label: "Savings Potential",
       valueClass: "text-amber-500",
       iconBg: "bg-amber-50 text-amber-500",
-      value: formatCurrency(savingsPotential ?? 0),
+      value: formatCurrency(savingsPotential ?? 0, currency),
     },
   ];
 

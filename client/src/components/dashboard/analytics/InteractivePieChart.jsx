@@ -2,6 +2,8 @@ import PropTypes from "prop-types";
 import { useMemo } from "react";
 import { Doughnut } from "react-chartjs-2";
 import ensureChartRegistration from "./chartSetup";
+import { formatCurrency } from "../../../utils/formatters";
+import { DEFAULT_CURRENCY } from "../../../constants/preferences";
 
 ensureChartRegistration();
 
@@ -15,7 +17,7 @@ const COLORS = [
   "#F97316",
 ];
 
-const InteractivePieChart = ({ data, onSegmentClick }) => {
+const InteractivePieChart = ({ data, currency, onSegmentClick }) => {
   const chartData = useMemo(() => {
     const labels = data?.map((item) => item.category ?? "Other") ?? [];
     const values = data?.map((item) => item.total ?? 0) ?? [];
@@ -59,7 +61,7 @@ const InteractivePieChart = ({ data, onSegmentClick }) => {
             label: (context) => {
               const label = context.label ?? "";
               const value = context.parsed ?? 0;
-              return `${label}: ${value.toLocaleString()}`;
+              return `${label}: ${formatCurrency(value, currency)}`;
             },
           },
         },
@@ -72,7 +74,7 @@ const InteractivePieChart = ({ data, onSegmentClick }) => {
         onSegmentClick({ label, value });
       },
     }),
-    [onSegmentClick]
+    [currency, onSegmentClick]
   );
 
   return <Doughnut data={chartData} options={options} />;
@@ -86,11 +88,13 @@ InteractivePieChart.propTypes = {
       percentage: PropTypes.number,
     })
   ),
+  currency: PropTypes.string,
   onSegmentClick: PropTypes.func,
 };
 
 InteractivePieChart.defaultProps = {
   data: [],
+  currency: DEFAULT_CURRENCY,
   onSegmentClick: undefined,
 };
 

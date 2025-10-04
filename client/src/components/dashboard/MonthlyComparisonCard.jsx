@@ -1,10 +1,12 @@
 import PropTypes from "prop-types";
 import { formatCurrency } from "../../utils/formatters";
+import { useCurrency } from "../../hooks/useCurrency";
 
 export default function MonthlyComparisonCard({
   comparison,
   showInitialLoader,
 }) {
+  const { currency } = useCurrency();
   if (!comparison) {
     return null;
   }
@@ -12,11 +14,7 @@ export default function MonthlyComparisonCard({
   const difference = comparison.difference ?? 0;
   const increase = difference >= 0;
   const percentage = comparison.percentageChange;
-  const icon = increase ? "⬆️" : "⬇️";
   const tone = increase ? "text-rose-500" : "text-emerald-500";
-  const pillBg = increase
-    ? "border-rose-200 bg-rose-50"
-    : "border-emerald-200 bg-emerald-50";
 
   return (
     <div className="dashboard-card">
@@ -35,14 +33,17 @@ export default function MonthlyComparisonCard({
                 {comparison.currentMonth.label}
               </p>
               <p className="text-lg font-semibold text-primary">
-                {formatCurrency(comparison.currentMonth.total)}
+                {formatCurrency(comparison.currentMonth.total, currency)}
               </p>
               <p className="mt-2 text-sm ">
                 Subscriptions:{" "}
-                {formatCurrency(comparison.currentMonth.subscriptions)}
+                {formatCurrency(
+                  comparison.currentMonth.subscriptions,
+                  currency
+                )}
               </p>
               <p className="text-sm">
-                Bills: {formatCurrency(comparison.currentMonth.bills)}
+                Bills: {formatCurrency(comparison.currentMonth.bills, currency)}
               </p>
             </div>
             <div>
@@ -50,14 +51,18 @@ export default function MonthlyComparisonCard({
                 {comparison.previousMonth.label}
               </p>
               <p className="text-lg font-semibold text-primary">
-                {formatCurrency(comparison.previousMonth.total)}
+                {formatCurrency(comparison.previousMonth.total, currency)}
               </p>
               <p className="mt-2 text-sm">
                 Subscriptions:{" "}
-                {formatCurrency(comparison.previousMonth.subscriptions)}
+                {formatCurrency(
+                  comparison.previousMonth.subscriptions,
+                  currency
+                )}
               </p>
               <p className="text-sm ">
-                Bills: {formatCurrency(comparison.previousMonth.bills)}
+                Bills:{" "}
+                {formatCurrency(comparison.previousMonth.bills, currency)}
               </p>
             </div>
           </div>
@@ -68,7 +73,7 @@ export default function MonthlyComparisonCard({
                   {increase ? "Spending increased" : "Spending decreased"}
                 </p>
                 <p className={`mt-2 text-xl font-semibold ${tone}`}>
-                  {formatCurrency(Math.abs(difference))}{" "}
+                  {formatCurrency(Math.abs(difference), currency)}{" "}
                   {increase ? "higher" : "lower"} than last month
                 </p>
                 {percentage !== null && (

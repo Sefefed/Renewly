@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import SmartRecommendationCard from "./SmartRecommendationCard";
+import { DEFAULT_CURRENCY } from "../../../constants/preferences";
 
 const SmartRecommendations = ({ opportunities, currency, onAskAssistant }) => {
   if (!opportunities?.length) {
@@ -58,7 +59,7 @@ SmartRecommendations.propTypes = {
 
 SmartRecommendations.defaultProps = {
   opportunities: [],
-  currency: "USD",
+  currency: DEFAULT_CURRENCY,
   onAskAssistant: undefined,
 };
 

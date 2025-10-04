@@ -1,7 +1,9 @@
 import PropTypes from "prop-types";
 import { formatCurrency } from "../../utils/formatters";
+import { useCurrency } from "../../hooks/useCurrency";
 
 export default function RecommendationsCard({ recommendations }) {
+  const { currency } = useCurrency();
   return (
     <div className="dashboard-card">
       <h2 className="mb-6 text-2xl font-semibold text-primary">
@@ -19,7 +21,8 @@ export default function RecommendationsCard({ recommendations }) {
               </p>
               {rec.potentialSavings && (
                 <p className="mt-3 text-sm font-medium text-amber-600">
-                  💰 Potential savings: {formatCurrency(rec.potentialSavings)}
+                  💰 Potential savings:{" "}
+                  {formatCurrency(rec.potentialSavings, currency)}
                 </p>
               )}
             </div>

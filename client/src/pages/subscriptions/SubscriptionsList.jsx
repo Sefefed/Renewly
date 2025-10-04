@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import Navigation from "../../components/Navigation";
@@ -8,16 +8,14 @@ import StatusBadge from "../../components/ui/StatusBadge";
 import FilterTabs from "../../components/ui/FilterTabs";
 import EmptyState from "../../components/ui/EmptyState";
 import { useApi } from "../../utils/api";
-import {
-  formatCurrency,
-  formatDate,
-  formatRelativeDate,
-} from "../../utils/formatters";
+import { useCurrency } from "../../hooks/useCurrency";
+import { formatCurrency, formatDate } from "../../utils/formatters";
 
 export default function SubscriptionsList() {
   const { token } = useAuth();
   const api = useApi(token);
   const navigate = useNavigate();
+  const { currency } = useCurrency();
   const [subscriptions, setSubscriptions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -31,11 +29,7 @@ export default function SubscriptionsList() {
     { value: "expired", label: "Expired" },
   ];
 
-  useEffect(() => {
-    fetchSubscriptions();
-  }, []);
-
-  const fetchSubscriptions = async () => {
+  const fetchSubscriptions = useCallback(async () => {
     try {
       setLoading(true);
       const data = await api.getSubscriptions();
@@ -45,7 +39,11 @@ export default function SubscriptionsList() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [api]);
+
+  useEffect(() => {
+    fetchSubscriptions();
+  }, [fetchSubscriptions]);
 
   const filteredSubscriptions = subscriptions.filter((sub) => {
     if (filter === "all") return true;
@@ -102,7 +100,7 @@ export default function SubscriptionsList() {
           </div>
           <Link
             to="/subscriptions/add"
-            onClick={(e) => handleDelayedNav(e, '/subscriptions/add')}
+            onClick={(e) => handleDelayedNav(e, "/subscriptions/add")}
             className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-sm"
           >
             Add Subscription
@@ -116,9 +114,11 @@ export default function SubscriptionsList() {
           <FilterTabs
             filters={filters.map((f) => ({
               ...f,
-              label: `${f.label} (${subscriptions.filter((sub) =>
-                f.value === "all" ? true : sub.status === f.value
-              ).length})`,
+              label: `${f.label} (${
+                subscriptions.filter((sub) =>
+                  f.value === "all" ? true : sub.status === f.value
+                ).length
+              })`,
             }))}
             activeFilter={filter}
             onFilterChange={setFilter}
@@ -156,7 +156,10 @@ export default function SubscriptionsList() {
                   <div className="flex items-center gap-4">
                     <div className="text-right">
                       <p className="text-xl font-bold">
-                        {formatCurrency(subscription.price)}
+                        {formatCurrency(
+                          subscription.price,
+                          subscription.currency || currency
+                        )}
                       </p>
                       <StatusBadge status={subscription.status} />
                     </div>
@@ -174,7 +177,12 @@ export default function SubscriptionsList() {
                       </button>
                       <Link
                         to={`/subscriptions/${subscription._id}`}
-                        onClick={(e) => handleDelayedNav(e, `/subscriptions/${subscription._id}`)}
+                        onClick={(e) =>
+                          handleDelayedNav(
+                            e,
+                            `/subscriptions/${subscription._id}`
+                          )
+                        }
                         className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm"
                       >
                         View Details
@@ -193,7 +201,12 @@ export default function SubscriptionsList() {
                   : `No ${filter} subscriptions found`
               }
               actionText={filter === "all" ? "Add Subscription" : null}
-              onAction={filter === "all" ? () => setTimeout(() => navigate('/subscriptions/add'), DELAY_MS) : null}
+              onAction={
+                filter === "all"
+                  ? () =>
+                      setTimeout(() => navigate("/subscriptions/add"), DELAY_MS)
+                  : null
+              }
               icon="📱"
             />
           )}

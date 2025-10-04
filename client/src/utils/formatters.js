@@ -1,6 +1,7 @@
 // Utility functions for formatting data consistently across the app
+import { DEFAULT_CURRENCY } from "../constants/preferences";
 
-export const formatCurrency = (amount, currency = "USD") => {
+export const formatCurrency = (amount, currency = DEFAULT_CURRENCY) => {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: currency,
@@ -13,7 +14,7 @@ export const formatDate = (dateString, options = {}) => {
     day: "numeric",
     year: "numeric",
   };
-  
+
   return new Date(dateString).toLocaleDateString("en-US", {
     ...defaultOptions,
     ...options,
@@ -48,7 +49,7 @@ export const getStatusColor = (status) => {
     cancelled: "bg-red-500",
     expired: "bg-gray-500",
   };
-  
+
   return statusColors[status] || "bg-gray-500";
 };
 
@@ -61,7 +62,7 @@ export const getStatusTextColor = (status) => {
     cancelled: "text-red-400",
     expired: "text-gray-400",
   };
-  
+
   return statusColors[status] || "text-gray-400";
 };
 

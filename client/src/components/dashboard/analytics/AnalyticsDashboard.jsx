@@ -1,6 +1,8 @@
 import { useCallback, useMemo, useState } from "react";
 import PropTypes from "prop-types";
 import { formatCurrency } from "../../../utils/formatters";
+import { useCurrency } from "../../../hooks/useCurrency";
+import { DEFAULT_CURRENCY } from "../../../constants/preferences";
 import InteractiveLineChart from "./InteractiveLineChart";
 import InteractivePieChart from "./InteractivePieChart";
 import ForecastChart from "./ForecastChart";
@@ -29,6 +31,9 @@ const AnalyticsDashboard = ({
 }) => {
   const [activeChart, setActiveChart] = useState(CHART_TABS[0].id);
   const [drilldownData, setDrilldownData] = useState(null);
+  const { currency: preferredCurrency } = useCurrency();
+  const activeCurrency =
+    preferredCurrency || insights?.currency || DEFAULT_CURRENCY;
 
   const cards = useMemo(() => {
     if (!insights) return [];
@@ -100,7 +105,7 @@ const AnalyticsDashboard = ({
         return (
           <InteractiveLineChart
             data={insights.spendingTrends}
-            currency={insights.currency}
+            currency={activeCurrency}
             onDataPointClick={(payload) => setDrilldownData(payload)}
           />
         );
@@ -108,6 +113,7 @@ const AnalyticsDashboard = ({
         return (
           <InteractivePieChart
             data={insights.categoryBreakdown}
+            currency={activeCurrency}
             onSegmentClick={(payload) => setDrilldownData(payload)}
           />
         );
@@ -116,7 +122,7 @@ const AnalyticsDashboard = ({
           <ForecastChart
             data={insights.predictedSpending}
             historical={insights.spendingTrends}
-            currency={insights.currency}
+            currency={activeCurrency}
           />
         );
       case "anomalies":
@@ -124,7 +130,7 @@ const AnalyticsDashboard = ({
           <AnomalyChart
             data={insights.anomalyDetection}
             baseline={insights.spendingTrends}
-            currency={insights.currency}
+            currency={activeCurrency}
             onPointClick={(payload) => setDrilldownData(payload)}
           />
         );
@@ -132,14 +138,14 @@ const AnalyticsDashboard = ({
         return (
           <SavingsChart
             opportunities={insights.savingsOpportunities}
-            currency={insights.currency}
+            currency={activeCurrency}
             onBarClick={(payload) => setDrilldownData(payload)}
           />
         );
       default:
         return null;
     }
-  }, [activeChart, insights]);
+  }, [activeChart, activeCurrency, insights]);
 
   const handleAlertDetails = useCallback(
     (alert) => {
@@ -188,7 +194,7 @@ const AnalyticsDashboard = ({
         typeof opportunity.potentialSavings === "number"
           ? `Estimated savings: ${formatCurrency(
               opportunity.potentialSavings,
-              insights?.currency || "USD"
+              activeCurrency
             )}.`
           : null,
       ].filter(Boolean);
@@ -201,7 +207,7 @@ const AnalyticsDashboard = ({
 
       onAssistantPrompt(prompt.trim());
     },
-    [insights?.currency, onAssistantPrompt]
+    [activeCurrency, onAssistantPrompt]
   );
 
   if (isLoading) {
@@ -231,7 +237,7 @@ const AnalyticsDashboard = ({
         />
       </div>
 
-      <AnalyticsSummaryCards cards={cards} currency={insights?.currency} />
+      <AnalyticsSummaryCards cards={cards} currency={activeCurrency} />
 
       <AnalyticsChartSection
         activeChart={activeChart}
@@ -242,7 +248,7 @@ const AnalyticsDashboard = ({
 
       <AnalyticsHabitsSummary
         habits={insights?.subscriptionHabits}
-        currency={insights?.currency}
+        currency={activeCurrency}
       />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -270,7 +276,7 @@ const AnalyticsDashboard = ({
           <div className="mt-4">
             <SmartRecommendations
               opportunities={insights?.savingsOpportunities}
-              currency={insights?.currency}
+              currency={activeCurrency}
               onAskAssistant={handleRecommendationAssist}
             />
           </div>
@@ -329,7 +335,7 @@ const AnalyticsDashboard = ({
       {drilldownData && (
         <DrilldownModal
           data={drilldownData}
-          currency={insights?.currency}
+          currency={activeCurrency}
           onClose={() => setDrilldownData(null)}
         />
       )}

@@ -1,4 +1,5 @@
 import Budget from "../models/budgetModel.js";
+import { DEFAULT_CURRENCY } from "../constants/currencies.js";
 
 export const getBudget = async (req, res, next) => {
   try {
@@ -9,7 +10,7 @@ export const getBudget = async (req, res, next) => {
       budget = await Budget.create({
         user: req.user._id,
         monthlyLimit: 500,
-        currency: "USD",
+        currency: DEFAULT_CURRENCY,
         categoryLimits: {
           entertainment: 100,
           utilities: 150,

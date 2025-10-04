@@ -1,21 +1,29 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import Navigation from "../../components/Navigation";
 import LoadingSpinner from "../../components/ui/LoadingSpinner";
 import ErrorMessage from "../../components/ui/ErrorMessage";
 import { useApi } from "../../utils/api";
-import { formatCurrency } from "../../utils/formatters";
+import { useCurrency } from "../../hooks/useCurrency";
+import { SUPPORTED_CURRENCIES } from "../../constants/preferences";
 
 export default function BudgetSettings() {
   const { token } = useAuth();
   const api = useApi(token);
-  const [budget, setBudget] = useState(null);
+  const { currency: selectedCurrency, setCurrency } = useCurrency();
+  const currencyLabel = useMemo(() => {
+    const match = SUPPORTED_CURRENCIES.find(
+      (option) => option.value === selectedCurrency
+    );
+    return match ? match.label : selectedCurrency;
+  }, [selectedCurrency]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
   const [form, setForm] = useState({
     monthlyLimit: 0,
-    currency: "USD",
+    currency: selectedCurrency,
     categoryLimits: {
       entertainment: 0,
       utilities: 0,
@@ -31,49 +39,80 @@ export default function BudgetSettings() {
     },
   });
 
-  useEffect(() => {
-    fetchBudget();
-  }, []);
-
-  const fetchBudget = async () => {
+  const fetchBudget = useCallback(async () => {
     try {
       setLoading(true);
       const data = await api.getBudget();
-      setBudget(data.data);
-      setForm(data.data);
+      const payload = data.data;
+      setForm((prev) => ({
+        ...prev,
+        ...payload,
+        currency: selectedCurrency,
+      }));
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
-  };
+  }, [api, selectedCurrency]);
+
+  useEffect(() => {
+    fetchBudget();
+  }, [fetchBudget]);
+
+  useEffect(() => {
+    setForm((prev) => ({
+      ...prev,
+      currency: selectedCurrency,
+    }));
+  }, [selectedCurrency]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
     if (name.startsWith("categoryLimits.")) {
       const category = name.split(".")[1];
-      setForm({
-        ...form,
+      setForm((prev) => ({
+        ...prev,
         categoryLimits: {
-          ...form.categoryLimits,
-          [category]: parseFloat(value) || 0,
+          ...prev.categoryLimits,
+          [category]: Number.parseFloat(value) || 0,
         },
-      });
+      }));
     } else if (name.startsWith("notifications.")) {
       const notificationKey = name.split(".")[1];
-      setForm({
-        ...form,
-        notifications: {
-          ...form.notifications,
-          [notificationKey]: type === "checkbox" ? checked : parseInt(value),
-        },
+      setForm((prev) => {
+        const parsedValue = Number.parseInt(value, 10);
+        return {
+          ...prev,
+          notifications: {
+            ...prev.notifications,
+            [notificationKey]:
+              type === "checkbox"
+                ? checked
+                : Number.isNaN(parsedValue)
+                ? prev.notifications[notificationKey]
+                : parsedValue,
+          },
+        };
       });
     } else {
-      setForm({
-        ...form,
-        [name]: type === "checkbox" ? checked : parseFloat(value) || value,
-      });
+      let nextValue;
+      if (type === "checkbox") {
+        nextValue = checked;
+      } else {
+        const numericValue = Number(value);
+        nextValue = Number.isNaN(numericValue) ? value : numericValue;
+      }
+
+      setForm((prev) => ({
+        ...prev,
+        [name]: nextValue,
+      }));
+
+      if (name === "currency" && value !== selectedCurrency) {
+        setCurrency(String(value));
+      }
     }
   };
 
@@ -84,6 +123,7 @@ export default function BudgetSettings() {
 
     try {
       await api.updateBudget(form);
+      setCurrency(form.currency);
       await fetchBudget(); // Refresh data
       alert("Budget updated successfully!");
     } catch (err) {
@@ -121,18 +161,17 @@ export default function BudgetSettings() {
 
       {/* Header */}
       <header className="border-b border-gray-200 bg-gray-50 backdrop-blur-sm px-6 py-5 shadow-sm">
-  <div className="flex items-center justify-between">
-    <div>
-      <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">
-        Budget Settings
-      </h1>
-      <p className="text-sm text-gray-500 mt-1">
-        Set your monthly spending limits and category budgets
-      </p>
-    </div>
-  </div>
-</header>
-
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">
+              Budget Settings
+            </h1>
+            <p className="text-sm text-gray-500 mt-1">
+              Set your monthly spending limits and category budgets
+            </p>
+          </div>
+        </div>
+      </header>
 
       <main className="mx-auto w-full max-w-4xl px-6 py-8">
         <form onSubmit={handleSubmit} className="space-y-8">
@@ -144,117 +183,113 @@ export default function BudgetSettings() {
 
           {/* Overall Budget */}
           <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 shadow-sm">
-  <h2 className="text-lg font-semibold text-gray-900 mb-4">
-    Overall Monthly Budget
-  </h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              Overall Monthly Budget
+            </h2>
 
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <div>
-      <label className="block text-sm font-bold text-gray-700 mb-2">
-        Monthly Limit *
-      </label>
-      <input
-        type="number"
-        name="monthlyLimit"
-        value={form.monthlyLimit}
-        onChange={handleChange}
-        min="0"
-        step="0.01"
-        required
-        className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-      />
-    </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2">
+                  Monthly Limit *
+                </label>
+                <input
+                  type="number"
+                  name="monthlyLimit"
+                  value={form.monthlyLimit}
+                  onChange={handleChange}
+                  min="0"
+                  step="0.01"
+                  required
+                  className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
 
-    <div>
-      <label className="block text-sm font-bold text-gray-700 mb-2">
-        Currency
-      </label>
-      <select
-        name="currency"
-        value={form.currency}
-        onChange={handleChange}
-        className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-      >
-        <option value="ETB">ETB</option>
-        <option value="USD">USD</option>
-        <option value="EUR">EUR</option>
-        <option value="GBP">GBP</option>
-      </select>
-    </div>
-  </div>
-</div>
-
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2">
+                  Currency
+                </label>
+                <div className="w-full bg-gray-100 border border-gray-200 rounded-lg px-3 py-2 text-gray-900 flex items-center justify-between">
+                  <span>{currencyLabel}</span>
+                  <Link
+                    to="/settings"
+                    className="text-sm font-medium text-blue-600 hover:text-blue-700"
+                  >
+                    Manage in Settings
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
 
           {/* Category Limits */}
           <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 shadow-sm">
-  <h2 className="text-lg font-semibold text-gray-900 mb-4">
-    Category Limits
-  </h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              Category Limits
+            </h2>
 
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-    {Object.entries(form.categoryLimits).map(([category, limit]) => (
-      <div key={category}>
-        <label className="block text-sm font-bold text-gray-700 mb-2 capitalize">
-          {category} Limit
-        </label>
-        <input
-          type="number"
-          name={`categoryLimits.${category}`}
-          value={limit}
-          onChange={handleChange}
-          min="0"
-          step="0.01"
-          placeholder="0.00"
-          className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-        />
-      </div>
-    ))}
-  </div>
-</div>
-
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {Object.entries(form.categoryLimits).map(([category, limit]) => (
+                <div key={category}>
+                  <label className="block text-sm font-bold text-gray-700 mb-2 capitalize">
+                    {category} Limit
+                  </label>
+                  <input
+                    type="number"
+                    name={`categoryLimits.${category}`}
+                    value={limit}
+                    onChange={handleChange}
+                    min="0"
+                    step="0.01"
+                    placeholder="0.00"
+                    className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
 
           {/* Notifications */}
           <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 shadow-sm">
-  <h2 className="text-lg font-semibold text-gray-900 mb-4">
-    Notification Settings
-  </h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              Notification Settings
+            </h2>
 
-  <div className="space-y-4">
-    {/* Email Notifications Checkbox */}
-    <div className="flex items-center gap-2">
-      <input
-        type="checkbox"
-        name="notifications.email"
-        checked={form.notifications.email}
-        onChange={handleChange}
-        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-      />
-      <label className="text-sm text-gray-700 font-bold">
-        Enable email notifications
-      </label>
-    </div>
+            <div className="space-y-4">
+              {/* Email Notifications Checkbox */}
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  name="notifications.email"
+                  checked={form.notifications.email}
+                  onChange={handleChange}
+                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                />
+                <label className="text-sm text-gray-700 font-bold">
+                  Enable email notifications
+                </label>
+              </div>
 
-    {/* Alert Threshold Input */}
-    <div>
-      <label className="block text-sm font-bold text-gray-700 mb-2">
-        Alert Threshold (%)
-      </label>
-      <input
-        type="number"
-        name="notifications.threshold"
-        value={form.notifications.threshold}
-        onChange={handleChange}
-        min="0"
-        max="100"
-        className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-      />
-      <p className="text-base font-medium text-gray-500 mt-1">
-        Get notified when spending reaches this percentage of your budget
-      </p>
-    </div>
-  </div>
-</div>
-
+              {/* Alert Threshold Input */}
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2">
+                  Alert Threshold (%)
+                </label>
+                <input
+                  type="number"
+                  name="notifications.threshold"
+                  value={form.notifications.threshold}
+                  onChange={handleChange}
+                  min="0"
+                  max="100"
+                  className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+                <p className="text-base font-medium text-gray-500 mt-1">
+                  Get notified when spending reaches this percentage of your
+                  budget
+                </p>
+              </div>
+            </div>
+          </div>
 
           {/* Actions */}
           <div className="flex gap-4">

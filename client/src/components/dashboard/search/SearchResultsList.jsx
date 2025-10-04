@@ -1,7 +1,9 @@
 import PropTypes from "prop-types";
 import { formatCurrency, formatDate } from "../../../utils/formatters";
+import { useCurrency } from "../../../hooks/useCurrency";
 
 const SearchResultsList = ({ results }) => {
+  const { currency } = useCurrency();
   const items = results?.results ?? [];
   const totalCount = results?.totalCount ?? 0;
   const categoryFacets = results?.facets?.categories ?? [];
@@ -33,7 +35,7 @@ const SearchResultsList = ({ results }) => {
         <div className="flex w-full flex-wrap gap-3 text-xs text-secondary sm:w-auto sm:justify-end">
           {priceFacets && (
             <span className="rounded-full border border-gray-200 bg-white px-3 py-1 text-black">
-              Avg: {formatCurrency(priceFacets.avgPrice ?? 0)}
+              Avg: {formatCurrency(priceFacets.avgPrice ?? 0, currency)}
             </span>
           )}
           {categoryFacets.slice(0, 3).map((category) => (
@@ -83,7 +85,7 @@ const SearchResultsList = ({ results }) => {
             </div>
             <div className="flex flex-col items-start gap-2 text-right sm:items-end">
               <p className="text-xl font-semibold text-blue-600">
-                {formatCurrency(item.price, item.currency)}
+                {formatCurrency(item.price, item.currency || currency)}
               </p>
               <p className="text-xs text-tertiary">
                 Added {item.createdAt ? formatDate(item.createdAt) : "-"}

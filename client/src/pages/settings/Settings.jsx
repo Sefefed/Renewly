@@ -3,44 +3,77 @@ import { useAuth } from "../../contexts/AuthContext";
 import Navigation from "../../components/Navigation";
 import LoadingSpinner from "../../components/ui/LoadingSpinner";
 import ErrorMessage from "../../components/ui/ErrorMessage";
-import { useApi } from "../../utils/api";
+import { useCurrency } from "../../hooks/useCurrency";
+import { SUPPORTED_CURRENCIES } from "../../constants/preferences";
 
 export default function Settings() {
-  const { user, token, logout } = useAuth();
-  const api = useApi(token);
-  const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
-  const [form, setForm] = useState({
+  const { user, token, logout, updateUser } = useAuth();
+  const { currency: selectedCurrency, setCurrency } = useCurrency();
+  const [form, setForm] = useState(() => ({
     name: user?.name || "",
     email: user?.email || "",
-    currency: "USD",
-    timezone: "America/New_York",
+    currency: selectedCurrency,
+    timezone:
+      user?.timezone ||
+      Intl.DateTimeFormat().resolvedOptions().timeZone ||
+      "UTC",
     notifications: {
-      email: true,
-      reminders: true,
-      budgetAlerts: true,
+      email: user?.notifications?.email ?? true,
+      reminders: user?.notifications?.reminders ?? true,
+      budgetAlerts: user?.notifications?.budgetAlerts ?? true,
     },
-  });
+  }));
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [success, setSuccess] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    setForm((prev) => ({
+      ...prev,
+      currency: selectedCurrency,
+    }));
+  }, [selectedCurrency]);
+
+  useEffect(() => {
+    setForm((prev) => ({
+      ...prev,
+      name: user?.name || "",
+      email: user?.email || "",
+      timezone:
+        user?.timezone ||
+        prev.timezone ||
+        Intl.DateTimeFormat().resolvedOptions().timeZone ||
+        "UTC",
+      notifications: {
+        email: user?.notifications?.email ?? true,
+        reminders: user?.notifications?.reminders ?? true,
+        budgetAlerts: user?.notifications?.budgetAlerts ?? true,
+      },
+    }));
+  }, [user]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
     if (name.startsWith("notifications.")) {
       const notificationKey = name.split(".")[1];
-      setForm({
-        ...form,
+      setForm((prev) => ({
+        ...prev,
         notifications: {
-          ...form.notifications,
+          ...prev.notifications,
           [notificationKey]: checked,
         },
-      });
+      }));
     } else {
-      setForm({
-        ...form,
+      setForm((prev) => ({
+        ...prev,
         [name]: type === "checkbox" ? checked : value,
-      });
+      }));
+
+      if (name === "currency") {
+        setCurrency(value);
+      }
     }
   };
 
@@ -54,6 +87,14 @@ export default function Settings() {
       // In a real app, you'd have a user update endpoint
       // For now, we'll just simulate success
       await new Promise((resolve) => setTimeout(resolve, 1000));
+      setCurrency(form.currency);
+      updateUser({
+        name: form.name,
+        email: form.email,
+        timezone: form.timezone,
+        notifications: { ...form.notifications },
+        currency: form.currency,
+      });
       setSuccess("Settings updated successfully!");
     } catch (err) {
       setError(err.message);
@@ -174,10 +215,11 @@ export default function Settings() {
                     onChange={handleChange}
                     className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
-                    <option value="USD">USD - US Dollar</option>
-                    <option value="Birr">ETB - Ethiopian Birr</option>
-                    <option value="EUR">EUR - Euro</option>
-                    <option value="GBP">GBP - British Pound</option>
+                    {SUPPORTED_CURRENCIES.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
@@ -212,9 +254,7 @@ export default function Settings() {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-bold text-gray-900">
-                    Email Notifications
-                  </p>
+                  <p className="font-bold text-gray-900">Email Notifications</p>
                   <p className="text-sm text-gray-500">
                     Receive email updates about your subscriptions and bills
                   </p>

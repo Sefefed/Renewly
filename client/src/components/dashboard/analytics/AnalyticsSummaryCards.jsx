@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import InsightCard from "./InsightCard";
+import { DEFAULT_CURRENCY } from "../../../constants/preferences";
 
 const AnalyticsSummaryCards = ({ cards, currency }) => (
   <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -35,7 +36,7 @@ AnalyticsSummaryCards.propTypes = {
 };
 
 AnalyticsSummaryCards.defaultProps = {
-  currency: "USD",
+  currency: DEFAULT_CURRENCY,
 };
 
 export default AnalyticsSummaryCards;

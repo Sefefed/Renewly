@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import Navigation from "../../components/Navigation";
@@ -8,6 +8,7 @@ import StatusBadge from "../../components/ui/StatusBadge";
 import FilterTabs from "../../components/ui/FilterTabs";
 import EmptyState from "../../components/ui/EmptyState";
 import { useApi } from "../../utils/api";
+import { useCurrency } from "../../hooks/useCurrency";
 import {
   formatCurrency,
   formatDate,
@@ -18,6 +19,7 @@ export default function BillsList() {
   const { token } = useAuth();
   const api = useApi(token);
   const navigate = useNavigate();
+  const { currency } = useCurrency();
   const [bills, setBills] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -31,11 +33,7 @@ export default function BillsList() {
     { value: "overdue", label: "Overdue" },
   ];
 
-  useEffect(() => {
-    fetchBills();
-  }, []);
-
-  const fetchBills = async () => {
+  const fetchBills = useCallback(async () => {
     try {
       setLoading(true);
       const data = await api.getBills();
@@ -45,7 +43,11 @@ export default function BillsList() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [api]);
+
+  useEffect(() => {
+    fetchBills();
+  }, [fetchBills]);
 
   const handleMarkPaid = async (billId) => {
     try {
@@ -103,7 +105,7 @@ export default function BillsList() {
           </div>
           <Link
             to="/bills/add"
-            onClick={(e) => handleDelayedNav(e, '/bills/add')}
+            onClick={(e) => handleDelayedNav(e, "/bills/add")}
             className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-sm"
           >
             Add Bill
@@ -117,9 +119,11 @@ export default function BillsList() {
           <FilterTabs
             filters={filters.map((f) => ({
               ...f,
-              label: `${f.label} (${bills.filter((bill) =>
-                f.value === "all" ? true : bill.status === f.value
-              ).length})`,
+              label: `${f.label} (${
+                bills.filter((bill) =>
+                  f.value === "all" ? true : bill.status === f.value
+                ).length
+              })`,
             }))}
             activeFilter={filter}
             onFilterChange={setFilter}
@@ -161,7 +165,7 @@ export default function BillsList() {
                   <div className="flex items-center gap-4">
                     <div className="text-right">
                       <p className="text-xl font-bold">
-                        {formatCurrency(bill.amount, bill.currency)}
+                        {formatCurrency(bill.amount, bill.currency || currency)}
                       </p>
                       <StatusBadge status={bill.status} />
                     </div>
@@ -177,7 +181,9 @@ export default function BillsList() {
                       )}
                       <Link
                         to={`/bills/${bill._id}`}
-                        onClick={(e) => handleDelayedNav(e, `/bills/${bill._id}`)}
+                        onClick={(e) =>
+                          handleDelayedNav(e, `/bills/${bill._id}`)
+                        }
                         className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm"
                       >
                         View Details
@@ -196,7 +202,11 @@ export default function BillsList() {
                   : `No ${filter} bills found`
               }
               actionText={filter === "all" ? "Add Bill" : null}
-              onAction={filter === "all" ? () => setTimeout(() => navigate('/bills/add'), DELAY_MS) : null}
+              onAction={
+                filter === "all"
+                  ? () => setTimeout(() => navigate("/bills/add"), DELAY_MS)
+                  : null
+              }
               icon="💳"
             />
           )}

@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import { formatCurrency } from "../../../utils/formatters";
+import { DEFAULT_CURRENCY } from "../../../constants/preferences";
 
 const AnalyticsHabitsSummary = ({ habits, currency }) => {
   if (!habits) return null;
@@ -50,7 +51,7 @@ AnalyticsHabitsSummary.propTypes = {
 
 AnalyticsHabitsSummary.defaultProps = {
   habits: null,
-  currency: "USD",
+  currency: DEFAULT_CURRENCY,
 };
 
 export default AnalyticsHabitsSummary;

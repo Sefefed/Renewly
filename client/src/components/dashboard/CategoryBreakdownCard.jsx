@@ -1,9 +1,11 @@
 import PropTypes from "prop-types";
 import { PieChart } from "../Charts";
 import { formatCurrency } from "../../utils/formatters";
+import { useCurrency } from "../../hooks/useCurrency";
 
 export default function CategoryBreakdownCard({ breakdown, isLoading }) {
   const hasBreakdown = breakdown && Object.keys(breakdown).length > 0;
+  const { currency } = useCurrency();
 
   return (
     <div className="dashboard-card">
@@ -55,7 +57,7 @@ export default function CategoryBreakdownCard({ breakdown, isLoading }) {
                       </div>
                       <div className="text-right">
                         <p className="text-lg font-semibold text-emerald-600">
-                          {formatCurrency(amount)}
+                          {formatCurrency(amount, currency)}
                         </p>
                         {percentage !== null && (
                           <p className="text-xs text-tertiary">

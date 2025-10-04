@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { Line } from "react-chartjs-2";
 import ensureChartRegistration from "./chartSetup";
 import { formatCurrency } from "../../../utils/formatters";
-
+import { DEFAULT_CURRENCY } from "../../../constants/preferences";
 ensureChartRegistration();
 
 const ForecastChart = ({ data, historical, currency }) => {
@@ -101,7 +101,7 @@ ForecastChart.propTypes = {
 ForecastChart.defaultProps = {
   data: null,
   historical: [],
-  currency: "USD",
+  currency: DEFAULT_CURRENCY,
 };
 
 export default ForecastChart;

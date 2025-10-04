@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { Bar } from "react-chartjs-2";
 import ensureChartRegistration from "./chartSetup";
 import { formatCurrency } from "../../../utils/formatters";
+import { DEFAULT_CURRENCY } from "../../../constants/preferences";
 
 ensureChartRegistration();
 
@@ -100,7 +101,7 @@ SavingsChart.propTypes = {
 
 SavingsChart.defaultProps = {
   opportunities: [],
-  currency: "USD",
+  currency: DEFAULT_CURRENCY,
   onBarClick: undefined,
 };
 

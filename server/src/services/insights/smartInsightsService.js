@@ -1,6 +1,10 @@
 import Subscription from "../../models/subscriptionModel.js";
 import Bill from "../../models/billModel.js";
 import Budget from "../../models/budgetModel.js";
+import {
+  DEFAULT_CURRENCY,
+  SUPPORTED_CURRENCY_CODES,
+} from "../../constants/currencies.js";
 
 const PERIOD_CONFIG = {
   "7d": { days: 7, label: "Last 7 days" },
@@ -20,27 +24,38 @@ const CURRENCY_INDEX = {
   USD: 1,
   EUR: 1.07,
   GBP: 1.25,
+  ETB: 0.018,
 };
+
+SUPPORTED_CURRENCY_CODES.forEach((code) => {
+  if (!CURRENCY_INDEX[code]) {
+    CURRENCY_INDEX[code] = 1;
+  }
+});
 
 const toISODate = (date) => date.toISOString().split("T")[0];
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
-const convertCurrency = (amount = 0, from = "USD", to = "USD") => {
+const convertCurrency = (
+  amount = 0,
+  from = DEFAULT_CURRENCY,
+  to = DEFAULT_CURRENCY
+) => {
   if (from === to) return amount;
   const fromRate = CURRENCY_INDEX[from] ?? 1;
   const toRate = CURRENCY_INDEX[to] ?? 1;
   return (amount / fromRate) * toRate;
 };
 
-const formatCurrency = (amount, currency = "USD") => {
+const formatCurrency = (amount, currency = DEFAULT_CURRENCY) => {
   try {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency,
       maximumFractionDigits: 0,
     }).format(amount ?? 0);
-  } catch (error) {
+  } catch {
     return `$${Number(amount ?? 0).toFixed(0)}`;
   }
 };
@@ -66,9 +81,9 @@ const getBaseCurrency = (budget, subscriptions, bills) => {
   subscriptions.forEach((sub) => tally(sub.currency));
   bills.forEach((bill) => tally(bill.currency));
 
-  if (currencies.size === 0) return "USD";
+  if (currencies.size === 0) return DEFAULT_CURRENCY;
 
-  let selected = "USD";
+  let selected = DEFAULT_CURRENCY;
   let maxCount = 0;
   currencies.forEach((count, curr) => {
     if (count > maxCount) {

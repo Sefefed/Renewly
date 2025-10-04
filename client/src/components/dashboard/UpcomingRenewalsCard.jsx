@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import PropTypes from "prop-types";
 import { formatCurrency, formatDate } from "../../utils/formatters";
+import { useCurrency } from "../../hooks/useCurrency";
 import {
   SmartSearch,
   SearchResultsSkeleton,
@@ -20,6 +21,7 @@ export default function UpcomingRenewalsCard({ renewals, api }) {
     return renewals.length;
   }, [searchResults, renewals.length]);
 
+  const { currency } = useCurrency();
   const loadPopularSearches = useCallback(async () => {
     try {
       const response = await api.getPopularSearches();
@@ -104,7 +106,6 @@ export default function UpcomingRenewalsCard({ renewals, api }) {
               className="group flex items-center justify-between rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-transform duration-200 hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg"
             >
               <div className="flex items-center gap-4">
-                
                 <div>
                   <p className="text-lg font-semibold text-primary transition-colors group-hover:text-blue-600">
                     {renewal.name}
@@ -116,7 +117,7 @@ export default function UpcomingRenewalsCard({ renewals, api }) {
               </div>
               <div className="text-right">
                 <p className="text-xl font-semibold text-blue-600">
-                  {formatCurrency(renewal.price)}
+                  {formatCurrency(renewal.price, renewal.currency || currency)}
                 </p>
                 <p className="text-sm font-medium text-secondary">
                   {renewal.frequency}

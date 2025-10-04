@@ -144,11 +144,11 @@ const seedDemoData = async () => {
       },
     ];
 
-    const createdBills = await Bill.insertMany(bills);
+    await Bill.insertMany(bills);
     console.log("💳 Created 3 bills");
 
     // Create budget
-    const budget = await Budget.create({
+    await Budget.create({
       user: demoUser._id,
       monthlyLimit: 300.0,
       currency: "USD",

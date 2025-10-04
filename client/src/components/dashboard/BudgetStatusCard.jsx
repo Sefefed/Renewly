@@ -1,11 +1,13 @@
 import PropTypes from "prop-types";
 import { formatCurrency } from "../../utils/formatters";
+import { useCurrency } from "../../hooks/useCurrency";
 
 export default function BudgetStatusCard({ analysis }) {
+  const { currency } = useCurrency();
+
   if (!analysis) {
     return null;
   }
-
   const entertainment = analysis.categoryAnalysis?.entertainment;
 
   return (
@@ -18,8 +20,8 @@ export default function BudgetStatusCard({ analysis }) {
           <div className="mb-3 flex justify-between text-base">
             <span className="font-semibold text-primary">Monthly Budget</span>
             <span className="font-medium text-secondary">
-              {formatCurrency(analysis.currentSpending)} /{" "}
-              {formatCurrency(analysis.monthlyLimit)}
+              {formatCurrency(analysis.currentSpending, currency)} /{" "}
+              {formatCurrency(analysis.monthlyLimit, currency)}
             </span>
           </div>
           <div className="h-3 w-full overflow-hidden rounded-full bg-slate-200 shadow-inner">
@@ -38,8 +40,8 @@ export default function BudgetStatusCard({ analysis }) {
             <div className="mb-3 flex justify-between text-base">
               <span className="font-semibold text-primary">Entertainment</span>
               <span className="font-medium text-secondary">
-                {formatCurrency(entertainment.spent)} /{" "}
-                {formatCurrency(entertainment.limit)}
+                {formatCurrency(entertainment.spent, currency)} /{" "}
+                {formatCurrency(entertainment.limit, currency)}
               </span>
             </div>
             <div className="h-3 w-full overflow-hidden rounded-full bg-slate-200 shadow-inner">

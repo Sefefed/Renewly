@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import { formatCurrency, formatDate } from "../../../utils/formatters";
+import { DEFAULT_CURRENCY } from "../../../constants/preferences";
 
 const DrilldownModal = ({ data, currency, onClose }) => {
   if (!data) return null;
@@ -107,7 +108,7 @@ DrilldownModal.propTypes = {
 
 DrilldownModal.defaultProps = {
   data: null,
-  currency: "USD",
+  currency: DEFAULT_CURRENCY,
 };
 
 export default DrilldownModal;
