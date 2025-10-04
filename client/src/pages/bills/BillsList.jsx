@@ -91,22 +91,22 @@ export default function BillsList() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-gray-50 text-white">
       <Navigation />
 
       {/* Header */}
-      <header className="border-b border-gray-800 bg-gray-950/70 px-6 py-4">
+      <header className="border-b border-gray-300 bg-white px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold">Bills</h1>
-            <p className="text-sm text-gray-400">
+            <h1 className="text-2xl font-bold text-gray-900">Bills</h1>
+            <p className="text-sm text-gray-900">
               Manage your household bills and recurring payments
             </p>
           </div>
           <Link
             to="/bills/add"
             onClick={(e) => handleDelayedNav(e, "/bills/add")}
-            className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-sm"
+            className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-sm text-white"
           >
             Add Bill
           </Link>
@@ -136,26 +136,26 @@ export default function BillsList() {
             filteredBills.map((bill) => (
               <div
                 key={bill._id}
-                className="bg-gray-800 rounded-lg p-6 hover:bg-gray-750 transition-colors"
+                className="bg-white rounded-lg border border-gray-200 p-6 hover:bg-gray-750 transition-colors"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-gray-700 rounded-lg flex items-center justify-center">
-                      <span className="text-xl">
+                    <div className="w-12 h-12 bg-gray-900 rounded-lg flex items-center justify-center">
+                      <span className="text-base font-bold text-white">
                         {bill.name.charAt(0).toUpperCase()}
                       </span>
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold">{bill.name}</h3>
-                      <p className="text-sm text-gray-400 capitalize">
+                      <h3 className="text-lg font-bold text-gray-900">{bill.name}</h3>
+                      <p className="text-sm text-gray-900 capitalize">
                         {bill.category} • {bill.paymentMethod}
                       </p>
-                      <p className="text-sm text-gray-400">
+                      <p className="text-sm text-gray-900">
                         Due: {formatDate(bill.dueDate)} (
                         {formatRelativeDate(bill.dueDate)})
                       </p>
                       {bill.autoPay && (
-                        <span className="inline-block mt-1 px-2 py-1 bg-blue-500/20 text-blue-400 text-xs rounded">
+                        <span className="inline-block mt-1 px-2 py-1 bg-blue-500/20 text-blue-600 text-xs rounded-3xl">
                           Auto Pay
                         </span>
                       )}
@@ -164,7 +164,7 @@ export default function BillsList() {
 
                   <div className="flex items-center gap-4">
                     <div className="text-right">
-                      <p className="text-xl font-bold">
+                      <p className="text-xl font-bold text-gray-900">
                         {formatCurrency(bill.amount, bill.currency || currency)}
                       </p>
                       <StatusBadge status={bill.status} />
@@ -184,7 +184,7 @@ export default function BillsList() {
                         onClick={(e) =>
                           handleDelayedNav(e, `/bills/${bill._id}`)
                         }
-                        className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm"
+                        className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm text-white"
                       >
                         View Details
                       </Link>

@@ -160,13 +160,13 @@ export default function BudgetSettings() {
       <Navigation />
 
       {/* Header */}
-      <header className="border-b border-gray-200 bg-gray-50 backdrop-blur-sm px-6 py-5 shadow-sm">
+      <header className=" bg-gray-50 backdrop-blur-sm px-6 py-5 shadow-sm">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">
               Budget Settings
             </h1>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-gray-900 mt-1">
               Set your monthly spending limits and category budgets
             </p>
           </div>
@@ -182,7 +182,7 @@ export default function BudgetSettings() {
           )}
 
           {/* Overall Budget */}
-          <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 shadow-sm">
+          <div className="bg-white rounded-xl p-6 border border-gray-300 shadow-sm">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Overall Monthly Budget
             </h2>
@@ -222,7 +222,7 @@ export default function BudgetSettings() {
           </div>
 
           {/* Category Limits */}
-          <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 shadow-sm">
+          <div className="bg-white rounded-xl p-6 border border-gray-300 shadow-sm">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Category Limits
             </h2>
@@ -249,7 +249,7 @@ export default function BudgetSettings() {
           </div>
 
           {/* Notifications */}
-          <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 shadow-sm">
+          <div className="bg-white rounded-xl p-6 border border-gray-300 shadow-sm">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Notification Settings
             </h2>

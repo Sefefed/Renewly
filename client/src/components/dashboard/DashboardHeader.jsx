@@ -35,7 +35,6 @@ export default function DashboardHeader({
   return (
     <header className="dashboard-card dashboard-card--compact flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between px-4 sm:px-6">
       <div className="space-y-2 text-center lg:text-left">
-        <div className="badge-soft w-max mx-auto lg:mx-0 ">Overview</div>
         <h1 className="dashboard-page-title text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
           Dashboard
         </h1>

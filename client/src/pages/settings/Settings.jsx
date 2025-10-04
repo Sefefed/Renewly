@@ -138,17 +138,17 @@ export default function Settings() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-white">
+    <div className="min-h-screen bg-gray-50 text-white">
       <Navigation />
 
       {/* Header */}
-      <header className="border-b border-gray-200 bg-white/80 backdrop-blur-md px-6 py-5 shadow-sm">
+      <header className="border-b border-gray-200 bg-white backdrop-blur-md px-6 py-5 shadow-sm">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">
               Settings
             </h1>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-gray-900 mt-1">
               Manage your account preferences and notifications
             </p>
           </div>
@@ -170,7 +170,7 @@ export default function Settings() {
           )}
 
           {/* Profile Settings */}
-          <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 shadow-sm">
+          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Profile Information
             </h2>
@@ -246,7 +246,7 @@ export default function Settings() {
           </div>
 
           {/* Notification Settings */}
-          <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 shadow-sm">
+          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Notification Preferences
             </h2>
@@ -303,7 +303,7 @@ export default function Settings() {
           </div>
 
           {/* Data & Export */}
-          <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 shadow-sm">
+          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Data & Export
             </h2>

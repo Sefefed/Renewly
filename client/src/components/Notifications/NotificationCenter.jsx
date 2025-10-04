@@ -93,10 +93,10 @@ export default function NotificationCenter({ token, isOpen, onClose }) {
           <button
             type="button"
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 transition-colors"
+            className="text-gray-500 px-4 py-2  hover:text-gray-700 transition-colors"
             aria-label="Close notification center"
           >
-            <span className="text-2xl">×</span>
+            <span className="text-2xl font-bold">×</span>
           </button>
         </header>
 
@@ -112,7 +112,7 @@ export default function NotificationCenter({ token, isOpen, onClose }) {
             <button
               type="button"
               onClick={() => loadNotifications(1, true)}
-              className="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium text-gray-700 transition-colors"
+              className="px-3 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-sm font-medium text-white transition-colors"
             >
               Refresh
             </button>
@@ -142,7 +142,7 @@ export default function NotificationCenter({ token, isOpen, onClose }) {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">
                         <h3
-                          className={`font-medium ${
+                          className={`font-bold ${
                             !notification.isRead
                               ? "text-gray-900"
                               : "text-gray-600"
@@ -163,17 +163,17 @@ export default function NotificationCenter({ token, isOpen, onClose }) {
                           <button
                             type="button"
                             onClick={() => deleteNotification(notification._id)}
-                            className="text-gray-400 hover:text-red-500 text-sm"
+                            className="text-white bg-red-600 hover:bg-red-700 text-sm"
                           >
                             Delete
                           </button>
                         </div>
                       </div>
-                      <p className="text-sm text-gray-600 mt-1">
+                      <p className="text-sm font-bold text-gray-600 mt-1">
                         {notification.message}
                       </p>
                       <div className="flex items-center justify-between mt-2">
-                        <span className="text-xs text-gray-500">
+                        <span className=" text-gray-500">
                           {new Date(notification.createdAt).toLocaleString()}
                         </span>
                         <span

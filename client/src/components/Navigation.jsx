@@ -78,9 +78,9 @@ export default function Navigation() {
           <div className="hidden sm:ml-6 sm:flex sm:items-center">
             <div className="relative ml-3">
               <div className="flex items-center space-x-4">
-                <span className="text-sm text-gray-600 dark:text-gray-300 font-medium">
+                <span className="text-sm text-gray-600 ">
                   Welcome,{" "}
-                  <span className="font-semibold text-gray-800 dark:text-white">
+                  <span className="font-semibold text-gray-900 ">
                     {user?.name}
                   </span>
                 </span>
