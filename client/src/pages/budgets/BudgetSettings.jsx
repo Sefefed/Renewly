@@ -116,20 +116,23 @@ export default function BudgetSettings() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-gray-50 text-white">
       <Navigation />
 
       {/* Header */}
-      <header className="border-b border-gray-800 bg-gray-950/70 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold">Budget Settings</h1>
-            <p className="text-sm text-gray-400">
-              Set your monthly spending limits and category budgets
-            </p>
-          </div>
-        </div>
-      </header>
+      <header className="border-b border-gray-200 bg-gray-50 backdrop-blur-sm px-6 py-5 shadow-sm">
+  <div className="flex items-center justify-between">
+    <div>
+      <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">
+        Budget Settings
+      </h1>
+      <p className="text-sm text-gray-500 mt-1">
+        Set your monthly spending limits and category budgets
+      </p>
+    </div>
+  </div>
+</header>
+
 
       <main className="mx-auto w-full max-w-4xl px-6 py-8">
         <form onSubmit={handleSubmit} className="space-y-8">
@@ -140,120 +143,132 @@ export default function BudgetSettings() {
           )}
 
           {/* Overall Budget */}
-          <div className="bg-gray-800 rounded-lg p-6">
-            <h2 className="text-lg font-semibold mb-4">
-              Overall Monthly Budget
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Monthly Limit *
-                </label>
-                <input
-                  type="number"
-                  name="monthlyLimit"
-                  value={form.monthlyLimit}
-                  onChange={handleChange}
-                  min="0"
-                  step="0.01"
-                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  required
-                />
-              </div>
+          <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 shadow-sm">
+  <h2 className="text-lg font-semibold text-gray-900 mb-4">
+    Overall Monthly Budget
+  </h2>
 
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Currency
-                </label>
-                <select
-                  name="currency"
-                  value={form.currency}
-                  onChange={handleChange}
-                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="USD">USD</option>
-                  <option value="EUR">EUR</option>
-                  <option value="GBP">GBP</option>
-                </select>
-              </div>
-            </div>
-          </div>
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <label className="block text-sm font-bold text-gray-700 mb-2">
+        Monthly Limit *
+      </label>
+      <input
+        type="number"
+        name="monthlyLimit"
+        value={form.monthlyLimit}
+        onChange={handleChange}
+        min="0"
+        step="0.01"
+        required
+        className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+      />
+    </div>
+
+    <div>
+      <label className="block text-sm font-bold text-gray-700 mb-2">
+        Currency
+      </label>
+      <select
+        name="currency"
+        value={form.currency}
+        onChange={handleChange}
+        className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+      >
+        <option value="ETB">ETB</option>
+        <option value="USD">USD</option>
+        <option value="EUR">EUR</option>
+        <option value="GBP">GBP</option>
+      </select>
+    </div>
+  </div>
+</div>
+
 
           {/* Category Limits */}
-          <div className="bg-gray-800 rounded-lg p-6">
-            <h2 className="text-lg font-semibold mb-4">Category Limits</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {Object.entries(form.categoryLimits).map(([category, limit]) => (
-                <div key={category}>
-                  <label className="block text-sm font-medium mb-2 capitalize">
-                    {category} Limit
-                  </label>
-                  <input
-                    type="number"
-                    name={`categoryLimits.${category}`}
-                    value={limit}
-                    onChange={handleChange}
-                    min="0"
-                    step="0.01"
-                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="0.00"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
+          <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 shadow-sm">
+  <h2 className="text-lg font-semibold text-gray-900 mb-4">
+    Category Limits
+  </h2>
+
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    {Object.entries(form.categoryLimits).map(([category, limit]) => (
+      <div key={category}>
+        <label className="block text-sm font-bold text-gray-700 mb-2 capitalize">
+          {category} Limit
+        </label>
+        <input
+          type="number"
+          name={`categoryLimits.${category}`}
+          value={limit}
+          onChange={handleChange}
+          min="0"
+          step="0.01"
+          placeholder="0.00"
+          className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+    ))}
+  </div>
+</div>
+
 
           {/* Notifications */}
-          <div className="bg-gray-800 rounded-lg p-6">
-            <h2 className="text-lg font-semibold mb-4">
-              Notification Settings
-            </h2>
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  name="notifications.email"
-                  checked={form.notifications.email}
-                  onChange={handleChange}
-                  className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
-                />
-                <label className="text-sm">Enable email notifications</label>
-              </div>
+          <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 shadow-sm">
+  <h2 className="text-lg font-semibold text-gray-900 mb-4">
+    Notification Settings
+  </h2>
 
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Alert Threshold (%)
-                </label>
-                <input
-                  type="number"
-                  name="notifications.threshold"
-                  value={form.notifications.threshold}
-                  onChange={handleChange}
-                  min="0"
-                  max="100"
-                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <p className="text-xs text-gray-400 mt-1">
-                  Get notified when spending reaches this percentage of your
-                  budget
-                </p>
-              </div>
-            </div>
-          </div>
+  <div className="space-y-4">
+    {/* Email Notifications Checkbox */}
+    <div className="flex items-center gap-2">
+      <input
+        type="checkbox"
+        name="notifications.email"
+        checked={form.notifications.email}
+        onChange={handleChange}
+        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+      />
+      <label className="text-sm text-gray-700 font-bold">
+        Enable email notifications
+      </label>
+    </div>
+
+    {/* Alert Threshold Input */}
+    <div>
+      <label className="block text-sm font-bold text-gray-700 mb-2">
+        Alert Threshold (%)
+      </label>
+      <input
+        type="number"
+        name="notifications.threshold"
+        value={form.notifications.threshold}
+        onChange={handleChange}
+        min="0"
+        max="100"
+        className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+      />
+      <p className="text-base font-medium text-gray-500 mt-1">
+        Get notified when spending reaches this percentage of your budget
+      </p>
+    </div>
+  </div>
+</div>
+
 
           {/* Actions */}
           <div className="flex gap-4">
             <button
               type="button"
               onClick={() => window.history.back()}
-              className="flex-1 bg-gray-600 hover:bg-gray-700 py-3 px-4 rounded-lg font-medium transition-colors"
+              className="flex-1 bg-red-500 hover:bg-red-600 py-3 px-4 rounded-lg font-medium transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 py-3 px-4 rounded-lg font-medium transition-colors"
+              className="flex-1 bg-blue-500 hover:bg-blue-600 disabled:bg-blue-800 py-3 px-4 rounded-lg font-medium transition-colors"
             >
               {saving ? "Saving..." : "Save Budget"}
             </button>
