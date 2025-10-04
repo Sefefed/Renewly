@@ -11,8 +11,8 @@ export default function CategoryBreakdownCard({ breakdown, isLoading }) {
         Category Breakdown
       </h2>
       {hasBreakdown ? (
-        <div className="grid gap-8 lg:grid-cols-[1.2fr_1fr]">
-          <div className="relative h-80 rounded-2xl border border-slate-200 bg-white p-4">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8">
+          <div className="relative min-h-[260px] w-full overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm lg:min-h-[320px] lg:flex-[1.25] lg:min-w-0">
             {isLoading && (
               <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-white/80">
                 <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
@@ -20,7 +20,7 @@ export default function CategoryBreakdownCard({ breakdown, isLoading }) {
             )}
             <PieChart data={breakdown} height={240} />
           </div>
-          <div className="max-h-80 space-y-5 overflow-y-auto pr-1">
+          <div className="min-w-0 space-y-5 lg:max-h-80 lg:flex-1 lg:overflow-y-auto lg:pr-1">
             {Object.entries(breakdown)
               .sort((a, b) => {
                 const getAmount = (entry) =>
@@ -42,9 +42,7 @@ export default function CategoryBreakdownCard({ breakdown, isLoading }) {
                   >
                     <div className="flex items-center justify-between gap-4">
                       <div className="flex items-center gap-4">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-violet-200 bg-violet-50 text-violet-600 shadow-sm">
-                          <span className="text-sm">📊</span>
-                        </div>
+                        
                         <div>
                           <p className="text-lg font-semibold text-primary capitalize">
                             {category}

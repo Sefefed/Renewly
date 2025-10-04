@@ -279,19 +279,19 @@ const AnalyticsDashboard = ({
 
       {insights?.categoryOptimization?.length > 0 && (
         <div className="dashboard-card">
-          <h3 className="text-lg font-semibold text-primary">
+          <h3 className="category-optimization__heading">
             Category Optimization Tips
           </h3>
           <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
             {insights.categoryOptimization.map((item) => (
               <div
                 key={item.category}
-                className="rounded-2xl border border-blue-200 bg-blue-50 p-4"
+                className="rounded-2xl border border-gray-200 bg-white p-4 "
               >
-                <p className="text-sm font-semibold text-blue-600">
+                <p className="category-optimization__card-title">
                   {item.category}
                 </p>
-                <p className="mt-2 text-xs text-blue-600/80">
+                <p className="category-optimization__card-description mt-2">
                   {item.recommendation}
                 </p>
               </div>

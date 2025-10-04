@@ -145,6 +145,68 @@ button:focus-visible {
   background: rgba(219, 234, 254, 0.65);
 }
 
+.category-optimization__heading {
+  font-family: "Space Grotesk", "Inter", "Helvetica Neue", Arial, sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+
+.category-optimization__card-title {
+  font-family: "Space Grotesk", "Inter", "Helvetica Neue", Arial, sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #1d4ed8;
+}
+
+.category-optimization__card-description {
+  font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: rgba(37, 99, 235, 0.8);
+}
+
+.assistant-alerts__heading {
+  font-family: "Space Grotesk", "Inter", "Helvetica Neue", Arial, sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #92400e;
+}
+
+.assistant-alerts__subtitle {
+  font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: rgba(146, 64, 14, 0.75);
+}
+
+.assistant-alerts__item-title {
+  font-family: "Space Grotesk", "Inter", "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #92400e;
+}
+
+.assistant-alerts__item-message {
+  font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: rgba(146, 64, 14, 0.75);
+}
+
+.assistant-alerts__badge {
+  font-family: "Space Grotesk", "Inter", "Helvetica Neue", Arial, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
 .dashboard-card:hover {
   box-shadow: 0 22px 48px rgba(15, 23, 42, 0.12);
   transform: translateY(-4px);

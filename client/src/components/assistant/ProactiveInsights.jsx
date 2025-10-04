@@ -53,14 +53,14 @@ const ProactiveInsights = ({ api, onInsightsLoaded }) => {
   return (
     <div className="space-y-6">
       {insights.alerts?.length ? (
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6 shadow-sm">
+        <div className="rounded-2xl border border-amber-200 bg-white p-6 shadow-sm">
           <div className="mb-4 flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-amber-200 bg-white">
               <span className="text-lg">⚠️</span>
             </div>
             <div>
-              <h3 className="font-semibold text-amber-700">Smart alerts</h3>
-              <p className="text-sm text-amber-600/80">
+              <h3 className="assistant-alerts__heading">Smart alerts</h3>
+              <p className="assistant-alerts__subtitle">
                 Proactive notifications about your finances
               </p>
             </div>
@@ -72,13 +72,15 @@ const ProactiveInsights = ({ api, onInsightsLoaded }) => {
                 className="flex items-center justify-between rounded-xl border border-amber-200 bg-white p-3 shadow-sm"
               >
                 <div>
-                  <h4 className="text-sm font-medium text-amber-700">
+                  <h4 className="assistant-alerts__item-title">
                     {alert.title}
                   </h4>
-                  <p className="text-xs text-amber-600/80">{alert.message}</p>
+                  <p className="assistant-alerts__item-message">
+                    {alert.message}
+                  </p>
                 </div>
                 <span
-                  className={`rounded-full border px-2 py-1 text-xs uppercase font-semibold ${
+                  className={`assistant-alerts__badge rounded-full border px-2 py-1 uppercase ${
                     alert.severity === "high"
                       ? "border-rose-200 bg-rose-50 text-rose-600"
                       : "border-amber-200 bg-amber-50 text-amber-600"
@@ -93,16 +95,14 @@ const ProactiveInsights = ({ api, onInsightsLoaded }) => {
       ) : null}
 
       {insights.tips?.length ? (
-        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 shadow-sm">
+        <div className="rounded-2xl border border-gray-300 bg-white p-6 shadow-sm">
           <div className="mb-4 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-emerald-200 bg-white">
-              <span className="text-lg">💡</span>
-            </div>
+            
             <div>
-              <h3 className="font-semibold text-emerald-700">
+              <h3 className="font-semibold text-black">
                 Personalized tips
               </h3>
-              <p className="text-sm text-emerald-600/80">
+              <p className="text-sm text-black">
                 Recommendations tailored for you
               </p>
             </div>
@@ -111,7 +111,7 @@ const ProactiveInsights = ({ api, onInsightsLoaded }) => {
             {insights.tips.map((tip, index) => (
               <div
                 key={`${tip}-${index}`}
-                className="rounded-xl border border-emerald-200 bg-white p-3 text-sm text-emerald-700 shadow-sm"
+                className="rounded-xl border border-gray-200 bg-white p-3 text-sm text-blue-600 shadow-sm text-bold"
               >
                 {tip}
               </div>

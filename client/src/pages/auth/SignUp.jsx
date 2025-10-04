@@ -71,7 +71,7 @@ export default function SignUp() {
           onSubmit={handleSubmit}
           className="bg-white p-10 rounded-lg shadow-lg w-full max-w-lg text-gray-900"
         >
-          <h2 className="text-2xl font-bold text-center mb-6">Sign Up</h2>
+          <h2 className="text-2xl font-bold text-center mb-6 ">Sign Up</h2>
 
           {error && (
             <div className="bg-white-500/20 border border-red-50 rounded-lg p-3 mb-4 space-y-1">
@@ -119,7 +119,7 @@ export default function SignUp() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-900 text-white py-3 rounded font-semibold hover:bg-blue-800 transition"
+            className="w-full bg-blue-600 text-white py-3 rounded font-semibold hover:bg-blue-800 transition"
           >
             {loading ? "Creating account..." : "Sign Up"}
           </button>

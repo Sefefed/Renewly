@@ -54,7 +54,7 @@ export default function LandingPage() {
             onClick={handleGetStarted}
             disabled={isWaiting}
             aria-live="polite"
-            className={`hero-cta relative inline-flex items-center justify-center gap-3 rounded-md border border-gray-700 bg-gradient-to-r from-gray-800 to-gray-900 px-8 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-gray-100 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 focus:ring-offset-gray-900 ${
+            className={`hero-cta relative inline-flex items-center justify-center gap-3 rounded-md border border-gray-700 bg-gradient-to-r from-gray-800 to-purple-600 px-8 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-gray-100 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 focus:ring-offset-gray-900 ${
               isWaiting
                 ? "cursor-not-allowed opacity-90"
                 : "hover:from-gray-700 hover:to-gray-800 hover:scale-105 hover:shadow-lg"

@@ -84,6 +84,7 @@ export default function SpendingTrendCard({
           activeFilter={activeFilter}
           onFilterChange={onFilterChange}
           isLoading={isLoading}
+          variant="dark"
         />
       </div>
 

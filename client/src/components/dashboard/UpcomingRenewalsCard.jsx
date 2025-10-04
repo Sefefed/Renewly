@@ -104,11 +104,7 @@ export default function UpcomingRenewalsCard({ renewals, api }) {
               className="group flex items-center justify-between rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-transform duration-200 hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg"
             >
               <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-blue-200 bg-blue-50 text-blue-600 shadow-sm">
-                  <span className="text-lg" aria-hidden="true">
-                    📅
-                  </span>
-                </div>
+                
                 <div>
                   <p className="text-lg font-semibold text-primary transition-colors group-hover:text-blue-600">
                     {renewal.name}

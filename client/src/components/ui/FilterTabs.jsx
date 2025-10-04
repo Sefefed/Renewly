@@ -1,11 +1,36 @@
 import PropTypes from "prop-types";
 
-const FilterTabs = ({ filters, activeFilter, onFilterChange, isLoading }) => {
+const FilterTabs = ({
+  filters,
+  activeFilter,
+  onFilterChange,
+  isLoading,
+  variant,
+}) => {
   return (
     <div className="flex flex-wrap gap-2">
       {filters.map((filter) => {
         const isActive = activeFilter === filter.value;
         const isBusy = isLoading && isActive;
+        const buttonBaseClass =
+          "flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-semibold transition-all duration-200";
+
+        const isDark = variant === "dark";
+
+        const activeClass = isDark
+          ? "border-transparent shadow-lg shadow-slate-900/40"
+          : "border-blue-300 bg-blue-50 text-blue-600 shadow-sm";
+
+        const inactiveClass = isDark
+          ? "border border-slate-200 bg-white text-secondary hover:border-slate-300 hover:text-primary"
+          : "border-transparent bg-white text-secondary hover:border-blue-200 hover:text-blue-600";
+
+        const buttonStyle = isDark
+          ? {
+              backgroundColor: isActive ? "#000000" : "#ffffff",
+              color: isActive ? "#ffffff" : "var(--text-secondary)",
+            }
+          : undefined;
 
         return (
           <button
@@ -15,11 +40,10 @@ const FilterTabs = ({ filters, activeFilter, onFilterChange, isLoading }) => {
                 onFilterChange(filter.value);
               }
             }}
-            className={`flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-semibold transition-all duration-200 ${
-              isActive
-                ? "border-blue-300 bg-blue-50 text-blue-600 shadow-sm"
-                : "border-transparent bg-white text-secondary hover:border-blue-200 hover:text-blue-600"
-            } ${isBusy ? "cursor-not-allowed opacity-60" : ""}`}
+            className={`${buttonBaseClass} ${
+              isBusy ? "cursor-not-allowed opacity-60" : ""
+            } ${isActive ? activeClass : inactiveClass}`.trim()}
+            style={buttonStyle}
             disabled={isBusy}
           >
             {isBusy ? (
@@ -46,10 +70,12 @@ FilterTabs.propTypes = {
   activeFilter: PropTypes.string.isRequired,
   onFilterChange: PropTypes.func.isRequired,
   isLoading: PropTypes.bool,
+  variant: PropTypes.oneOf(["default", "dark"]),
 };
 
 FilterTabs.defaultProps = {
   isLoading: false,
+  variant: "default",
 };
 
 export default FilterTabs;

@@ -31,32 +31,32 @@ export default function MonthlyComparisonCard({
         <div className="space-y-6">
           <div className="grid grid-cols-1 gap-4 rounded-xl border border-slate-200 bg-white p-4 text-sm text-secondary shadow-sm sm:grid-cols-2">
             <div>
-              <p className="mb-1 text-xs uppercase tracking-wide text-tertiary">
+              <p className="mb-1 text-lg uppercase tracking-wide font-semibold text-tertiary">
                 {comparison.currentMonth.label}
               </p>
               <p className="text-lg font-semibold text-primary">
                 {formatCurrency(comparison.currentMonth.total)}
               </p>
-              <p className="mt-2 text-xs text-tertiary">
+              <p className="mt-2 text-sm ">
                 Subscriptions:{" "}
                 {formatCurrency(comparison.currentMonth.subscriptions)}
               </p>
-              <p className="text-xs text-tertiary">
+              <p className="text-sm">
                 Bills: {formatCurrency(comparison.currentMonth.bills)}
               </p>
             </div>
             <div>
-              <p className="mb-1 text-xs uppercase tracking-wide text-tertiary">
+              <p className="mb-1 text-lg font-semibold uppercase tracking-wide text-tertiary">
                 {comparison.previousMonth.label}
               </p>
               <p className="text-lg font-semibold text-primary">
                 {formatCurrency(comparison.previousMonth.total)}
               </p>
-              <p className="mt-2 text-xs text-tertiary">
+              <p className="mt-2 text-sm">
                 Subscriptions:{" "}
                 {formatCurrency(comparison.previousMonth.subscriptions)}
               </p>
-              <p className="text-xs text-tertiary">
+              <p className="text-sm ">
                 Bills: {formatCurrency(comparison.previousMonth.bills)}
               </p>
             </div>
@@ -77,11 +77,7 @@ export default function MonthlyComparisonCard({
                   </p>
                 )}
               </div>
-              <div
-                className={`flex h-14 w-14 items-center justify-center rounded-full border ${pillBg}`}
-              >
-                <span className="text-xl">{icon}</span>
-              </div>
+              
             </div>
           </div>
         </div>

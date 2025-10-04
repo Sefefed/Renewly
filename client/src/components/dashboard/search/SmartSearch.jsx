@@ -76,7 +76,7 @@ const SmartSearch = ({
   return (
     <div className="relative">
       <div className="relative rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-200 focus-within:border-blue-300 focus-within:shadow-lg">
-        <div className="flex items-center gap-3 px-4 py-3">
+        <div className="flex flex-wrap items-center gap-3 px-4 py-3">
           <div className="text-tertiary">
             {isLoading ? (
               <div className="h-5 w-5 animate-spin rounded-full border-b-2 border-blue-500"></div>
@@ -90,14 +90,14 @@ const SmartSearch = ({
             onChange={(event) => setQuery(event.target.value)}
             onKeyDown={handleInputKeyDown}
             placeholder="Search subscriptions, categories, or descriptions..."
-            className="flex-1 border-none bg-transparent text-lg text-primary placeholder:text-tertiary outline-none"
+            className="min-w-0 flex-1 border-none bg-transparent text-lg text-primary placeholder:text-tertiary outline-none"
           />
-          <div className="flex items-center gap-2">
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center sm:justify-end">
             {query && (
               <button
                 type="button"
                 onClick={() => setQuery("")}
-                className="px-2 text-lg text-tertiary transition-colors hover:text-primary"
+                className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-secondary transition-colors hover:border-blue-200 hover:text-primary sm:w-auto sm:border-transparent sm:bg-transparent sm:px-2 sm:py-1 sm:text-lg sm:text-tertiary"
               >
                 ×
               </button>
@@ -105,7 +105,7 @@ const SmartSearch = ({
             <button
               type="button"
               onClick={() => handleSearch()}
-              className="rounded-xl border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-600 transition-colors hover:bg-blue-100"
+              className="w-full rounded-xl border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-600 transition-colors hover:bg-blue-100 sm:w-auto"
             >
               Search
             </button>

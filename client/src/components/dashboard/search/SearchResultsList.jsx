@@ -30,16 +30,16 @@ const SearchResultsList = ({ results }) => {
           <span className="font-semibold text-primary">{totalCount}</span>{" "}
           results
         </div>
-        <div className="flex flex-wrap gap-3 text-xs text-secondary">
+        <div className="flex w-full flex-wrap gap-3 text-xs text-secondary sm:w-auto sm:justify-end">
           {priceFacets && (
-            <span className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-blue-600">
+            <span className="rounded-full border border-gray-200 bg-white px-3 py-1 text-black">
               Avg: {formatCurrency(priceFacets.avgPrice ?? 0)}
             </span>
           )}
           {categoryFacets.slice(0, 3).map((category) => (
             <span
               key={category._id}
-              className="rounded-full border border-violet-200 bg-violet-50 px-3 py-1 text-violet-600"
+              className="rounded-full border border-violet-200 bg-white px-3 py-1 text-violet-600"
             >
               {category._id} · {category.count}
             </span>
@@ -54,21 +54,18 @@ const SearchResultsList = ({ results }) => {
             className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-transform duration-200 hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg sm:flex-row sm:items-center sm:justify-between"
           >
             <div className="flex flex-1 items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-blue-200 bg-blue-50 text-blue-600 shadow-sm">
-                <span className="text-lg">💡</span>
-              </div>
               <div>
                 <div className="flex items-center gap-3">
                   <p className="text-lg font-semibold text-primary">
                     {item.name}
                   </p>
                   {item.category && (
-                    <span className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs uppercase tracking-wide text-blue-600">
+                    <span className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs uppercase tracking-wide text-black">
                       {item.category}
                     </span>
                   )}
                   {item.status && (
-                    <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs uppercase tracking-wide text-emerald-600">
+                    <span className="rounded-full border border-black bg-orange-250 px-3 py-1 text-xs uppercase tracking-wide text-black-600">
                       {item.status}
                     </span>
                   )}
