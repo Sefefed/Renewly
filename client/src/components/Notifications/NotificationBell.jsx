@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import PropTypes from "prop-types";
 import { useApi } from "../../utils/api";
 import { getNotificationIcon } from "./utils";
+import BellIcon from "../../assets/bell-icon.png";
 
 const PRIORITY_STYLES = {
   urgent: "border-rose-200 bg-rose-50",
@@ -19,6 +20,8 @@ export default function NotificationBell({ token, onOpenCenter }) {
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const dropdownRef = useRef(null);
+  const buttonRef = useRef(null);
+  const [menuStyles, setMenuStyles] = useState(null);
   const api = useApi(token);
 
   const fetchUnreadCount = useCallback(async () => {
@@ -103,6 +106,59 @@ export default function NotificationBell({ token, onOpenCenter }) {
     onOpenCenter?.();
   };
 
+  const updateMenuPosition = useCallback(() => {
+    if (!buttonRef.current) return;
+
+    const rect = buttonRef.current.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const margin = 16;
+    const preferredWidth = 384; // 24rem
+    const width = Math.min(preferredWidth, viewportWidth - margin * 2);
+    const availableHeight = Math.max(200, viewportHeight - margin * 2);
+    let estimatedHeight = Math.min(560, availableHeight);
+
+    let left = rect.right - width;
+    left = Math.max(margin, left);
+    left = Math.min(left, viewportWidth - width - margin);
+
+    const spaceBelow = viewportHeight - rect.bottom - margin;
+    const topCandidate = rect.bottom + 12;
+    let top = topCandidate;
+
+    if (spaceBelow < estimatedHeight) {
+      top = Math.max(margin, viewportHeight - estimatedHeight - margin);
+    }
+
+    const remaining = Math.max(120, viewportHeight - top - margin);
+    estimatedHeight = Math.min(estimatedHeight, remaining);
+
+    setMenuStyles({
+      width: `${width}px`,
+      left: `${left}px`,
+      top: `${top}px`,
+      maxHeight: `${estimatedHeight}px`,
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setMenuStyles(null);
+      return undefined;
+    }
+
+    updateMenuPosition();
+
+    const handleResize = () => updateMenuPosition();
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("scroll", handleResize, true);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("scroll", handleResize, true);
+    };
+  }, [isOpen, updateMenuPosition]);
+
   return (
     <div className="relative" ref={dropdownRef}>
       <button
@@ -110,8 +166,15 @@ export default function NotificationBell({ token, onOpenCenter }) {
         onClick={() => token && setIsOpen((prev) => !prev)}
         className="relative inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white p-2.5 text-slate-600 shadow-sm transition-all duration-200 hover:border-blue-200 hover:text-blue-600 hover:shadow-lg"
         aria-label="Notifications"
+        ref={buttonRef}
       >
-        <span className="text-xl">🔔</span>
+        <span className="text-xl">
+          <img
+            src={BellIcon}
+            alt="Notification"
+            className="w-6 h-6 inline-block"
+          />
+        </span>{" "}
         {unreadCount > 0 && (
           <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 text-xs font-semibold text-white">
             {unreadCount > 9 ? "9+" : unreadCount}
@@ -119,8 +182,11 @@ export default function NotificationBell({ token, onOpenCenter }) {
         )}
       </button>
 
-      {isOpen && (
-        <div className="absolute right-0 top-12 z-50 w-96 max-h-96 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl">
+      {isOpen && menuStyles && (
+        <div
+          className="fixed z-50 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl"
+          style={menuStyles}
+        >
           <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
             <h3 className="font-semibold text-primary">Notifications</h3>
             <div className="flex gap-2">
@@ -143,7 +209,7 @@ export default function NotificationBell({ token, onOpenCenter }) {
             </div>
           </div>
 
-          <div className="overflow-y-auto max-h-80">
+          <div className="overflow-y-auto max-h-[60vh]">
             {loading ? (
               <div className="flex items-center justify-center p-8">
                 <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-blue-500" />

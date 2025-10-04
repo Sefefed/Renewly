@@ -77,7 +77,6 @@ export default function MonthlyComparisonCard({
                   </p>
                 )}
               </div>
-              
             </div>
           </div>
         </div>
