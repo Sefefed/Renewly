@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useId, useRef } from "react";
 import AssistantComposer from "./AssistantComposer";
 import AssistantHeader from "./AssistantHeader";
 import AssistantMessages from "./AssistantMessages";
@@ -34,19 +34,18 @@ const FinancialAssistant = ({
   const {
     isSupported: isSpeechSupported,
     isEnabled: isSpeechEnabled,
-    isSpeaking,
     speak,
     stop,
-    toggleSpeech,
   } = useAssistantSpeech();
 
   const lastSpokenRef = useRef(null);
   const lastQueuedPromptRef = useRef(null);
 
-  const { containerRef, containerLayoutClasses } = useAssistantLayout({
-    isOpen,
-    onLayoutChange,
-  });
+  const { isExpanded, containerRef, containerLayoutClasses } =
+    useAssistantLayout({
+      isOpen,
+      onLayoutChange,
+    });
 
   useEffect(() => {
     if (!isOpen) {
@@ -129,59 +128,70 @@ const FinancialAssistant = ({
     onPromptConsumed?.(queuedPrompt.id);
   }, [handleSendMessage, isOpen, onPromptConsumed, queuedPrompt]);
 
+  const titleId = useId();
+
   if (!isOpen) {
     return null;
   }
 
   const surfaceClasses = isDark
-    ? "border-gray-700/50 bg-gradient-to-br from-gray-800 to-gray-900 text-white"
-    : "border-gray-200 bg-gradient-to-br from-white to-gray-50 text-gray-900";
+    ? "bg-gradient-to-br from-gray-950 via-gray-900 to-black text-white md:border-gray-700/50"
+    : "bg-gradient-to-br from-white via-white to-gray-100 text-gray-900 md:border-gray-200";
 
   return (
-    <div
-      ref={containerRef}
-      className={`fixed right-6 z-50 flex w-[24rem] max-w-[90vw] flex-col rounded-3xl border shadow-2xl backdrop-blur-sm transition-all duration-500 ease-out lg:w-[26rem] ${surfaceClasses} ${containerLayoutClasses}`}
-    >
-      <AssistantHeader
-        isDark={isDark}
-        assistantState={assistantState}
-        theme={theme}
-        toggleTheme={toggleTheme}
-        speechControls={{
-          isSupported: isSpeechSupported,
-          isEnabled: isSpeechEnabled,
-          isSpeaking,
-          onToggle: toggleSpeech,
-        }}
-        onTranscript={handleTranscript}
-        onClose={handleClose}
+    <>
+      <div
+        className={`fixed inset-0 z-40 bg-slate-950/50 transition-opacity duration-500 ${
+          isExpanded ? "opacity-100" : "opacity-0"
+        } ${isExpanded ? "pointer-events-auto" : "pointer-events-none"}`}
+        onClick={handleClose}
+        aria-hidden="true"
       />
 
-      <AssistantMessages
-        conversation={conversation}
-        theme={theme}
-        isDark={isDark}
-        isLoading={isLoading}
-        onAction={handleSendMessage}
-      />
+      <div
+        ref={containerRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Finance assistant chat"
+        aria-labelledby={titleId}
+        className={`fixed inset-0 z-50 flex w-full flex-col overflow-hidden rounded-none border-0 shadow-none transition-all duration-500 ease-out md:inset-auto md:right-6 md:top-6 md:bottom-6 md:h-auto md:w-[24rem] md:max-h-[calc(100vh-3rem)] md:max-w-[90vw] md:rounded-3xl md:border md:shadow-2xl lg:w-[26rem] ${surfaceClasses} ${containerLayoutClasses}`}
+      >
+        <AssistantHeader
+          isDark={isDark}
+          assistantState={assistantState}
+          theme={theme}
+          toggleTheme={toggleTheme}
+          onTranscript={handleTranscript}
+          onClose={handleClose}
+          titleId={titleId}
+        />
 
-      <AssistantSuggestions
-        suggestions={suggestions}
-        assistantState={assistantState}
-        isDark={isDark}
-        onSuggestionClick={handleSendMessage}
-      />
+        <AssistantMessages
+          conversation={conversation}
+          theme={theme}
+          isDark={isDark}
+          isLoading={isLoading}
+          onAction={handleSendMessage}
+        />
 
-      <AssistantComposer
-        input={input}
-        isDark={isDark}
-        isLoading={isLoading}
-        error={error}
-        onInputChange={handleInputChange}
-        onInputKeyDown={handleInputKeyDown}
-        onSend={() => handleSendMessage()}
-      />
-    </div>
+        <AssistantSuggestions
+          suggestions={suggestions}
+          assistantState={assistantState}
+          isDark={isDark}
+          onSuggestionClick={handleSendMessage}
+        />
+
+        <AssistantComposer
+          input={input}
+          isDark={isDark}
+          isLoading={isLoading}
+          error={error}
+          onInputChange={handleInputChange}
+          onInputKeyDown={handleInputKeyDown}
+          onSend={() => handleSendMessage()}
+        />
+      </div>
+    </>
   );
 };
 

@@ -1,5 +1,4 @@
 import VoiceAssistant from "./VoiceAssistant";
-import SpeechToggle from "./SpeechToggle";
 
 const STATUS_CONFIG = {
   thinking: {
@@ -24,20 +23,22 @@ const AssistantHeader = ({
   assistantState,
   theme,
   toggleTheme,
-  speechControls,
   onTranscript,
   onClose,
+  titleId,
 }) => {
   const { label, dotClass } = getStatus(assistantState);
   const dotStyles = isDark
     ? dotClass
     : dotClass.replace("bg-gray-500", "bg-gray-300");
 
+  const surfaceClasses = isDark
+    ? "border-white/10 bg-gray-950/90 text-white md:border-gray-700/50 md:bg-transparent"
+    : "border-slate-200/70 bg-white/95 text-gray-900 md:border-gray-200 md:bg-transparent";
+
   return (
     <div
-      className={`flex items-center justify-between border-b p-4 ${
-        isDark ? "border-gray-700/50" : "border-gray-200"
-      }`}
+      className={`sticky top-0 z-10 flex items-center justify-between gap-3 border-b px-4 pb-4 pt-[calc(1rem+env(safe-area-inset-top))] backdrop-blur-sm transition-all duration-300 md:px-5 md:pt-4 ${surfaceClasses}`}
     >
       <div className="flex items-center gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-r from-blue-500 to-purple-600">
@@ -45,7 +46,8 @@ const AssistantHeader = ({
         </div>
         <div>
           <h3
-            className={`font-semibold ${
+            id={titleId}
+            className={`font-semibold tracking-tight ${
               isDark ? "text-white" : "text-gray-900"
             }`}
           >
@@ -63,13 +65,6 @@ const AssistantHeader = ({
       </div>
 
       <div className="flex items-center gap-2">
-        <SpeechToggle
-          theme={theme}
-          isSupported={speechControls?.isSupported}
-          isEnabled={speechControls?.isEnabled}
-          isSpeaking={speechControls?.isSpeaking}
-          onToggle={speechControls?.onToggle}
-        />
         <button
           onClick={toggleTheme}
           className={`rounded-xl p-3 text-lg transition-all duration-300 ${
@@ -84,10 +79,10 @@ const AssistantHeader = ({
         <VoiceAssistant onTranscript={onTranscript} theme={theme} />
         <button
           onClick={onClose}
-          className={`text-xl transition-colors ${
+          className={`flex h-10 w-10 items-center justify-center rounded-xl text-lg transition-all duration-300 ${
             isDark
-              ? "text-gray-400 hover:text-white"
-              : "text-gray-500 hover:text-gray-700"
+              ? "bg-gray-800/70 text-gray-300 hover:bg-gray-700 hover:text-white"
+              : "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800"
           }`}
           aria-label="Close assistant"
         >

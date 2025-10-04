@@ -17,8 +17,10 @@ const AssistantComposer = ({
 
   return (
     <div
-      className={`border-t p-4 ${
-        isDark ? "border-gray-700/50" : "border-gray-200"
+      className={`border-t p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] backdrop-blur-sm ${
+        isDark
+          ? "border-gray-700/50 bg-gray-900/60"
+          : "border-gray-200 bg-white/85"
       }`}
     >
       <div className="flex gap-2">

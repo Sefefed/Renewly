@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 
 const getExpandedClass = (isExpanded) =>
-  isExpanded ? "top-6 bottom-6 max-h-[calc(100vh-3rem)]" : "bottom-6 h-80";
+  isExpanded
+    ? "opacity-100 translate-y-0 md:max-h-[calc(100vh-3rem)]"
+    : "pointer-events-none opacity-0 translate-y-8 md:translate-y-6";
 
 const useAssistantLayout = ({ isOpen, onLayoutChange }) => {
   const [isExpanded, setIsExpanded] = useState(false);
