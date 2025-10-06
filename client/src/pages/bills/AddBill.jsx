@@ -61,11 +61,11 @@ export default function AddBill() {
       <Navigation />
 
       {/* Header */}
-      <header className="border-b border-gray-100 bg-white px-6 py-4">
+      <header className="border-b bg-blue-900 px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Add Bill</h1>
-            <p className="text-base text-gray-900">
+            <h1 className="text-2xl font-bold text-white">Add Bill</h1>
+            <p className="text-base text-gray-300">
               Add a new household bill or recurring payment
             </p>
           </div>
@@ -93,7 +93,7 @@ export default function AddBill() {
                   name="name"
                   value={form.name}
                   onChange={handleChange}
-                  className="w-full text-gray-900  border border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full text-gray-900  border border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400"
                   placeholder="e.g., Electricity Bill"
                   required
                 />
@@ -110,7 +110,7 @@ export default function AddBill() {
                   onChange={handleChange}
                   step="0.01"
                   min="0"
-                  className="w-full border text-gray-900 border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border text-gray-900 border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400"
                   placeholder="85.50"
                   required
                 />
@@ -124,7 +124,7 @@ export default function AddBill() {
                   name="currency"
                   value={form.currency}
                   onChange={handleChange}
-                  className="w-full border text-gray-900 border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border text-gray-900 border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400"
                 >
                   {SUPPORTED_CURRENCIES.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -143,7 +143,7 @@ export default function AddBill() {
                   name="dueDate"
                   value={form.dueDate}
                   onChange={handleChange}
-                  className="w-full border border-gray-600 text-gray-900 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-600 text-gray-900 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400"
                   required
                 />
               </div>
@@ -162,7 +162,7 @@ export default function AddBill() {
                   name="category"
                   value={form.category}
                   onChange={handleChange}
-                  className="w-full border border-gray-600 text-gray-900 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-600 text-gray-900 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400"
                 >
                   <option value="utilities">Utilities</option>
                   <option value="rent">Rent</option>
@@ -182,7 +182,7 @@ export default function AddBill() {
                   name="paymentMethod"
                   value={form.paymentMethod}
                   onChange={handleChange}
-                  className="w-full  border border-gray-600 text-gray-900 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full  border border-gray-600 text-gray-900 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400"
                   placeholder="e.g., Bank Transfer"
                   required
                 />

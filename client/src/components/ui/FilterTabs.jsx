@@ -19,7 +19,7 @@ const FilterTabs = ({
 
         const activeClass = isDark
           ? "border-transparent shadow-lg shadow-slate-900/40"
-          : "border-blue-300 bg-blue-50 text-blue-600 shadow-sm";
+          : "border-blue-300 bg-black text-white shadow-sm";
 
         const inactiveClass = isDark
           ? "border border-slate-200 bg-white text-secondary hover:border-slate-300 hover:text-primary"

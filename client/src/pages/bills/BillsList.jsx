@@ -95,11 +95,11 @@ export default function BillsList() {
       <Navigation />
 
       {/* Header */}
-      <header className="border-b border-gray-300 bg-white px-6 py-4">
+      <header className="border-b bg-blue-900 px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Bills</h1>
-            <p className="text-sm text-gray-900">
+            <h1 className="text-2xl font-bold text-white">Bills</h1>
+            <p className="text-sm text-gray-300">
               Manage your household bills and recurring payments
             </p>
           </div>

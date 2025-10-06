@@ -87,21 +87,21 @@ export default function SubscriptionsList() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-gray-50 text-white">
       <Navigation />
       {/* Header */}
-      <header className="border-b border-gray-800 bg-gray-950/70 px-6 py-4">
+      <header className=" bg-blue-900 px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold">Subscriptions</h1>
-            <p className="text-sm text-gray-400">
+            <h1 className="text-2xl font-bold text-white">Subscriptions</h1>
+            <p className="text-base text-gray-300">
               Manage your subscription services
             </p>
           </div>
           <Link
             to="/subscriptions/add"
             onClick={(e) => handleDelayedNav(e, "/subscriptions/add")}
-            className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-sm"
+            className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-sm text-white"
           >
             Add Subscription
           </Link>
@@ -131,23 +131,23 @@ export default function SubscriptionsList() {
             filteredSubscriptions.map((subscription) => (
               <div
                 key={subscription._id}
-                className="bg-gray-800 rounded-lg p-6 hover:bg-gray-750 transition-colors"
+                className="bg-white rounded-lg p-6 transition-colors"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-gray-700 rounded-lg flex items-center justify-center">
+                    <div className="w-12 h-12 bg-gray-900 rounded-lg flex items-center justify-center">
                       <span className="text-xl">
                         {subscription.name.charAt(0).toUpperCase()}
                       </span>
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold">
+                      <h3 className="text-lg font-bold text-gray-900">
                         {subscription.name}
                       </h3>
-                      <p className="text-sm text-gray-400 capitalize">
+                      <p className="text-sm text-gray-900 capitalize">
                         {subscription.category} • {subscription.frequency}
                       </p>
-                      <p className="text-sm text-gray-400">
+                      <p className="text-sm text-gray-900">
                         Next renewal: {formatDate(subscription.renewalDate)}
                       </p>
                     </div>
@@ -167,12 +167,12 @@ export default function SubscriptionsList() {
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleTestReminder(subscription._id)}
-                        className="bg-purple-600 hover:bg-purple-700 px-3 py-1 rounded text-sm"
+                        className="bg-sky-500 hover:bg-sky-600 px-3 py-1 rounded text-sm text-white"
                         disabled={subscription.status !== "active"}
                       >
                         Test Reminder
                       </button>
-                      <button className="bg-gray-600 hover:bg-gray-700 px-3 py-1 rounded text-sm">
+                      <button className="bg-red-500 text-white hover:bg-red-600 px-3 py-1 rounded text-sm">
                         Assist Cancel
                       </button>
                       <Link
@@ -183,7 +183,7 @@ export default function SubscriptionsList() {
                             `/subscriptions/${subscription._id}`
                           )
                         }
-                        className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm"
+                        className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm text-white"
                       >
                         View Details
                       </Link>
