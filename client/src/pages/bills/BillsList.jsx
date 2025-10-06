@@ -96,7 +96,7 @@ export default function BillsList() {
 
       {/* Header */}
       <header className="border-b bg-blue-900 px-6 py-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-2xl font-bold text-white">Bills</h1>
             <p className="text-sm text-gray-300">
@@ -106,7 +106,7 @@ export default function BillsList() {
           <Link
             to="/bills/add"
             onClick={(e) => handleDelayedNav(e, "/bills/add")}
-            className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-sm text-white"
+            className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-sm text-white w-full text-center sm:w-auto"
           >
             Add Bill
           </Link>
@@ -136,17 +136,19 @@ export default function BillsList() {
             filteredBills.map((bill) => (
               <div
                 key={bill._id}
-                className="bg-white rounded-lg border border-gray-200 p-6 hover:bg-gray-750 transition-colors"
+                className="bg-white rounded-lg border border-gray-200 p-6 transition-colors hover:bg-gray-50"
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
+                <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+                  <div className="flex items-start gap-4 sm:items-center">
                     <div className="w-12 h-12 bg-gray-900 rounded-lg flex items-center justify-center">
                       <span className="text-base font-bold text-white">
                         {bill.name.charAt(0).toUpperCase()}
                       </span>
                     </div>
                     <div>
-                      <h3 className="text-lg font-bold text-gray-900">{bill.name}</h3>
+                      <h3 className="text-lg font-bold text-gray-900">
+                        {bill.name}
+                      </h3>
                       <p className="text-sm text-gray-900 capitalize">
                         {bill.category} • {bill.paymentMethod}
                       </p>
@@ -162,19 +164,19 @@ export default function BillsList() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-4">
-                    <div className="text-right">
+                  <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-end md:gap-6">
+                    <div className="text-left md:text-right">
                       <p className="text-xl font-bold text-gray-900">
                         {formatCurrency(bill.amount, bill.currency || currency)}
                       </p>
                       <StatusBadge status={bill.status} />
                     </div>
 
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2 w-full sm:w-auto sm:justify-end">
                       {bill.status === "pending" && (
                         <button
                           onClick={() => handleMarkPaid(bill._id)}
-                          className="bg-green-600 hover:bg-green-700 px-3 py-1 rounded text-sm"
+                          className="bg-green-600 hover:bg-green-700 px-3 py-1 rounded text-sm text-white w-full sm:w-auto"
                         >
                           Mark Paid
                         </button>
@@ -184,7 +186,7 @@ export default function BillsList() {
                         onClick={(e) =>
                           handleDelayedNav(e, `/bills/${bill._id}`)
                         }
-                        className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm text-white"
+                        className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm text-white w-full sm:w-auto"
                       >
                         View Details
                       </Link>

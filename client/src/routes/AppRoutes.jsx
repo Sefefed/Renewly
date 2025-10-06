@@ -7,8 +7,10 @@ import SignUp from "../pages/auth/SignUp";
 import Dashboard from "../pages/dashboard/Dashboard";
 import SubscriptionsList from "../pages/subscriptions/SubscriptionsList";
 import AddSubscription from "../pages/subscriptions/AddSubscription";
+import SubscriptionDetails from "../pages/subscriptions/SubscriptionDetails";
 import BillsList from "../pages/bills/BillsList";
 import AddBill from "../pages/bills/AddBill";
+import BillDetails from "../pages/bills/BillDetails";
 import BudgetSettings from "../pages/budgets/BudgetSettings";
 import Settings from "../pages/settings/Settings";
 
@@ -66,6 +68,14 @@ export default function AppRoutes() {
         }
       />
       <Route
+        path="/subscriptions/:id"
+        element={
+          <ProtectedRoute>
+            <SubscriptionDetails />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/subscriptions/add"
         element={
           <ProtectedRoute>
@@ -78,6 +88,14 @@ export default function AppRoutes() {
         element={
           <ProtectedRoute>
             <BillsList />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/bills/:id"
+        element={
+          <ProtectedRoute>
+            <BillDetails />
           </ProtectedRoute>
         }
       />

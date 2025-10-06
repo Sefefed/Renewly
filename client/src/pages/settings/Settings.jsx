@@ -142,13 +142,13 @@ export default function Settings() {
       <Navigation />
 
       {/* Header */}
-      <header className="border-b border-gray-200 bg-white backdrop-blur-md px-6 py-5 shadow-sm">
+      <header className="border-b bg-blue-900 backdrop-blur-md px-6 py-5 shadow-sm">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">
+            <h1 className="text-2xl font-semibold text-white tracking-tight">
               Settings
             </h1>
-            <p className="text-sm text-gray-900 mt-1">
+            <p className="text-sm text-gray-300 mt-1">
               Manage your account preferences and notifications
             </p>
           </div>

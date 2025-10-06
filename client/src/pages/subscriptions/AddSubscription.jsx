@@ -93,7 +93,7 @@ export default function AddSubscription() {
                   name="name"
                   value={form.name}
                   onChange={handleChange}
-                  className="w-full bg-gray-50 border border-gray-600 text-gray-900 rounded-lg px-3 py-2 focus:outline-none "
+                  className="w-full bg-gray-50 border border-gray-400 text-gray-900 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 "
                   placeholder="e.g., Netflix"
                   required
                 />
@@ -110,7 +110,7 @@ export default function AddSubscription() {
                   onChange={handleChange}
                   step="0.01"
                   min="0"
-                  className="w-full bg-gray-50 text-gray-900 border border-gray-600 rounded-lg px-3 py-2 focus:outline-none "
+                  className="w-full bg-gray-50 text-gray-900 border border-gray-400 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 "
                   placeholder="15.99"
                   required
                 />
@@ -124,7 +124,7 @@ export default function AddSubscription() {
                   name="currency"
                   value={form.currency}
                   onChange={handleChange}
-                  className="w-full bg-gray-50 text-gray-900 border border-gray-600 rounded-lg px-3 py-2 focus:outline-none "
+                  className="w-full bg-gray-50 text-gray-900 border border-gray-400 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 "
                 >
                   {SUPPORTED_CURRENCIES.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -142,7 +142,7 @@ export default function AddSubscription() {
                   name="frequency"
                   value={form.frequency}
                   onChange={handleChange}
-                  className="w-full bg-gray-50 text-gray-900 border border-gray-600 rounded-lg px-3 py-2 focus:outline-none "
+                  className="w-full bg-gray-50 text-gray-900 border border-gray-400 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 "
                 >
                   <option value="daily">Daily</option>
                   <option value="weekly">Weekly</option>
@@ -167,7 +167,7 @@ export default function AddSubscription() {
                   name="category"
                   value={form.category}
                   onChange={handleChange}
-                  className="w-full bg-gray-50 text-gray-900 border border-gray-600 rounded-lg px-3 py-2 focus:outline-none "
+                  className="w-full bg-gray-50 text-gray-900 border border-gray-400 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="entertainment">Entertainment</option>
                   <option value="technology">Technology</option>
@@ -189,7 +189,7 @@ export default function AddSubscription() {
                   name="paymentMethod"
                   value={form.paymentMethod}
                   onChange={handleChange}
-                  className="w-full bg-gray-50 text-gray-900 border border-gray-600 rounded-lg px-3 py-2 focus:outline-none"
+                  className="w-full bg-gray-50 text-gray-900 border border-gray-400 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 "
                   placeholder="e.g., Credit Card ****1234"
                   required
                 />
@@ -210,7 +210,7 @@ export default function AddSubscription() {
                   name="startDate"
                   value={form.startDate}
                   onChange={handleChange}
-                  className="w-full bg-gray-50 text-gray-900 border border-gray-600 rounded-lg px-3 py-2 focus:outline-none "
+                  className="w-full bg-gray-50 text-gray-900 border border-gray-400 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 "
                   required
                 />
               </div>
@@ -224,7 +224,7 @@ export default function AddSubscription() {
                   name="renewalDate"
                   value={form.renewalDate}
                   onChange={handleChange}
-                  className="w-full bg-gray-50 text-gray-900 border border-gray-600 rounded-lg px-3 py-2 focus:outline-none "
+                  className="w-full bg-gray-50 text-gray-900 border border-gray-400 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 "
                 />
                 <p className="text-sm text-blue-400 mt-1">
                   Leave empty to auto-calculate based on frequency

@@ -91,7 +91,7 @@ export default function SubscriptionsList() {
       <Navigation />
       {/* Header */}
       <header className=" bg-blue-900 px-6 py-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-2xl font-bold text-white">Subscriptions</h1>
             <p className="text-base text-gray-300">
@@ -101,7 +101,7 @@ export default function SubscriptionsList() {
           <Link
             to="/subscriptions/add"
             onClick={(e) => handleDelayedNav(e, "/subscriptions/add")}
-            className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-sm text-white"
+            className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-sm text-white w-full text-center sm:w-auto"
           >
             Add Subscription
           </Link>
@@ -131,10 +131,10 @@ export default function SubscriptionsList() {
             filteredSubscriptions.map((subscription) => (
               <div
                 key={subscription._id}
-                className="bg-white rounded-lg p-6 transition-colors"
+                className="bg-white rounded-lg p-6 transition-colors hover:bg-gray-50"
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
+                <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+                  <div className="flex items-start gap-4 sm:items-center">
                     <div className="w-12 h-12 bg-gray-900 rounded-lg flex items-center justify-center">
                       <span className="text-xl">
                         {subscription.name.charAt(0).toUpperCase()}
@@ -153,8 +153,8 @@ export default function SubscriptionsList() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-4">
-                    <div className="text-right">
+                  <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-end md:gap-6">
+                    <div className="text-left md:text-right">
                       <p className="text-xl font-bold">
                         {formatCurrency(
                           subscription.price,
@@ -164,15 +164,15 @@ export default function SubscriptionsList() {
                       <StatusBadge status={subscription.status} />
                     </div>
 
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2 w-full sm:w-auto sm:justify-end">
                       <button
                         onClick={() => handleTestReminder(subscription._id)}
-                        className="bg-sky-500 hover:bg-sky-600 px-3 py-1 rounded text-sm text-white"
+                        className="bg-sky-500 hover:bg-sky-600 px-3 py-1 rounded text-sm text-white w-full sm:w-auto"
                         disabled={subscription.status !== "active"}
                       >
                         Test Reminder
                       </button>
-                      <button className="bg-red-500 text-white hover:bg-red-600 px-3 py-1 rounded text-sm">
+                      <button className="bg-red-500 text-white hover:bg-red-600 px-3 py-1 rounded text-sm w-full sm:w-auto">
                         Assist Cancel
                       </button>
                       <Link
@@ -183,7 +183,7 @@ export default function SubscriptionsList() {
                             `/subscriptions/${subscription._id}`
                           )
                         }
-                        className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm text-white"
+                        className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm text-white w-full sm:w-auto"
                       >
                         View Details
                       </Link>

@@ -93,7 +93,7 @@ export default function AddBill() {
                   name="name"
                   value={form.name}
                   onChange={handleChange}
-                  className="w-full text-gray-900  border border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400"
+                  className="w-full text-gray-900  border border-gray-400 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="e.g., Electricity Bill"
                   required
                 />
@@ -110,7 +110,7 @@ export default function AddBill() {
                   onChange={handleChange}
                   step="0.01"
                   min="0"
-                  className="w-full border text-gray-900 border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400"
+                  className="w-full border text-gray-900 border-gray-400 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="85.50"
                   required
                 />
@@ -124,7 +124,7 @@ export default function AddBill() {
                   name="currency"
                   value={form.currency}
                   onChange={handleChange}
-                  className="w-full border text-gray-900 border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400"
+                  className="w-full border text-gray-900 border-gray-400 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   {SUPPORTED_CURRENCIES.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -143,7 +143,7 @@ export default function AddBill() {
                   name="dueDate"
                   value={form.dueDate}
                   onChange={handleChange}
-                  className="w-full border border-gray-600 text-gray-900 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400"
+                  className="w-full border border-gray-400 text-gray-900 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   required
                 />
               </div>
@@ -162,7 +162,7 @@ export default function AddBill() {
                   name="category"
                   value={form.category}
                   onChange={handleChange}
-                  className="w-full border border-gray-600 text-gray-900 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400"
+                  className="w-full border border-gray-400 text-gray-900 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="utilities">Utilities</option>
                   <option value="rent">Rent</option>
@@ -182,7 +182,7 @@ export default function AddBill() {
                   name="paymentMethod"
                   value={form.paymentMethod}
                   onChange={handleChange}
-                  className="w-full  border border-gray-600 text-gray-900 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400"
+                  className="w-full  border border-gray-400 text-gray-900 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="e.g., Bank Transfer"
                   required
                 />

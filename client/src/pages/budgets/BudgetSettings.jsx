@@ -160,13 +160,13 @@ export default function BudgetSettings() {
       <Navigation />
 
       {/* Header */}
-      <header className=" bg-gray-50 backdrop-blur-sm px-6 py-5 shadow-sm">
+      <header className=" bg-blue-900 backdrop-blur-sm px-6 py-5 shadow-sm">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">
+            <h1 className="text-2xl font-semibold text-white tracking-tight">
               Budget Settings
             </h1>
-            <p className="text-sm text-gray-900 mt-1">
+            <p className="text-sm text-gray-300 mt-1">
               Set your monthly spending limits and category budgets
             </p>
           </div>
@@ -190,7 +190,7 @@ export default function BudgetSettings() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-2">
-                  Monthly Limit *
+                  Monthly Limit 
                 </label>
                 <input
                   type="number"

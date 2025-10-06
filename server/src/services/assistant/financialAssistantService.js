@@ -86,6 +86,7 @@ class FinancialAssistantService {
       persona,
       knowledgeBase,
       conversationHistory: history,
+      context,
     });
 
     const structuredResponse = await this.generateResponse(
