@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Navigation from "../../components/Navigation";
 import LoadingSpinner from "../../components/ui/LoadingSpinner";
@@ -6,259 +6,74 @@ import ErrorMessage from "../../components/ui/ErrorMessage";
 import StatusBadge from "../../components/ui/StatusBadge";
 import { useAuth } from "../../contexts/AuthContext";
 import { useApi } from "../../utils/api";
-import { useCurrency } from "../../hooks/useCurrency";
-import { formatCurrency, formatDate } from "../../utils/formatters";
-
-const frequencyCopy = {
-  daily: "Daily",
-  weekly: "Weekly",
-  monthly: "Monthly",
-  yearly: "Yearly",
-};
-
-const createEmptyAiState = () => ({
-  summary: null,
-  suggestions: [],
-  actions: [],
-  version: 0,
-});
+import { formatCurrency } from "../../utils/formatters";
+import { useAiBriefing } from "../../hooks/useAiBriefing";
+import { useSubscriptionDetails } from "./hooks/useSubscriptionDetails";
+import { buildSubscriptionPrompt } from "./utils/prompts";
+import { pickSubscriptionAngle } from "./constants/angles";
 
 export default function SubscriptionDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { token } = useAuth();
   const api = useApi(token);
-  const { currency: defaultCurrency } = useCurrency();
+  const {
+    subscription,
+    loading,
+    error,
+    refresh: refreshSubscription,
+    defaultCurrency,
+    monthlyPrice,
+    paymentSchedule,
+    riskProfile,
+    frequencyLabel,
+  } = useSubscriptionDetails(id, api);
 
-  const [subscription, setSubscription] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const [aiState, setAiState] = useState(createEmptyAiState);
-  const [aiLoading, setAiLoading] = useState(false);
-  const [aiError, setAiError] = useState(null);
-  const [displayedSummaryLines, setDisplayedSummaryLines] = useState([]);
-  const [isTypingSummary, setIsTypingSummary] = useState(false);
-  const summaryTypingTimeoutRef = useRef(null);
-
-  const monthlyPrice = useMemo(() => {
-    if (!subscription) return null;
-    const multiplier =
-      {
-        daily: 30,
-        weekly: 4.345,
-        monthly: 1,
-        yearly: 1 / 12,
-      }[subscription.frequency] ?? 1;
-
-    return subscription.price * multiplier;
-  }, [subscription]);
-  const paymentSchedule = useMemo(
-    () => buildPaymentSchedule(subscription, defaultCurrency),
-    [subscription, defaultCurrency]
-  );
-  const riskProfile = useMemo(
-    () =>
-      computeRiskProfile(
-        subscription,
-        paymentSchedule,
-        monthlyPrice,
-        defaultCurrency
-      ),
-    [subscription, paymentSchedule, monthlyPrice, defaultCurrency]
-  );
-
-  const fetchSubscription = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const response = await api.getSubscriptions();
-      const record = response?.data?.find((item) => item._id === id);
-
-      if (!record) {
-        setError(
-          "We couldn't locate that subscription. It may have been deleted or updated."
-        );
-        setSubscription(null);
-        return;
-      }
-
-      setSubscription(record);
-    } catch (err) {
-      setError(err.message ?? "Unable to load subscription details");
-    } finally {
-      setLoading(false);
-    }
-  }, [api, id]);
-
-  const buildAiQuery = useCallback(
-    (record, followUp) => {
-      const basePrompt = `You are Renewly's embedded finance co-pilot. Create a thorough, user-friendly briefing for the subscription below using ONLY the data supplied. Respond with exactly four short paragraphs in this order:
-1. **Status & Renewal Outlook** – two to three sentences about current status, renewal timing, payment method, and any gaps in the data.
-2. **Spend & Utilization Lens** – two to three sentences about cost cadence, category impact, usage notes, and whether the spend trajectory looks healthy.
-3. **Actionable Moves** – two to three sentences describing concrete, subscription-specific actions or safeguards. If data is missing, call it out and suggest how to fill the gap instead of guessing.
-4. **Clarifications & Watchpoints** – two to three sentences summarizing assumptions, missing fields that need attention, and what signals to monitor next.
-
-Keep the tone supportive yet direct, reference only this subscription, avoid lists or bullet formatting, and do not compare to other services.
-
-Subscription: ${record.name}. Price: ${formatCurrency(
-        record.price,
-        record.currency || defaultCurrency
-      )} (${frequencyCopy[record.frequency] ?? record.frequency}). Status: ${
-        record.status
-      }. Renewal date: ${
-        record.renewalDate ? formatDate(record.renewalDate) : "Unknown"
-      }. Payment method: ${record.paymentMethod || "Unspecified"}. Category: ${
-        record.category || "Uncategorized"
-      }. Description: ${
-        record.description || "No description provided"
-      }. Notes: ${record.notes || "None provided"}.`;
-
-      if (followUp) {
-        return `${basePrompt} The user specifically wants to know: ${followUp}`;
-      }
-
-      return basePrompt;
-    },
+  const buildPrompt = useCallback(
+    (entity, followUp, angle) =>
+      buildSubscriptionPrompt({
+        subscription: entity,
+        defaultCurrency,
+        angle,
+        followUp,
+      }),
     [defaultCurrency]
   );
 
-  const fetchAiSummary = useCallback(
-    async (record, { followUp, silent = false } = {}) => {
-      if (!record) return;
+  const {
+    aiState,
+    aiLoading,
+    aiError,
+    displayedLines,
+    isTyping,
+    refresh: refreshBriefing,
+    analysisAngle,
+  } = useAiBriefing({
+    entity: subscription,
+    buildPrompt,
+    api,
+    entityType: "subscription",
+    pickAngle: pickSubscriptionAngle,
+  });
 
-      setAiError(null);
-      if (!silent) {
-        setAiLoading(true);
-      }
+  const goBack = useCallback(() => navigate("/subscriptions"), [navigate]);
+  const refreshAi = useCallback(() => refreshBriefing(), [refreshBriefing]);
 
-      try {
-        const query = buildAiQuery(record, followUp);
-        const response = await api.assistantQuery(query, {
-          entityType: "subscription",
-          entityId: record._id,
-          entity: record,
-          followUp,
-        });
-
-        const summary = response?.data?.response ?? null;
-        const suggestions = response?.data?.suggestions ?? [];
-        const actions = response?.data?.actions ?? [];
-
-        setAiState({
-          summary,
-          suggestions,
-          actions,
-          version: Date.now(),
-        });
-      } catch (err) {
-        setAiError(err.message ?? "Unable to generate AI insights right now");
-        setAiState(createEmptyAiState());
-      } finally {
-        setAiLoading(false);
-      }
-    },
-    [api, buildAiQuery]
-  );
-
-  useEffect(() => {
-    fetchSubscription();
-  }, [fetchSubscription]);
-
-  useEffect(() => {
-    if (subscription) {
-      fetchAiSummary(subscription);
-    }
-  }, [subscription, fetchAiSummary]);
-
-  useEffect(() => {
-    if (aiLoading) {
-      if (summaryTypingTimeoutRef.current) {
-        clearTimeout(summaryTypingTimeoutRef.current);
-      }
-      setDisplayedSummaryLines([]);
-      setIsTypingSummary(false);
-    }
-  }, [aiLoading]);
-
-  const summaryText =
-    typeof aiState.summary === "string"
-      ? aiState.summary
-      : aiState.summary?.text;
-  const summaryVersion = aiState.version;
-  useEffect(() => {
-    if (summaryTypingTimeoutRef.current) {
-      clearTimeout(summaryTypingTimeoutRef.current);
-    }
-
-    if (!summaryText) {
-      setDisplayedSummaryLines([]);
-      setIsTypingSummary(false);
-      return undefined;
-    }
-
-    const paragraphTexts = summaryText
-      .split(/\n+/)
-      .map((segment) => segment.trim())
-      .filter(Boolean);
-
-    const paragraphs =
-      paragraphTexts.length > 0 ? paragraphTexts : [summaryText.trim()];
-
-    const wordsByParagraph = paragraphs.map((paragraph) =>
-      paragraph.split(/\s+/).filter(Boolean)
+  const priceDisplay = useMemo(() => {
+    if (!subscription) return null;
+    return formatCurrency(
+      subscription.price,
+      subscription.currency || defaultCurrency
     );
+  }, [subscription, defaultCurrency]);
 
-    setDisplayedSummaryLines(paragraphs.map(() => ""));
-    setIsTypingSummary(true);
-
-    let paragraphIndex = 0;
-    let wordIndex = 0;
-
-    const typeNextWord = () => {
-      const words = wordsByParagraph[paragraphIndex];
-      if (!words || words.length === 0) {
-        paragraphIndex += 1;
-        wordIndex = 0;
-      } else {
-        const nextWord = words[wordIndex];
-        setDisplayedSummaryLines((prev) => {
-          const next = [...prev];
-          const existing = next[paragraphIndex];
-          next[paragraphIndex] = existing
-            ? `${existing} ${nextWord}`
-            : nextWord;
-          return next;
-        });
-
-        wordIndex += 1;
-
-        if (wordIndex >= words.length) {
-          paragraphIndex += 1;
-          wordIndex = 0;
-        }
-      }
-
-      if (paragraphIndex < wordsByParagraph.length) {
-        summaryTypingTimeoutRef.current = setTimeout(typeNextWord, 120);
-      } else {
-        setIsTypingSummary(false);
-        summaryTypingTimeoutRef.current = null;
-      }
-    };
-
-    summaryTypingTimeoutRef.current = setTimeout(typeNextWord, 220);
-
-    return () => {
-      if (summaryTypingTimeoutRef.current) {
-        clearTimeout(summaryTypingTimeoutRef.current);
-        summaryTypingTimeoutRef.current = null;
-      }
-    };
-  }, [summaryText, summaryVersion]);
-
-  const goBack = () => navigate("/subscriptions");
+  const monthlyDisplay = useMemo(() => {
+    if (!subscription || !monthlyPrice) return null;
+    return formatCurrency(
+      monthlyPrice,
+      subscription.currency || defaultCurrency
+    );
+  }, [monthlyPrice, subscription, defaultCurrency]);
 
   if (loading) {
     return (
@@ -276,7 +91,7 @@ Subscription: ${record.name}. Price: ${formatCurrency(
       <div className="min-h-screen bg-gray-50 text-gray-900">
         <Navigation />
         <div className="mx-auto max-w-3xl px-4 py-10">
-          <ErrorMessage error={error} onRetry={fetchSubscription} />
+          <ErrorMessage error={error} onRetry={refreshSubscription} />
           <button
             type="button"
             onClick={goBack}
@@ -288,14 +103,6 @@ Subscription: ${record.name}. Price: ${formatCurrency(
       </div>
     );
   }
-
-  const priceDisplay = formatCurrency(
-    subscription.price,
-    subscription.currency || defaultCurrency
-  );
-  const monthlyDisplay = monthlyPrice
-    ? formatCurrency(monthlyPrice, subscription.currency || defaultCurrency)
-    : null;
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">
       <Navigation />
@@ -365,8 +172,9 @@ Subscription: ${record.name}. Price: ${formatCurrency(
                   </div>
                   <button
                     type="button"
-                    onClick={() => fetchAiSummary(subscription)}
-                    className="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 bg-indigo-500/30 px-5 py-2 text-xs font-semibold uppercase tracking-wide text-indigo-100 transition hover:bg-indigo-500/50"
+                    onClick={refreshAi}
+                    disabled={aiLoading}
+                    className="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 bg-indigo-500/30 px-5 py-2 text-xs font-semibold uppercase tracking-wide text-indigo-100 transition hover:bg-indigo-500/50 disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     Refresh briefing
                   </button>
@@ -382,6 +190,19 @@ Subscription: ${record.name}. Price: ${formatCurrency(
                     <p className="mt-1 text-xs text-indigo-200/80">
                       Streaming adaptive guidance for this subscription only.
                     </p>
+                    {analysisAngle && (
+                      <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-white/10 bg-indigo-500/15 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wide text-indigo-100">
+                        <span>Lens</span>
+                        <span className="rounded-full bg-white/10 px-2 py-0.5 text-indigo-50">
+                          {analysisAngle.label}
+                        </span>
+                      </div>
+                    )}
+                    {analysisAngle?.tagline && (
+                      <p className="mt-1 text-[0.7rem] uppercase tracking-wide text-indigo-200/60">
+                        {analysisAngle.tagline}
+                      </p>
+                    )}
                     <div className="mt-4 space-y-4">
                       {aiLoading ? (
                         <div className="flex items-center gap-3 text-sm text-indigo-100">
@@ -390,20 +211,19 @@ Subscription: ${record.name}. Price: ${formatCurrency(
                         </div>
                       ) : aiError ? (
                         <div className="text-sm text-rose-200">{aiError}</div>
-                      ) : summaryText ? (
+                      ) : aiState.summary ? (
                         <div className="space-y-3">
-                          {displayedSummaryLines
+                          {displayedLines
                             .filter((line) => line.length > 0)
                             .map((line, index) => (
                               <p
                                 key={`${line}-${index}`}
                                 className="text-sm leading-relaxed text-indigo-50 transition-opacity duration-500"
-                                style={{ opacity: 1 }}
                               >
                                 {line}
                               </p>
                             ))}
-                          {isTypingSummary && (
+                          {isTyping && (
                             <div className="flex items-center gap-2 text-xs text-indigo-200/80">
                               <span className="h-1.5 w-1.5 animate-ping rounded-full bg-indigo-200" />
                               <span>Streaming more insights…</span>
@@ -412,8 +232,8 @@ Subscription: ${record.name}. Price: ${formatCurrency(
                         </div>
                       ) : (
                         <p className="text-xs text-indigo-200/80">
-                          Insights will appear here as soon as the assistant
-                          gathers enough context. Try refreshing in a moment.
+                          {analysisAngle?.fallbackHint ||
+                            "Insights will appear here as soon as the assistant gathers enough context. Try refreshing in a moment."}
                         </p>
                       )}
                     </div>
@@ -428,12 +248,11 @@ Subscription: ${record.name}. Price: ${formatCurrency(
                           Payment schedule
                         </h3>
                         <p className="text-[0.7rem] uppercase tracking-wide text-indigo-200/70">
-                          {subscription.paymentMethod}
+                          {subscription.paymentMethod || "Payment method TBD"}
                         </p>
                       </div>
                       <span className="rounded-full bg-black/30 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-wide text-indigo-100/80">
-                        {frequencyCopy[subscription.frequency] ??
-                          subscription.frequency}
+                        {frequencyLabel ?? subscription.frequency}
                       </span>
                     </div>
                     <div className="mt-4 space-y-3 text-sm text-indigo-100">
@@ -525,183 +344,4 @@ Subscription: ${record.name}. Price: ${formatCurrency(
       </main>
     </div>
   );
-}
-
-function buildPaymentSchedule(subscription, defaultCurrency) {
-  if (!subscription?.renewalDate) return [];
-
-  const currencyCode = subscription.currency || defaultCurrency;
-  const schedule = [];
-  const now = new Date();
-  let cursor = new Date(subscription.renewalDate);
-
-  if (Number.isNaN(cursor.getTime())) {
-    return [];
-  }
-
-  while (cursor < now) {
-    const nextCursor = addInterval(cursor, subscription.frequency);
-    if (!nextCursor) break;
-    cursor = nextCursor;
-  }
-
-  for (let index = 0; index < 3; index += 1) {
-    schedule.push({
-      id: `${subscription._id ?? "subscription"}-payment-${index}`,
-      date: new Date(cursor),
-      formattedDate: formatDate(cursor),
-      relative: formatRelativeToToday(cursor),
-      amount: formatCurrency(subscription.price, currencyCode),
-    });
-
-    const next = addInterval(cursor, subscription.frequency);
-    if (!next) break;
-    cursor = next;
-  }
-
-  return schedule;
-}
-
-function addInterval(date, frequency) {
-  const next = new Date(date.getTime());
-
-  switch (frequency) {
-    case "daily":
-      next.setDate(next.getDate() + 1);
-      break;
-    case "weekly":
-      next.setDate(next.getDate() + 7);
-      break;
-    case "monthly":
-      next.setMonth(next.getMonth() + 1);
-      break;
-    case "yearly":
-      next.setFullYear(next.getFullYear() + 1);
-      break;
-    default:
-      return null;
-  }
-
-  return next;
-}
-
-function formatRelativeToToday(date) {
-  const now = new Date();
-  const diffMs = date.getTime() - now.getTime();
-  const diffDays = Math.round(diffMs / 86400000);
-  const formatter = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
-
-  if (Math.abs(diffDays) >= 14) {
-    const diffWeeks = Math.round(diffDays / 7);
-    return formatter.format(diffWeeks, "week");
-  }
-
-  return formatter.format(diffDays, "day");
-}
-
-function computeRiskProfile(
-  subscription,
-  paymentSchedule,
-  monthlyPrice,
-  defaultCurrency
-) {
-  if (!subscription) return null;
-
-  const currencyCode = subscription.currency || defaultCurrency;
-  const now = new Date();
-  const nextPaymentDate = paymentSchedule[0]?.date
-    ? new Date(paymentSchedule[0].date)
-    : subscription.renewalDate
-    ? new Date(subscription.renewalDate)
-    : null;
-
-  let score = 35;
-
-  if (subscription.status !== "active") {
-    score += 25;
-  }
-
-  if (subscription.price >= 150) {
-    score += 25;
-  } else if (subscription.price >= 80) {
-    score += 15;
-  } else if (subscription.price >= 40) {
-    score += 8;
-  }
-
-  if (typeof monthlyPrice === "number" && monthlyPrice > 80) {
-    score += 10;
-  }
-
-  if (nextPaymentDate) {
-    const daysUntil = Math.round(
-      (nextPaymentDate.getTime() - now.getTime()) / 86400000
-    );
-
-    if (daysUntil <= 7) {
-      score += 20;
-    } else if (daysUntil <= 14) {
-      score += 12;
-    } else if (daysUntil < 0) {
-      score += 15;
-    }
-  } else {
-    score += 5;
-  }
-
-  score = Math.max(5, Math.min(95, Math.round(score)));
-
-  const level =
-    score >= 70
-      ? "Attention needed"
-      : score >= 45
-      ? "Monitor closely"
-      : "Steady";
-  const accent = score >= 70 ? "#f97316" : score >= 45 ? "#38bdf8" : "#34d399";
-
-  const narrative =
-    level === "Attention needed"
-      ? "This subscription is trending toward higher spend soon. Review usage or negotiate before the next renewal."
-      : level === "Monitor closely"
-      ? "Keep an eye on utilization and payment cadence to stay ahead of potential surprises."
-      : "No immediate risks detected. Maintain current strategy and keep monitoring engagement.";
-
-  const signals = [];
-
-  if (nextPaymentDate) {
-    const diffDays = Math.round(
-      (nextPaymentDate.getTime() - now.getTime()) / 86400000
-    );
-    signals.push({
-      label: "Renewal window",
-      detail:
-        diffDays >= 0
-          ? `Next charge in ${diffDays} day${
-              diffDays === 1 ? "" : "s"
-            } (${formatDate(nextPaymentDate)}).`
-          : `Last charged ${Math.abs(diffDays)} day${
-              Math.abs(diffDays) === 1 ? "" : "s"
-            } ago.`,
-    });
-  } else {
-    signals.push({
-      label: "Renewal window",
-      detail: "No renewal date stored. Set one to unlock proactive reminders.",
-    });
-  }
-
-  signals.push({
-    label: "Spend intensity",
-    detail: `Currently budgeted at ${formatCurrency(
-      subscription.price,
-      currencyCode
-    )} per ${frequencyCopy[subscription.frequency] ?? subscription.frequency}.`,
-  });
-
-  signals.push({
-    label: "Status",
-    detail: `Marked as ${subscription.status}.`,
-  });
-
-  return { score, level, accent, narrative, signals };
 }
