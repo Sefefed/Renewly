@@ -1,7 +1,13 @@
 import PropTypes from "prop-types";
 import useTypingParagraphs from "../hooks/useTypingParagraphs";
 
-const AssistantResponse = ({ alertTitle, responseText, isLoading, error }) => {
+const AssistantResponse = ({
+  title,
+  responseText,
+  isLoading,
+  error,
+  emptyMessage,
+}) => {
   const { paragraphs, displayedParagraphs, isTyping } =
     useTypingParagraphs(responseText);
 
@@ -16,7 +22,7 @@ const AssistantResponse = ({ alertTitle, responseText, isLoading, error }) => {
             AI Perspective
           </p>
           <h2 className="mt-2 text-2xl font-semibold text-slate-900">
-            {alertTitle ? `What to do about ${alertTitle}` : "Alert guidance"}
+            {title}
           </h2>
         </div>
       </div>
@@ -55,8 +61,7 @@ const AssistantResponse = ({ alertTitle, responseText, isLoading, error }) => {
 
         {showEmptyState && (
           <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
-            The assistant didn’t return detailed guidance for this alert. Try
-            again later or reach out through the assistant for more context.
+            {emptyMessage}
           </div>
         )}
       </div>
@@ -65,17 +70,20 @@ const AssistantResponse = ({ alertTitle, responseText, isLoading, error }) => {
 };
 
 AssistantResponse.propTypes = {
-  alertTitle: PropTypes.string,
+  title: PropTypes.string,
   responseText: PropTypes.string,
   isLoading: PropTypes.bool,
   error: PropTypes.string,
+  emptyMessage: PropTypes.string,
 };
 
 AssistantResponse.defaultProps = {
-  alertTitle: "",
+  title: "Alert guidance",
   responseText: "",
   isLoading: false,
   error: null,
+  emptyMessage:
+    "The assistant didn’t return detailed guidance. Try again later or reach out through the assistant for more context.",
 };
 
 export default AssistantResponse;

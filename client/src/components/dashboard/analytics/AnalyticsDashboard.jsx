@@ -187,14 +187,12 @@ const AnalyticsDashboard = ({
 
   const handleRecommendationAssist = useCallback(
     (opportunity) => {
-      if (!onAssistantPrompt) {
-        return;
-      }
-
       if (!opportunity) {
-        onAssistantPrompt(
-          "I don't see any smart recommendations right now. Please review my subscription spending and suggest fresh ways to save money."
-        );
+        if (onAssistantPrompt) {
+          onAssistantPrompt(
+            "I don't see any smart recommendations right now. Please review my subscription spending and suggest fresh ways to save money."
+          );
+        }
         return;
       }
 
@@ -219,9 +217,26 @@ const AnalyticsDashboard = ({
         " "
       )} Provide the reasoning behind it and outline clear next steps I can take now.`;
 
-      onAssistantPrompt(prompt.trim());
+      const slugBase = [
+        opportunity.type,
+        opportunity.subscriptionIds?.join("-"),
+        opportunity.title,
+      ]
+        .filter(Boolean)
+        .join("-");
+
+      const recommendationSlug = slugBase
+        ? encodeURIComponent(slugBase.toLowerCase())
+        : `recommendation-${Date.now()}`;
+
+      navigate(`/dashboard/recommendations/${recommendationSlug}`, {
+        state: {
+          recommendation: opportunity,
+          prompt: prompt.trim(),
+        },
+      });
     },
-    [activeCurrency, onAssistantPrompt]
+    [activeCurrency, navigate, onAssistantPrompt]
   );
 
   if (isLoading) {

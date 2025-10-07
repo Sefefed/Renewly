@@ -1,25 +1,33 @@
+import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+
 import { useAuth } from "../../contexts/AuthContext";
 import { useApi } from "../../utils/api";
-import AlertSummaryCard from "./components/AlertSummaryCard";
-import RecommendedStepsCard from "./components/RecommendedStepsCard";
 import AssistantResponse from "./components/AssistantResponse";
-import useAlertInsight from "./hooks/useAlertInsight";
+import RecommendationSummaryCard from "./components/RecommendationSummaryCard";
+import RecommendedStepsCard from "./components/RecommendedStepsCard";
+import useRecommendationInsight from "./hooks/useRecommendationInsight";
 
-const AlertInsightPage = () => {
+const RecommendationInsightPage = () => {
   const navigate = useNavigate();
-  const { state } = useLocation();
+  const location = useLocation();
+  const { recommendation, prompt } = location.state ?? {};
+
   const { token } = useAuth();
   const api = useApi(token);
 
-  const alert = state?.alert ?? null;
-  const prompt = state?.prompt ?? null;
+  const { assistantActions, error, isLoading, responseText } =
+    useRecommendationInsight({
+      api,
+      recommendation,
+      prompt,
+    });
 
-  const { assistantActions, isLoading, error, responseText } = useAlertInsight({
-    api,
-    alert,
-    prompt,
-  });
+  useEffect(() => {
+    if (!recommendation || !prompt) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [navigate, prompt, recommendation]);
 
   const handleBack = () => {
     navigate(-1);
@@ -39,20 +47,20 @@ const AlertInsightPage = () => {
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
           <div className="space-y-4">
-            <AlertSummaryCard alert={alert} />
+            <RecommendationSummaryCard recommendation={recommendation} />
             <RecommendedStepsCard actions={assistantActions} />
           </div>
 
           <AssistantResponse
             title={
-              alert?.title
-                ? `What to do about ${alert.title}`
-                : "Alert guidance"
+              recommendation?.title
+                ? `What to do about ${recommendation.title}`
+                : "Recommendation guidance"
             }
             responseText={responseText}
             isLoading={isLoading}
             error={error}
-            emptyMessage="The assistant didn’t return detailed guidance for this alert. Try again later or reach out through the assistant for more context."
+            emptyMessage="The assistant didn’t return guidance for this recommendation. Try again later or ask the assistant from the dashboard."
           />
         </div>
       </div>
@@ -60,4 +68,4 @@ const AlertInsightPage = () => {
   );
 };
 
-export default AlertInsightPage;
+export default RecommendationInsightPage;
