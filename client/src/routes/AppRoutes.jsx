@@ -5,6 +5,7 @@ import LandingPage from "../pages/landing/LandingPage";
 import SignIn from "../pages/auth/SignIn";
 import SignUp from "../pages/auth/SignUp";
 import Dashboard from "../pages/dashboard/Dashboard";
+import AlertInsightPage from "../pages/dashboard/AlertInsightPage";
 import SubscriptionsList from "../pages/subscriptions/SubscriptionsList";
 import AddSubscription from "../pages/subscriptions/AddSubscription";
 import SubscriptionDetails from "../pages/subscriptions/SubscriptionDetails";
@@ -56,6 +57,14 @@ export default function AppRoutes() {
         element={
           <ProtectedRoute>
             <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/alerts/:alertId"
+        element={
+          <ProtectedRoute>
+            <AlertInsightPage />
           </ProtectedRoute>
         }
       />

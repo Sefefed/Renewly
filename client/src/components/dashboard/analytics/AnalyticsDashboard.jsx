@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import { formatCurrency } from "../../../utils/formatters";
 import { useCurrency } from "../../../hooks/useCurrency";
@@ -31,6 +32,7 @@ const AnalyticsDashboard = ({
 }) => {
   const [activeChart, setActiveChart] = useState(CHART_TABS[0].id);
   const [drilldownData, setDrilldownData] = useState(null);
+  const navigate = useNavigate();
   const { currency: preferredCurrency } = useCurrency();
   const activeCurrency =
     preferredCurrency || insights?.currency || DEFAULT_CURRENCY;
@@ -166,9 +168,21 @@ const AnalyticsDashboard = ({
 
       const prompt = `I just received a predictive alert titled "${alert.title}". ${contextLine} Please explain why this alert matters and outline the recommended next steps.`;
 
-      onAssistantPrompt?.(prompt.trim());
+      const slugBase = [alert.subscriptionId, alert.type, alert.priority]
+        .filter(Boolean)
+        .join("-");
+      const alertSlug = slugBase
+        ? encodeURIComponent(slugBase.toLowerCase())
+        : `alert-${Date.now()}`;
+
+      navigate(`/dashboard/alerts/${alertSlug}`, {
+        state: {
+          alert,
+          prompt: prompt.trim(),
+        },
+      });
     },
-    [onAssistantPrompt]
+    [navigate]
   );
 
   const handleRecommendationAssist = useCallback(
