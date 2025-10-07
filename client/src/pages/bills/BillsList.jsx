@@ -70,7 +70,7 @@ export default function BillsList() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 text-white">
+      <div className="min-h-screen bg-gray-50 text-gray-900">
         <Navigation />
         <div className="flex items-center justify-center h-96">
           <LoadingSpinner text="Loading bills..." />
@@ -81,7 +81,7 @@ export default function BillsList() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-900 text-white">
+      <div className="min-h-screen bg-gray-50 text-gray-900">
         <Navigation />
         <div className="flex items-center justify-center h-96">
           <ErrorMessage error={error} onRetry={fetchBills} />
@@ -91,7 +91,7 @@ export default function BillsList() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 text-white">
+    <div className="min-h-screen bg-gray-50 text-gray-900">
       <Navigation />
 
       {/* Header */}

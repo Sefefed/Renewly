@@ -48,16 +48,6 @@ const useAssistantPanel = () => {
     [assistantOffset]
   );
 
-  const toastsStyle = useMemo(
-    () =>
-      assistantOffset
-        ? {
-            right: `${assistantOffset + 16}px`,
-          }
-        : undefined,
-    [assistantOffset]
-  );
-
   return {
     isAssistantOpen,
     setIsAssistantOpen,
@@ -65,7 +55,6 @@ const useAssistantPanel = () => {
     setAssistantUnread,
     assistantOffset,
     dashboardStyle,
-    toastsStyle,
     handleAssistantLayoutChange,
   };
 };

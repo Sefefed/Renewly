@@ -135,7 +135,7 @@ export default function BudgetSettings() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 text-white">
+      <div className="min-h-screen bg-gray-50 text-gray-900">
         <Navigation />
         <div className="flex items-center justify-center h-96">
           <LoadingSpinner text="Loading budget settings..." />
@@ -146,7 +146,7 @@ export default function BudgetSettings() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-900 text-white">
+      <div className="min-h-screen bg-gray-50 text-gray-900">
         <Navigation />
         <div className="flex items-center justify-center h-96">
           <ErrorMessage error={error} onRetry={fetchBudget} />
@@ -156,7 +156,7 @@ export default function BudgetSettings() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 text-white">
+    <div className="min-h-screen bg-gray-50 text-gray-900">
       <Navigation />
 
       {/* Header */}
@@ -190,7 +190,7 @@ export default function BudgetSettings() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-2">
-                  Monthly Limit 
+                  Monthly Limit
                 </label>
                 <input
                   type="number"

@@ -20,6 +20,8 @@ export default function SubscriptionsList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filter, setFilter] = useState("all");
+  const [cancellingIds, setCancellingIds] = useState(() => new Set());
+  const [reminderIds, setReminderIds] = useState(() => new Set());
   const DELAY_MS = 400;
 
   const filters = [
@@ -50,14 +52,55 @@ export default function SubscriptionsList() {
     return sub.status === filter;
   });
 
-  const handleTestReminder = async (subscriptionId) => {
-    try {
-      await api.sendReminder(subscriptionId, true);
-      alert("Test reminder sent successfully!");
-    } catch (err) {
-      alert("Failed to send reminder: " + err.message);
-    }
-  };
+  const handleTestReminder = useCallback(
+    async (subscriptionId) => {
+      setReminderIds((prev) => {
+        const next = new Set(prev);
+        next.add(subscriptionId);
+        return next;
+      });
+
+      try {
+        await api.sendReminder(subscriptionId, true);
+        alert("Test reminder sent successfully!");
+      } catch (err) {
+        alert("Failed to send reminder: " + err.message);
+      } finally {
+        setReminderIds((prev) => {
+          const next = new Set(prev);
+          next.delete(subscriptionId);
+          return next;
+        });
+      }
+    },
+    [api]
+  );
+
+  const handleAssistCancel = useCallback(
+    async (subscriptionId) => {
+      setCancellingIds((prev) => {
+        const next = new Set(prev);
+        next.add(subscriptionId);
+        return next;
+      });
+
+      try {
+        await api.deleteSubscription(subscriptionId);
+        setSubscriptions((prev) =>
+          prev.filter((item) => item._id !== subscriptionId)
+        );
+      } catch (err) {
+        alert("Failed to cancel subscription: " + err.message);
+      } finally {
+        setCancellingIds((prev) => {
+          const next = new Set(prev);
+          next.delete(subscriptionId);
+          return next;
+        });
+      }
+    },
+    [api]
+  );
 
   const handleDelayedNav = (e, path) => {
     e.preventDefault();
@@ -66,7 +109,7 @@ export default function SubscriptionsList() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 text-white">
+      <div className="min-h-screen bg-gray-50 text-gray-900">
         <Navigation />
         <div className="flex items-center justify-center h-96">
           <LoadingSpinner text="Loading subscriptions..." />
@@ -77,7 +120,7 @@ export default function SubscriptionsList() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-900 text-white">
+      <div className="min-h-screen bg-gray-50 text-gray-900">
         <Navigation />
         <div className="flex items-center justify-center h-96">
           <ErrorMessage error={error} onRetry={fetchSubscriptions} />
@@ -87,7 +130,7 @@ export default function SubscriptionsList() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 text-white">
+    <div className="min-h-screen bg-gray-50 text-gray-900">
       <Navigation />
       {/* Header */}
       <header className=" bg-blue-900 px-6 py-4">
@@ -128,70 +171,91 @@ export default function SubscriptionsList() {
         {/* Subscriptions List */}
         <div className="space-y-4">
           {filteredSubscriptions.length > 0 ? (
-            filteredSubscriptions.map((subscription) => (
-              <div
-                key={subscription._id}
-                className="bg-white rounded-lg p-6 transition-colors hover:bg-gray-50"
-              >
-                <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-                  <div className="flex items-start gap-4 sm:items-center">
-                    <div className="w-12 h-12 bg-gray-900 rounded-lg flex items-center justify-center">
-                      <span className="text-xl">
-                        {subscription.name.charAt(0).toUpperCase()}
-                      </span>
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-bold text-gray-900">
-                        {subscription.name}
-                      </h3>
-                      <p className="text-sm text-gray-900 capitalize">
-                        {subscription.category} • {subscription.frequency}
-                      </p>
-                      <p className="text-sm text-gray-900">
-                        Next renewal: {formatDate(subscription.renewalDate)}
-                      </p>
-                    </div>
-                  </div>
+            filteredSubscriptions.map((subscription) => {
+              const isCancelling = cancellingIds.has(subscription._id);
+              const isSendingReminder = reminderIds.has(subscription._id);
 
-                  <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-end md:gap-6">
-                    <div className="text-left md:text-right">
-                      <p className="text-xl font-bold">
-                        {formatCurrency(
-                          subscription.price,
-                          subscription.currency || currency
-                        )}
-                      </p>
-                      <StatusBadge status={subscription.status} />
+              return (
+                <div
+                  key={subscription._id}
+                  className="bg-white rounded-lg p-6 transition-colors hover:bg-gray-50"
+                >
+                  <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+                    <div className="flex items-start gap-4 sm:items-center">
+                      <div className="w-12 h-12 bg-gray-900 rounded-lg flex items-center justify-center">
+                        <span className="text-xl">
+                          {subscription.name.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-bold text-gray-900">
+                          {subscription.name}
+                        </h3>
+                        <p className="text-sm text-gray-900 capitalize">
+                          {subscription.category} • {subscription.frequency}
+                        </p>
+                        <p className="text-sm text-gray-900">
+                          Next renewal: {formatDate(subscription.renewalDate)}
+                        </p>
+                      </div>
                     </div>
 
-                    <div className="flex flex-wrap gap-2 w-full sm:w-auto sm:justify-end">
-                      <button
-                        onClick={() => handleTestReminder(subscription._id)}
-                        className="bg-sky-500 hover:bg-sky-600 px-3 py-1 rounded text-sm text-white w-full sm:w-auto"
-                        disabled={subscription.status !== "active"}
-                      >
-                        Test Reminder
-                      </button>
-                      <button className="bg-red-500 text-white hover:bg-red-600 px-3 py-1 rounded text-sm w-full sm:w-auto">
-                        Assist Cancel
-                      </button>
-                      <Link
-                        to={`/subscriptions/${subscription._id}`}
-                        onClick={(e) =>
-                          handleDelayedNav(
-                            e,
-                            `/subscriptions/${subscription._id}`
-                          )
-                        }
-                        className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm text-white w-full sm:w-auto"
-                      >
-                        View Details
-                      </Link>
+                    <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-end md:gap-6">
+                      <div className="text-left md:text-right">
+                        <p className="text-xl font-bold">
+                          {formatCurrency(
+                            subscription.price,
+                            subscription.currency || currency
+                          )}
+                        </p>
+                        <StatusBadge status={subscription.status} />
+                      </div>
+
+                      <div className="flex flex-wrap gap-2 w-full sm:w-auto sm:justify-end">
+                        <button
+                          onClick={() => handleTestReminder(subscription._id)}
+                          className={`bg-sky-500 text-white px-3 py-1 rounded text-sm w-full sm:w-auto transition-colors ${
+                            subscription.status !== "active" ||
+                            isSendingReminder
+                              ? "cursor-not-allowed opacity-70"
+                              : "hover:bg-sky-600"
+                          }`}
+                          disabled={
+                            subscription.status !== "active" ||
+                            isSendingReminder
+                          }
+                        >
+                          {isSendingReminder ? "Sending..." : "Test Reminder"}
+                        </button>
+                        <button
+                          onClick={() => handleAssistCancel(subscription._id)}
+                          className={`bg-red-500 text-white px-3 py-1 rounded text-sm w-full sm:w-auto transition-colors ${
+                            isCancelling
+                              ? "cursor-not-allowed opacity-70"
+                              : "hover:bg-red-600"
+                          }`}
+                          disabled={isCancelling}
+                        >
+                          {isCancelling ? "Cancelling..." : "Assist Cancel"}
+                        </button>
+                        <Link
+                          to={`/subscriptions/${subscription._id}`}
+                          onClick={(e) =>
+                            handleDelayedNav(
+                              e,
+                              `/subscriptions/${subscription._id}`
+                            )
+                          }
+                          className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm text-white w-full sm:w-auto"
+                        >
+                          View Details
+                        </Link>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           ) : (
             <EmptyState
               title="No subscriptions found"

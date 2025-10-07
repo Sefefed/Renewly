@@ -9,7 +9,6 @@ import DashboardEmptyState from "./DashboardEmptyState";
 import DashboardContent from "./DashboardContent";
 import useDashboardInsights from "./hooks/useDashboardInsights";
 import useAssistantPanel from "./hooks/useAssistantPanel";
-import useToastNotifications from "./hooks/useToastNotifications";
 
 export default function Dashboard() {
   const { user, token } = useAuth();
@@ -26,10 +25,8 @@ export default function Dashboard() {
     assistantUnread,
     setAssistantUnread,
     handleAssistantLayoutChange,
-    toastsStyle,
   } = assistant;
   const [assistantPrompt, setAssistantPrompt] = useState(null);
-  const { toasts, removeToast } = useToastNotifications({ api, token });
   const {
     insights: smartInsights,
     loading: smartInsightsLoading,
@@ -126,9 +123,6 @@ export default function Dashboard() {
       assistantUnread={assistantUnread}
       setAssistantUnread={setAssistantUnread}
       handleAssistantLayoutChange={handleAssistantLayoutChange}
-      toasts={toasts}
-      removeToast={removeToast}
-      toastsStyle={toastsStyle}
       mainGridProps={mainGridProps}
       assistantPrompt={assistantPrompt}
       onAssistantPromptConsumed={() => setAssistantPrompt(null)}

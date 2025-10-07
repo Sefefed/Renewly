@@ -12,7 +12,6 @@ import {
 } from "../../components/assistant";
 import DashboardHeader from "../../components/dashboard/DashboardHeader";
 import DashboardMainGrid from "./DashboardMainGrid";
-import DashboardToasts from "./DashboardToasts";
 import DashboardSidebar from "./DashboardSidebar";
 
 const DashboardContent = ({
@@ -29,9 +28,6 @@ const DashboardContent = ({
   assistantUnread,
   setAssistantUnread,
   handleAssistantLayoutChange,
-  toasts,
-  removeToast,
-  toastsStyle,
   assistantPrompt,
   onAssistantPromptConsumed,
   mainGridProps,
@@ -120,12 +116,6 @@ const DashboardContent = ({
 
         <DashboardMainGrid {...mainGridProps} />
       </div>
-
-      <DashboardToasts
-        toasts={toasts}
-        onDismiss={removeToast}
-        style={toastsStyle}
-      />
 
       {!isAssistantOpen ? (
         <AssistantTrigger

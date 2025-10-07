@@ -138,7 +138,7 @@ export default function Settings() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 text-white">
+    <div className="min-h-screen bg-gray-50 text-gray-900">
       <Navigation />
 
       {/* Header */}

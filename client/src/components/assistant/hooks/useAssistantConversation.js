@@ -1,12 +1,21 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+const createMessageId = () => {
+  if (typeof crypto !== "undefined" && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+};
+
 const buildErrorMessage = () => ({
+  id: createMessageId(),
   type: "assistant",
   content: {
     text: "I'm having trouble processing that right now. Try again shortly.",
     type: "error",
   },
   timestamp: new Date(),
+  animate: false,
 });
 
 const extractHistory = (conversation) =>
@@ -51,9 +60,11 @@ const useAssistantConversation = ({ api, isOpen, onUnreadChange }) => {
   const sendMessage = useCallback(
     async (payload) => {
       const userMessage = {
+        id: createMessageId(),
         type: "user",
         content: payload,
         timestamp: new Date(),
+        animate: false,
       };
 
       appendMessage(userMessage);
@@ -68,10 +79,12 @@ const useAssistantConversation = ({ api, isOpen, onUnreadChange }) => {
         });
 
         const assistantMessage = {
+          id: createMessageId(),
           type: "assistant",
           content: response.data.response,
           actions: response.data.actions,
           timestamp: new Date(),
+          animate: true,
         };
 
         appendMessage(assistantMessage);

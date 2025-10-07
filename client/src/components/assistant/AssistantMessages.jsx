@@ -61,7 +61,7 @@ const AssistantMessages = ({
     ) : (
       conversation.map((message, index) => (
         <ChatMessage
-          key={`${message.timestamp}-${index}`}
+          key={message.id ?? `${message.timestamp}-${index}`}
           message={message}
           theme={theme}
           onAction={onAction}

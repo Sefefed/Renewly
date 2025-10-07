@@ -204,6 +204,15 @@ export class ApiClient {
 
   // Workflow methods
   async sendReminder(subscriptionId, immediate = false) {
+    if (immediate) {
+      return this.request(
+        `/api/v1/subscriptions/${subscriptionId}/reminders/test`,
+        {
+          method: "POST",
+        }
+      );
+    }
+
     return this.request("/api/v1/workflows/subscription/reminder", {
       method: "POST",
       body: JSON.stringify({

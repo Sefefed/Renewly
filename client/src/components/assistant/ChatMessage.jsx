@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from "react";
 import { renderDataBlock } from "./chatMessageBlocks";
 import { useCurrency } from "../../hooks/useCurrency";
 
@@ -29,6 +30,11 @@ const getActionClasses = (isDark) =>
     ? "border border-blue-500/30 bg-blue-600/20 text-blue-300 hover:bg-blue-600/30"
     : "border border-blue-200 bg-blue-50 text-blue-600 hover:bg-blue-100";
 
+const buildTokens = (text) => {
+  if (!text) return [];
+  return text.match(/\S+\s*/g) ?? [text];
+};
+
 const ChatMessage = ({ message, onAction, theme = "dark" }) => {
   const { currency } = useCurrency();
   const isAssistant = message.type === "assistant";
@@ -37,7 +43,63 @@ const ChatMessage = ({ message, onAction, theme = "dark" }) => {
   const avatarClass = getAvatarClass(isAssistant, isDark);
   const bubbleClass = getBubbleClass(isAssistant, isDark);
   const timeColor = isDark ? "text-gray-500" : "text-gray-400";
-  const dataBlock = message.content?.dataBlock;
+  const content = useMemo(() => {
+    if (typeof message.content === "string") {
+      return { text: message.content };
+    }
+    return message.content ?? { text: "" };
+  }, [message]);
+
+  const baseText = content.text ?? "";
+  const tokens = useMemo(() => buildTokens(baseText), [baseText]);
+  const shouldAnimate = Boolean(
+    isAssistant && message.animate && tokens.length > 0
+  );
+
+  const [displayText, setDisplayText] = useState(shouldAnimate ? "" : baseText);
+  const [isAnimating, setIsAnimating] = useState(shouldAnimate);
+
+  useEffect(() => {
+    if (!shouldAnimate) {
+      setDisplayText(baseText);
+      setIsAnimating(false);
+      return;
+    }
+
+    let index = 0;
+    setDisplayText("");
+    setIsAnimating(true);
+
+    const interval = setInterval(() => {
+      setDisplayText((prev) => prev + (tokens[index] ?? ""));
+      index += 1;
+
+      if (index >= tokens.length) {
+        clearInterval(interval);
+        setIsAnimating(false);
+      }
+    }, Math.min(140, Math.max(60, 900 / tokens.length)));
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [shouldAnimate, tokens, baseText, message.id]);
+
+  const dataBlock = useMemo(() => {
+    if (content?.dataBlock) {
+      return content.dataBlock;
+    }
+    if (content?.data) {
+      return { type: content.type, data: content.data };
+    }
+    return null;
+  }, [content]);
+
+  const hasDataBlock = Boolean(dataBlock);
+  const showDataBlock = hasDataBlock && !isAnimating;
+  const textClassName = `text-sm leading-relaxed whitespace-pre-wrap${
+    hasDataBlock ? " mb-2" : ""
+  }`;
 
   return (
     <div className={`flex gap-3 ${isAssistant ? "" : "flex-row-reverse"}`}>
@@ -51,21 +113,26 @@ const ChatMessage = ({ message, onAction, theme = "dark" }) => {
         <div
           className={`inline-block max-w-[80%] rounded-2xl px-4 py-3 ${bubbleClass}`}
         >
-          {typeof message.content === "string" ? (
-            <p className="text-sm leading-relaxed">{message.content}</p>
-          ) : (
+          {content ? (
             <div>
-              <p className="mb-2 text-sm leading-relaxed">
-                {message.content?.text}
+              <p className={textClassName}>
+                {displayText}
+                {isAnimating ? (
+                  <span className="ml-0.5 inline-block animate-pulse opacity-70">
+                    ▍
+                  </span>
+                ) : null}
               </p>
-              {renderDataBlock(
-                dataBlock?.type,
-                dataBlock?.data,
-                isDark,
-                currency
-              )}
+              {showDataBlock
+                ? renderDataBlock(
+                    dataBlock?.type,
+                    dataBlock?.data,
+                    isDark,
+                    currency
+                  )
+                : null}
             </div>
-          )}
+          ) : null}
         </div>
 
         {isAssistant && message.actions?.length ? (

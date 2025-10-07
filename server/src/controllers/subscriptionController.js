@@ -21,12 +21,10 @@ export const createSubscription = async (req, res, next) => {
         type: "1 days before reminder",
         subscription: populated,
       });
-      return res
-        .status(201)
-        .json({
-          success: true,
-          data: { subscription: populated, workflowRunId: null, emailed: true },
-        });
+      return res.status(201).json({
+        success: true,
+        data: { subscription: populated, workflowRunId: null, emailed: true },
+      });
     }
 
     const { workflowRunId } = await workflowClient.trigger({
@@ -53,6 +51,67 @@ export const getUserSubscriptions = async (req, res, next) => {
     const subscriptions = await Subscription.find({ user: req.user._id });
 
     res.status(200).json({ success: true, data: subscriptions });
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const deleteSubscription = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const subscription = await Subscription.findOneAndDelete({
+      _id: id,
+      user: req.user._id,
+    });
+
+    if (!subscription) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Subscription not found." });
+    }
+
+    res.status(200).json({ success: true, data: { id } });
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const sendTestReminder = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const subscription = await Subscription.findOne({
+      _id: id,
+      user: req.user._id,
+    }).populate("user", "name email");
+
+    if (!subscription) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Subscription not found." });
+    }
+
+    if (!subscription.user?.email) {
+      return res.status(400).json({
+        success: false,
+        message: "User email is required to send reminders.",
+      });
+    }
+
+    await sendReminderEmail({
+      to: subscription.user.email,
+      type: "1 days before reminder",
+      subscription,
+    });
+
+    res.status(200).json({
+      success: true,
+      data: {
+        id: subscription.id,
+        message: "Test reminder sent successfully.",
+      },
+    });
   } catch (e) {
     next(e);
   }

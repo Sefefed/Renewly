@@ -5,7 +5,7 @@ const SkeletonCard = ({ lines, showIcon, className, pulseOnly, style }) => {
 
   return (
     <div
-      className={`bg-gradient-to-br from-gray-800/95 via-gray-900/90 to-gray-950/90 rounded-2xl border border-gray-800/60 shadow-lg overflow-hidden ${
+      className={`bg-gradient-to-br from-white via-slate-50 to-slate-100 rounded-2xl border border-slate-200 shadow-lg overflow-hidden ${
         className || ""
       }`}
       style={style}
@@ -20,13 +20,13 @@ const SkeletonCard = ({ lines, showIcon, className, pulseOnly, style }) => {
               return (
                 <div
                   key={`skeleton-line-${index}`}
-                  className={`${heightClass} ${widthClass} rounded-lg bg-size-200 animate-shimmer`}
+                  className={`${heightClass} ${widthClass} rounded-lg bg-slate-200/80 bg-size-200 animate-shimmer`}
                 ></div>
               );
             })}
           </div>
           {showIcon && (
-            <div className="flex w-14 h-14 rounded-2xl bg-size-200 animate-shimmer"></div>
+            <div className="flex w-14 h-14 rounded-2xl bg-slate-200/80 bg-size-200 animate-shimmer"></div>
           )}
         </div>
       </div>
