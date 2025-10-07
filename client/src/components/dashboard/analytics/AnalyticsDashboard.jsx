@@ -252,9 +252,13 @@ const AnalyticsDashboard = ({
       />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="dashboard-card">
+        <section
+          id="predictive-alerts"
+          className="dashboard-card scroll-mt-28"
+          aria-labelledby="predictive-alerts-heading"
+        >
           <h3 className="text-lg font-semibold text-primary">
-            Predictive Alerts
+            <span id="predictive-alerts-heading">Predictive Alerts</span>
           </h3>
           <p className="mt-1 text-sm text-secondary">
             Stay ahead of renewals and price changes.
@@ -265,10 +269,16 @@ const AnalyticsDashboard = ({
               onViewDetails={handleAlertDetails}
             />
           </div>
-        </div>
-        <div className="dashboard-card">
+        </section>
+        <section
+          id="smart-recommendations"
+          className="dashboard-card scroll-mt-28"
+          aria-labelledby="smart-recommendations-heading"
+        >
           <h3 className="text-lg font-semibold text-primary">
-            Smart Recommendations
+            <span id="smart-recommendations-heading">
+              Smart Recommendations
+            </span>
           </h3>
           <p className="mt-1 text-sm text-secondary">
             Personalized savings ideas based on your habits.
@@ -280,7 +290,7 @@ const AnalyticsDashboard = ({
               onAskAssistant={handleRecommendationAssist}
             />
           </div>
-        </div>
+        </section>
       </div>
 
       {insights?.categoryOptimization?.length > 0 && (

@@ -126,17 +126,17 @@ GET http://localhost:3000/ → "Welcome to the Renewly API!"
 
 Base routes (see `server/src/app.js`):
 
-| Feature       | Path                               | AI Surface |
-| ------------- | ---------------------------------- | ---------- |
-| Auth          | `/api/v1/auth`                     | –          |
-| Users         | `/api/v1/users`                    | –          |
+| Feature       | Path                               | AI Surface                            |
+| ------------- | ---------------------------------- | ------------------------------------- |
+| Auth          | `/api/v1/auth`                     | –                                     |
+| Users         | `/api/v1/users`                    | –                                     |
 | Subscriptions | `/api/v1/subscriptions`            | ✅ contextual briefings + risk scores |
 | Bills         | `/api/v1/bills`                    | ✅ urgency guidance + automation tips |
-| Budgets       | `/api/v1/budgets`                  | –          |
-| Insights      | `/api/v1/insights` (+ `/enhanced`) | ✅ feeds dashboard & prompt seeds |
-| Calendar      | `/api/v1/calendar`                 | –          |
-| Workflows     | `/api/v1/workflows`                | –          |
-| Assistant     | `/api/v1/assistant/query`          | ✅ Gemini / fallback responses |
+| Budgets       | `/api/v1/budgets`                  | –                                     |
+| Insights      | `/api/v1/insights` (+ `/enhanced`) | ✅ feeds dashboard & prompt seeds     |
+| Calendar      | `/api/v1/calendar`                 | –                                     |
+| Workflows     | `/api/v1/workflows`                | –                                     |
+| Assistant     | `/api/v1/assistant/query`          | ✅ Gemini / fallback responses        |
 
 The backend permits `http://localhost:5173` for local development CORS.
 
@@ -171,10 +171,10 @@ Available routes:
 
 ## 🧭 System Blueprint
 
-| Layer         | Highlights                                                                                                                                                                                                                                                                                        |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Client**    | React + Vite SPA with Tailwind design tokens, dark/light-aware components, and modular feature folders. Detail pages now rely on `useSubscriptionDetails`, `useBillDetails`, and `useAiBriefing` to unify data fetching, risk scoring, prompt generation, typing effects, and refresh cycles. |
-| **Server**    | Express API in ESM mode with MongoDB/Mongoose, JWT auth, and service-driven controllers across auth, subscriptions, bills, budgets, insights, workflows, notifications, and assistant interactions. The assistant service wraps a pluggable `GeminiProvider` with structured fallback builders.      |
+| Layer         | Highlights                                                                                                                                                                                                                                                                                            |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Client**    | React + Vite SPA with Tailwind design tokens, dark/light-aware components, and modular feature folders. Detail pages now rely on `useSubscriptionDetails`, `useBillDetails`, and `useAiBriefing` to unify data fetching, risk scoring, prompt generation, typing effects, and refresh cycles.         |
+| **Server**    | Express API in ESM mode with MongoDB/Mongoose, JWT auth, and service-driven controllers across auth, subscriptions, bills, budgets, insights, workflows, notifications, and assistant interactions. The assistant service wraps a pluggable `GeminiProvider` with structured fallback builders.       |
 | **Data Flow** | Insights endpoints aggregate subscription + billing data, hydrate chart-ready payloads, and feed the dashboard via `useSmartInsights`/`useDashboardInsights`. Page utilities assemble prompts, post them to `/api/v1/assistant/query`, and render streaming replies or fallback narratives instantly. |
 
 ### Dashboard Experience
@@ -209,13 +209,13 @@ PredictiveAlerts → AnalyticsDashboard → DashboardMainGrid → Dashboard → 
 
 ## 🤖 AI Integration Deep Dive
 
-| Layer | What changed | Why it matters |
-| ----- | ------------- | -------------- |
-| **Frontend hooks** | Added `useAiBriefing`, `useSubscriptionDetails`, and `useBillDetails` to consolidate data loading, pricing math, risk scoring, and AI orchestration. | Keeps `SubscriptionDetails.jsx` and `BillDetails.jsx` lightweight while making AI briefings reusable for future entities. |
-| **Prompt utilities** | Dedicated builders in `client/src/pages/*/utils/prompts.js` plus angle constants to rotate perspectives (renewal runway, cash-flow impact, compliance controls, etc.). | Ensures AI conversations stay consistent and editable without touching UI components. |
-| **LLM provider** | `server/src/services/assistant/llmProvider.js` now delegates to `GeminiProvider` and rich fallback builders. | Swapping to another vendor becomes a one-file change, and the assistant still responds when the provider is offline. |
-| **Fallback responses** | Structured narratives for subscriptions and bills that mirror AI tone when no external response is available. | Guarantees the AI panel always returns actionable guidance instead of silent failures. |
-| **Environment config** | Introduced `GEMINI_API_KEY`, `LLM_PROVIDER`, `AI_ASSISTANT_MODEL` in `.env`. | Keeps credentials and model selection per environment, enabling rapid experimentation. |
+| Layer                  | What changed                                                                                                                                                           | Why it matters                                                                                                            |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| **Frontend hooks**     | Added `useAiBriefing`, `useSubscriptionDetails`, and `useBillDetails` to consolidate data loading, pricing math, risk scoring, and AI orchestration.                   | Keeps `SubscriptionDetails.jsx` and `BillDetails.jsx` lightweight while making AI briefings reusable for future entities. |
+| **Prompt utilities**   | Dedicated builders in `client/src/pages/*/utils/prompts.js` plus angle constants to rotate perspectives (renewal runway, cash-flow impact, compliance controls, etc.). | Ensures AI conversations stay consistent and editable without touching UI components.                                     |
+| **LLM provider**       | `server/src/services/assistant/llmProvider.js` now delegates to `GeminiProvider` and rich fallback builders.                                                           | Swapping to another vendor becomes a one-file change, and the assistant still responds when the provider is offline.      |
+| **Fallback responses** | Structured narratives for subscriptions and bills that mirror AI tone when no external response is available.                                                          | Guarantees the AI panel always returns actionable guidance instead of silent failures.                                    |
+| **Environment config** | Introduced `GEMINI_API_KEY`, `LLM_PROVIDER`, `AI_ASSISTANT_MODEL` in `.env`.                                                                                           | Keeps credentials and model selection per environment, enabling rapid experimentation.                                    |
 
 ### Quickstart: Running the AI Copilot Locally
 

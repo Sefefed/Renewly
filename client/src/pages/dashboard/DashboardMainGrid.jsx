@@ -18,25 +18,31 @@ const DashboardMainGrid = ({
   onAssistantPrompt,
 }) => (
   <main className="space-y-10">
-    <FadeIn delay={0.12} className="block">
-      <KpiGrid
-        summary={insights.summary}
-        savingsPotential={insights.savingsPotential}
-      />
-    </FadeIn>
+    <section
+      id="financial-insights"
+      className="space-y-6 scroll-mt-28"
+      aria-label="Financial insights overview"
+    >
+      <FadeIn delay={0.12} className="block">
+        <KpiGrid
+          summary={insights.summary}
+          savingsPotential={insights.savingsPotential}
+        />
+      </FadeIn>
 
-    <FadeIn delay={0.16} className="block">
-      <AnalyticsDashboard
-        insights={smartInsights}
-        isLoading={smartInsightsLoading}
-        error={smartInsightsError}
-        timeframe={smartPeriod}
-        onTimeframeChange={setSmartPeriod}
-        onRefresh={refetchSmartInsights}
-        isRefreshing={smartInsightsRefreshing}
-        onAssistantPrompt={onAssistantPrompt}
-      />
-    </FadeIn>
+      <FadeIn delay={0.16} className="block">
+        <AnalyticsDashboard
+          insights={smartInsights}
+          isLoading={smartInsightsLoading}
+          error={smartInsightsError}
+          timeframe={smartPeriod}
+          onTimeframeChange={setSmartPeriod}
+          onRefresh={refetchSmartInsights}
+          isRefreshing={smartInsightsRefreshing}
+          onAssistantPrompt={onAssistantPrompt}
+        />
+      </FadeIn>
+    </section>
 
     <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
       <DashboardPrimaryColumn {...primaryColumnProps} />

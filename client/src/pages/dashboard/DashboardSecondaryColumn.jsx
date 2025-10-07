@@ -14,27 +14,43 @@ const DashboardSecondaryColumn = ({
   quickActions,
 }) => (
   <div className="space-y-8">
-    <FadeIn delay={0.18} className="w-full">
-      <ProactiveInsights
-        api={api}
-        onInsightsLoaded={handleAssistantInsightsLoaded}
-      />
-    </FadeIn>
+    <section className="scroll-mt-28" aria-label="Predictive insights">
+      <FadeIn delay={0.18} className="w-full">
+        <ProactiveInsights
+          api={api}
+          onInsightsLoaded={handleAssistantInsightsLoaded}
+        />
+      </FadeIn>
+    </section>
 
-    <FadeIn delay={0.24} className="w-full">
-      <MonthlyComparisonCard
-        comparison={monthlyComparison}
-        showInitialLoader={showComparisonLoader}
-      />
-    </FadeIn>
+    <section
+      id="monthly-comparison"
+      className="scroll-mt-28"
+      aria-label="Monthly comparison"
+    >
+      <FadeIn delay={0.24} className="w-full">
+        <MonthlyComparisonCard
+          comparison={monthlyComparison}
+          showInitialLoader={showComparisonLoader}
+        />
+      </FadeIn>
+    </section>
 
-    <FadeIn delay={0.3} className="w-full">
-      <BudgetStatusCard analysis={insights.budgetAnalysis} />
-    </FadeIn>
+    <section
+      id="budget-status"
+      className="scroll-mt-28"
+      aria-label="Budget status"
+    >
+      <FadeIn delay={0.3} className="w-full">
+        <BudgetStatusCard analysis={insights.budgetAnalysis} />
+      </FadeIn>
+    </section>
 
-    <FadeIn delay={0.36} className="w-full">
-      <RecommendationsCard recommendations={insights.recommendations} />
-    </FadeIn>
+    <section className="scroll-mt-28" aria-label="Smart recommendations">
+      <FadeIn delay={0.36} className="w-full">
+        <RecommendationsCard recommendations={insights.recommendations} />
+      </FadeIn>
+    </section>
 
     <FadeIn delay={0.42} className="w-full">
       <QuickActionsCard actions={quickActions} />

@@ -53,7 +53,10 @@ const ProactiveInsights = ({ api, onInsightsLoaded }) => {
   return (
     <div className="space-y-6">
       {insights.alerts?.length ? (
-        <div className="rounded-2xl border border-amber-200 bg-white p-6 shadow-sm">
+        <section
+          className="rounded-2xl border border-amber-200 bg-white p-6 shadow-sm"
+          aria-label="Predictive alerts"
+        >
           <div className="mb-4 flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-amber-200 bg-white">
               <span className="text-lg">⚠️</span>
@@ -91,17 +94,18 @@ const ProactiveInsights = ({ api, onInsightsLoaded }) => {
               </div>
             ))}
           </div>
-        </div>
+        </section>
       ) : null}
 
       {insights.tips?.length ? (
-        <div className="rounded-2xl border border-gray-300 bg-white p-6 shadow-sm">
+        <section
+          id="personalized-tips"
+          className="rounded-2xl border border-gray-300 bg-white p-6 shadow-sm scroll-mt-28"
+          aria-label="Personalized tips"
+        >
           <div className="mb-4 flex items-center gap-3">
-            
             <div>
-              <h3 className="font-semibold text-black">
-                Personalized tips
-              </h3>
+              <h3 className="font-semibold text-black">Personalized tips</h3>
               <p className="text-sm text-black">
                 Recommendations tailored for you
               </p>
@@ -117,7 +121,7 @@ const ProactiveInsights = ({ api, onInsightsLoaded }) => {
               </div>
             ))}
           </div>
-        </div>
+        </section>
       ) : null}
 
       {insights.persona ? (

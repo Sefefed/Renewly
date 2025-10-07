@@ -1,8 +1,46 @@
+import PropTypes from "prop-types";
 import { useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import DelayedLink from "./ui/DelayedLink";
 
-export default function Navigation() {
+const HamburgerButton = ({ onClick, isOpen }) => (
+  <button
+    type="button"
+    onClick={onClick}
+    aria-expanded={isOpen}
+    aria-controls="dashboard-sidebar"
+    className="absolute left-4 top-1/2 -translate-y-1/2 inline-flex h-12 w-10 items-center justify-center bg-white text-slate-900 shadow-sm transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+  >
+    <span className="sr-only">Toggle dashboard navigation</span>
+    <span
+      className="flex h-5 w-6 flex-col items-start justify-center gap-1.5 text-current"
+      aria-hidden="true"
+    >
+      <span
+        className={`h-0.5 w-6 rounded-full bg-current transition-transform duration-300 ${
+          isOpen ? "translate-y-[6px] rotate-45" : ""
+        }`}
+      />
+      <span
+        className={`h-0.5 w-6 rounded-full bg-current transition-opacity duration-300 ${
+          isOpen ? "opacity-0" : "opacity-100"
+        }`}
+      />
+      <span
+        className={`h-0.5 w-6 rounded-full bg-current transition-transform duration-300 ${
+          isOpen ? "-translate-y-[6px] -rotate-45" : ""
+        }`}
+      />
+    </span>
+  </button>
+);
+
+HamburgerButton.propTypes = {
+  onClick: PropTypes.func.isRequired,
+  isOpen: PropTypes.bool.isRequired,
+};
+
+export default function Navigation({ onToggleSidebar, isSidebarOpen }) {
   const { user, logout } = useAuth();
   const location = useLocation();
   const DELAY_MS = 400;
@@ -11,16 +49,25 @@ export default function Navigation() {
     return location.pathname === path;
   };
 
+  const hasSidebarToggle = typeof onToggleSidebar === "function";
+  const sidebarOpen = Boolean(isSidebarOpen);
+
   return (
     <nav className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 shadow-[0_12px_30px_rgba(15,23,42,0.04)]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 justify-between">
           <div className="flex">
             <div className="flex items-center flex-shrink-0">
+              {hasSidebarToggle ? (
+                <HamburgerButton
+                  onClick={onToggleSidebar}
+                  isOpen={sidebarOpen}
+                />
+              ) : null}
               <DelayedLink
                 to="/dashboard"
                 delay={DELAY_MS}
-                className="text-xl font-bold text-primary"
+                className="text-xl font-bold text-primary ml-[4.5rem] sm:ml-0"
               >
                 Renewly
               </DelayedLink>
@@ -98,3 +145,13 @@ export default function Navigation() {
     </nav>
   );
 }
+
+Navigation.propTypes = {
+  onToggleSidebar: PropTypes.func,
+  isSidebarOpen: PropTypes.bool,
+};
+
+Navigation.defaultProps = {
+  onToggleSidebar: undefined,
+  isSidebarOpen: false,
+};

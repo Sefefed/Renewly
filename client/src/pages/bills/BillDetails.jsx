@@ -90,29 +90,31 @@ export default function BillDetails() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900">
+    <div className="bg-gradient-to-b from-[#0A0A0A] via-[#0E111A] to-[#1A1D2A] min-h-screen text-white">
       <Navigation />
       <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <button
             type="button"
             onClick={goBack}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100 sm:w-auto"
+            className="px-4 py-2 rounded-lg border border-gray-600/40 text-gray-200 bg-white/5 hover:text-amber-300 hover:border-amber-400/40
+ backdrop-blur-sm transition-all mb-6"
           >
             ← Back to bills
           </button>
           <div className="flex w-full flex-col items-start gap-3 text-left sm:w-auto">
-            <p className="text-sm font-medium uppercase tracking-wide text-gray-500">
+            <p className="text-xs uppercase tracking-wider text-amber-400 font-semibold">
               Bill overview
             </p>
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-              {bill.name}
-            </h1>
+            <h1 className="text-3xl font-bold text-white">{bill.name}</h1>
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-              <span className="text-xl font-semibold text-gray-900">
+              <span className="text-2xl font-semibold text-amber-300">
                 {amountDisplay}
               </span>
-              <StatusBadge status={bill.status} />
+              <StatusBadge
+                className="text-sm font-medium px-2 py-1 rounded-md bg-red-500/10 text-red-400 border border-red-500/30"
+                status={bill.status}
+              />
             </div>
           </div>
         </div>
@@ -130,10 +132,14 @@ export default function BillDetails() {
             <div className="relative z-10 flex flex-col gap-6">
               <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.35em] text-amber-300/90">
+                  <p
+                    className="AI payment command
+  text-xs font-semibold uppercase tracking-wide text-amber-200/90
+"
+                  >
                     AI payment command
                   </p>
-                  <h2 className="mt-3 text-3xl font-bold leading-tight text-white sm:text-4xl">
+                  <h2 className="text-4xl font-bold text-white tracking-tight drop-shadow-[0_0_8px_rgba(255,255,255,0.15)]">
                     Intelligent bill briefing
                   </h2>
                   <p className="mt-3 max-w-2xl text-sm leading-relaxed text-amber-100/80">
@@ -143,14 +149,14 @@ export default function BillDetails() {
                   </p>
                 </div>
                 <div className="flex w-full flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-end lg:w-auto lg:items-start">
-                  <div className="rounded-2xl border border-white/20 bg-white/10 px-5 py-4 text-left text-sm text-amber-100 shadow-inner">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-amber-200/90">
+                  <div className="p-6 bg-gradient-to-br from-[#1A1423]/80 via-[#0C0F18]/80 to-[#111827]/80 border border-amber-400/20 rounded-2xl backdrop-blur-md shadow-lg">
+                    <p className="text-sm uppercase tracking-widest text-amber-400/80 font-semibold mb-1">
                       Amount due
                     </p>
-                    <p className="mt-1 text-xl font-semibold text-white">
+                    <p className="text-4xl font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.15)]">
                       {amountDisplay}
                     </p>
-                    <p className="text-xs text-amber-200/90">
+                    <p className="text-gray-500 text-sm flex items-center gap-2">
                       {dueDateDisplay}
                       {dueRelative ? ` · ${dueRelative}` : ""}
                     </p>
@@ -158,7 +164,7 @@ export default function BillDetails() {
                   <button
                     type="button"
                     onClick={() => refreshBriefing()}
-                    className="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 bg-amber-500/30 px-5 py-2 text-xs font-semibold uppercase tracking-wide text-amber-100 transition hover:bg-amber-500/50"
+                    className="px-5 py-2 rounded-lg bg-gradient-to-r from-amber-500 to-orange-400 text-black font-semibold shadow-lg hover:from-amber-400 hover:to-yellow-400 transition-all"
                   >
                     Refresh briefing
                   </button>
@@ -168,12 +174,20 @@ export default function BillDetails() {
               <div className="grid gap-5 lg:grid-cols-[minmax(0,1.45fr)_minmax(0,1fr)]">
                 <div className="space-y-4">
                   <div className="rounded-3xl border border-white/10 bg-black/30 p-6 shadow-inner backdrop-blur">
-                    <h3 className="text-sm font-semibold uppercase tracking-wide text-amber-200">
-                      Live AI briefing
-                    </h3>
-                    <p className="mt-1 text-xs text-amber-200/80">
+                    <p className="text-xs uppercase tracking-[0.25em] text-emerald-400/80 font-semibold flex items-center gap-2">
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400/70 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
+                      </span>
+                    </p>
+                    <p className="text-amber-400/80 text-sm mt-1 flex items-center gap-2">
+                      <span className="relative flex h-1.5 w-1.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400/70 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-amber-400"></span>
+                      </span>
                       Streaming adaptive guidance for this bill only.
                     </p>
+
                     {analysisAngle && (
                       <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-white/10 bg-amber-500/20 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wide text-amber-50">
                         <span>Lens</span>
@@ -183,7 +197,7 @@ export default function BillDetails() {
                       </div>
                     )}
                     {analysisAngle?.tagline && (
-                      <p className="mt-1 text-[0.7rem] uppercase tracking-wide text-amber-200/60">
+                      <p className="text-gray-200 text-sm font-medium italic mt-3 pl-4 border-l-2 border-amber-400/40">
                         {analysisAngle.tagline}
                       </p>
                     )}
@@ -229,14 +243,14 @@ export default function BillDetails() {
                   <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
                     <div className="flex items-center justify-between gap-3">
                       <div>
-                        <h3 className="text-xs font-semibold uppercase tracking-wide text-amber-200">
+                        <h3 className="text-xs uppercase tracking-[0.25em] text-amber-400/90 font-semibold">
                           Payment timeline
                         </h3>
-                        <p className="text-[0.7rem] uppercase tracking-wide text-amber-200/70">
+                        <p className="text-sm text-gray-400 uppercase tracking-widest mt-1">
                           {bill.paymentMethod || "Payment method pending"}
                         </p>
                       </div>
-                      <span className="rounded-full bg-black/30 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-wide text-amber-100/80">
+                      <span className="text-gray-200 font-medium">
                         {bill.autoPay ? "Auto pay" : "Manual"}
                       </span>
                     </div>
@@ -252,12 +266,12 @@ export default function BillDetails() {
                                 {item.primary}
                               </p>
                               {item.secondary && (
-                                <p className="text-xs text-amber-200/80">
+                                <p className="text-sm text-amber-200/80">
                                   {item.secondary}
                                 </p>
                               )}
                             </div>
-                            <p className="text-sm font-semibold text-amber-100">
+                            <p className="text-amber-400 font-semibold mt-1">
                               {item.value}
                             </p>
                           </div>
@@ -293,13 +307,17 @@ export default function BillDetails() {
                           </div>
                         </div>
                         <div className="space-y-2">
-                          <h3 className="text-xs font-semibold uppercase tracking-wide text-amber-200">
+                          <p className="text-xs uppercase tracking-[0.25em] text-amber-400/90 font-semibold flex items-center gap-2">
+                            <span className="relative flex h-2 w-2">
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400/70 opacity-75"></span>
+                              <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-400"></span>
+                            </span>
                             Risk radar
-                          </h3>
-                          <p className="text-lg font-semibold text-white">
+                          </p>
+                          <p className="text-amber-400 font-semibold text-lg">
                             {riskProfile.level}
                           </p>
-                          <p className="text-xs leading-relaxed text-amber-100/80">
+                          <p className="text-gray-300 text-sm leading-relaxed">
                             {riskProfile.narrative}
                           </p>
                         </div>
@@ -309,10 +327,10 @@ export default function BillDetails() {
                           <li key={index} className="flex items-start gap-2">
                             <span className="mt-1 h-1.5 w-1.5 rounded-full bg-amber-300" />
                             <div>
-                              <p className="font-semibold text-amber-100">
+                              <p className="text-xs uppercase tracking-widest text-gray-400">
                                 {signal.label}
                               </p>
-                              <p className="text-amber-200/80">
+                              <p className="text-gray-200 font-medium">
                                 {signal.detail}
                               </p>
                             </div>
